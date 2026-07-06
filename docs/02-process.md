@@ -12,7 +12,7 @@ Principle throughout — the standard ontology-elicitation loop: **discover → 
 
 Steps:
 1. Business context interview (see Question Bank Q0). Capture: what the company sells, to whom (ICP), GTM motion (inbound/outbound/PLG/partner), team roles, sales cycle length, ACV range.
-2. Systems inventory: every app in the GTM stack, its role, access method available (MCP / API / warehouse / none).
+2. Systems inventory: every app in the GTM stack, its role, access method available (MCP / API / warehouse / none). For platform CRMs (Salesforce, HubSpot, Dynamics) additionally decide **which modules and objects are in scope** and record it in the system profile's `scope` block — the ontology covers the CRM module, not the whole platform (see `05-crm-type-mapping.md`).
 3. Use cases: what agents should be able to *answer* and *do* — the ontology's **competency questions**. They drive scope: model only what they need (see anti-patterns).
 4. Scope decision: which systems and which processes are in scope for this iteration.
 
@@ -22,6 +22,10 @@ Steps:
 ## Phase 1 — Discovery (binding, bottom-up)
 
 **Goal:** a raw, timestamped snapshot of everything each system can tell us.
+
+Scope guard: if the system profile has a `scope` block, introspect ONLY
+`objects_in_scope` (a full Salesforce describe returns hundreds of objects — never
+enumerate them all) and record the count of skipped objects in the snapshot.
 
 Per system, introspect via the declared access method and record:
 - entities/collections and standard fields

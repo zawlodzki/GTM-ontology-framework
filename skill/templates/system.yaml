@@ -5,6 +5,11 @@ name: Pipedrive
 meta: {source: declared, status: draft, updated: 2026-01-01}
 role: crm                          # crm|email-marketing|erp|billing|support|enrichment|automation-platform|other
 vendor: Pipedrive OÜ
+scope:                             # REQUIRED for platform CRMs (Salesforce, HubSpot, Dynamics)
+  modules_in_scope: []             # e.g. [Sales Cloud] / [CRM, Sales Hub]
+  objects_in_scope: []             # e.g. [Lead, Account, Contact, Opportunity, Task, Event]
+  excluded: []                     # e.g. [Service Cloud, Marketing Cloud, CPQ]
+  notes: "discovery reads ONLY objects_in_scope; log skipped-object count"
 access:
   - via: mcp
     server: pipedrive-mcp          # server name as configured

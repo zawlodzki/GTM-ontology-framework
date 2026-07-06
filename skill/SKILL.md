@@ -2,7 +2,7 @@
 name: gtm-ontology-builder
 description: >
   Build an agent-ready business ontology for GTM systems (Pipedrive, HubSpot, Attio,
-  email marketing, ERP). Use when the user wants to create, extend, or update an
+  Salesforce, email marketing, ERP). Use when the user wants to create, extend, or update an
   ontology of their CRM/GTM stack: map objects and custom fields with business
   semantics, define lifecycle/dropdown value conditions, document AI-filled fields
   and their prompts, model pipelines with entry/exit criteria, catalogue automations,
@@ -52,6 +52,10 @@ gtm-ontology/
 Interview the user:
 1. Business: what is sold, to whom (ICP + disqualifiers), pricing/ACV, cycle length, GTM motion, team roles.
 2. Systems: every GTM app, its role, available access (MCP server? API creds? warehouse?).
+   For platform CRMs (Salesforce, HubSpot, Dynamics) also agree WHICH modules/objects
+   are in scope and record it in the system profile's `scope` block — the ontology
+   covers the CRM module (e.g. Salesforce Sales Cloud: Lead, Account, Contact,
+   Opportunity, Task/Event), never the whole platform.
 3. Use cases: what should agents ANSWER and DO? These are the ontology's competency questions — they define scope.
 
 Scaffold the `gtm-ontology/` directory tree (layout above), then write
@@ -62,10 +66,16 @@ Scaffold the `gtm-ontology/` directory tree (layout above), then write
 
 ### Phase 1 — Discovery
 
+Scope guard first: if the system profile has a `scope` block, introspect ONLY
+`objects_in_scope` (a full Salesforce describe returns hundreds of objects — never
+enumerate them all) and record the skipped-object count in the snapshot.
+
 Per system, introspect via the declared access method:
 - MCP: enumerate available tools; prefer metadata/schema tools (`list_*_fields`,
   `list_stages`, `get_properties`); sample records where no metadata tool exists.
-- API: metadata endpoints (Pipedrive `/dealFields`, `/stages`; HubSpot `/properties/*`; Attio `/objects`).
+- API: metadata endpoints (Pipedrive `/dealFields`, `/stages`; HubSpot `/properties/*`;
+  Attio `/objects`; Salesforce `/sobjects/{object}/describe` + Tooling API for flows
+  and validation rules).
 - Warehouse: information schema.
 
 Record into `binding/discovery/<system>/snapshot-<date>.yaml`: entities + fields

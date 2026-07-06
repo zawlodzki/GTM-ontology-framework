@@ -84,6 +84,7 @@ The `lifecycle_stage` pattern: model as an enum property AND, if it has ordered 
 | `id`, `name`, `meta` | R | |
 | `role` | R | `crm / email-marketing / erp / billing / support / enrichment / automation-platform / other` |
 | `vendor` | O | |
+| `scope` | O — **required for platform CRMs** (Salesforce, HubSpot, Dynamics) | `{modules_in_scope[], objects_in_scope[], excluded[], notes}` — limits discovery and bindings to the CRM module; see `05-crm-type-mapping.md` |
 | `access[]` | R | list of methods, each: `{via: mcp/api/warehouse, ...}` — mcp: `{server, key_tools[]}`; api: `{base_url, auth, docs_url}`; warehouse: `{dataset, loaded_by}` |
 | `write_access` | R | `none / limited / full` + notes |
 | `rate_limits` | O | |

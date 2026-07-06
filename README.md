@@ -42,7 +42,9 @@ agents never act on drafts.
 
 1. Install the skill: grab `gtm-ontology-builder.skill` from this repo and add it to
    Claude (Cowork or Claude Code), or copy `skill/` into your skills folder.
-2. Connect your CRM — an MCP server is best, an API token works too.
+2. Connect your CRM — an MCP server is best, an API token works too. Salesforce works
+   as well; for platform CRMs (Salesforce, HubSpot) the skill scopes itself to the CRM
+   module — Sales Cloud objects, not the whole platform.
 3. Say: *"Build an ontology of my CRM."* The skill runs the phases, asks before it
    writes, and ends with a `gtm-ontology/` folder in your repo plus an entry in your
    root `CLAUDE.md` so every future agent knows where to look.
