@@ -1,4 +1,4 @@
-# CRM Ontology Skill — Pipedrive, HubSpot, Attio
+# CRM Ontology Skill — Pipedrive, HubSpot, Attio, Salesforce
 
 Make your CRM understandable for AI agents.
 
