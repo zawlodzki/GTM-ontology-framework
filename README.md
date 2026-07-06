@@ -9,9 +9,10 @@ n8n workflow writes the AI summary field and from what prompt, or that moving a 
 and breaks the moment an agent starts writing to your CRM.
 
 This repo is a method for writing it down once — in a form that works for three
-audiences at the same time: your client (rendered tables and funnel diagrams), AI
-agents (small, indexed YAML artifacts), and the CRM API (field keys, enum maps,
-stage ids).
+audiences at the same time: your sales team and leadership (rendered tables and
+funnel diagrams, no YAML), AI agents (small, indexed YAML artifacts), and the CRM
+API (field keys, enum maps, stage ids). If you run a CRM as an admin or own the
+sales process, this is for you.
 
 ## What's inside
 
@@ -22,7 +23,7 @@ stage ids).
 | `docs/` | The method: 4 layers, a 7-phase process with interview question banks, a format spec for every artifact, CRM type mappings, extension and anti-pattern notes. |
 | `schemas/` | JSON Schema for each artifact type — validate everything, trust nothing. |
 | `templates/` | Commented starter files. |
-| `tools/render_ontology.py` | One command: ontology → client table, Mermaid funnel, field dictionary, action catalog, interactive `explorer.html`. |
+| `tools/render_ontology.py` | One command: ontology → readable process table, Mermaid funnel, field dictionary, action catalog, interactive `explorer.html`. |
 
 ## How it works
 
@@ -56,9 +57,9 @@ in one file. That's the end state you're building toward.
 ## Why this exists
 
 I implement CRMs for a living. On every project the same process knowledge had to be
-written three times: a table for the client, context for AI agents, configuration for
-the API. Three copies, three places to drift apart. This framework keeps one source of
-truth in YAML and renders the rest. The example in `gtm-ontology/` is small on purpose —
-read it in ten minutes, then decide if the method fits your stack.
+written three times: a table for the sales team, context for AI agents, configuration
+for the API. Three copies, three places to drift apart. This framework keeps one source
+of truth in YAML and renders the rest. The example in `gtm-ontology/` is small on
+purpose — read it in ten minutes, then decide if the method fits your stack.
 
 Questions? grzesiek@zawlodzki.pl
