@@ -62,5 +62,13 @@ for the API. Three copies, three places to drift apart. This framework keeps one
 of truth in YAML and renders the rest. The example in `gtm-ontology/` is small on
 purpose — read it in ten minutes, then decide if the method fits your stack.
 
+## License
+
+[PolyForm Internal Use 1.0.0](LICENSE.md) — free to use inside your own company,
+including commercially. What it does NOT allow: redistributing this, reselling it,
+or using it to deliver services or products to third parties (consultancies and
+training companies included). If that's your case, write to me — a commercial
+license is a short conversation.
+
 Want to talk about agentic AI, or about implementing and optimizing a CRM for B2B sales?
 grzesiek@zawlodzki.pl · [zawlodzki.pl](https://zawlodzki.pl)
