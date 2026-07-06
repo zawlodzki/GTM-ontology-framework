@@ -1,0 +1,67 @@
+# A3 — semantic object type. One file per canonical business object.
+kind: object-type
+id: deal                          # kebab-case
+name: Deal                        # PascalCase
+description: >
+  What this object IS in business terms — not "a row in the deals table".
+meta:
+  source: inferred                # discovered | inferred | declared
+  status: draft                   # draft | confirmed — agents may not act on drafts
+  updated: 2026-01-01
+aliases: [opportunity]            # source-system synonyms collapsed into this type
+
+properties:
+  # --- plain property ---
+  - id: amount                    # snake_case
+    name: Amount
+    type: currency                # string|text|number|currency|boolean|date|datetime|enum|set|reference|json|phone|email|url|user|address
+    semantics: >
+      What the value MEANS, when it changes, edge cases (e.g. "expected first-year
+      contract value, excl. VAT; set at qualification, updated at proposal").
+    filled_by: human              # human|automation|ai|integration|system|mixed
+    filled_by_detail: "Account Executive"
+    required: {from_stage: "process:new-business/qualified"}
+    default: null                 # default value on record creation (optional)
+    validation: "value > 0"       # validation rule, e.g. "regex:^[0-9]{10}$" for tax id (optional)
+
+  # --- enum property: EVERY value needs a business definition ---
+  - id: lifecycle_stage
+    name: Lifecycle Stage
+    type: enum
+    semantics: Where the related person/org sits in the overall customer lifecycle.
+    filled_by: mixed
+    enum:
+      - value: mql
+        label: MQL
+        definition: >
+          CONDITIONS for this value, in checkable terms — e.g. "matches ICP filters
+          AND engaged with >= 2 marketing touchpoints in last 30 days".
+        set_by: "automation:lead-scoring"
+        entry_conditions:
+          - "icp_fit == true"
+          - "engagement_score >= 40"
+        reversible: false
+      - value: sql
+        label: SQL
+        definition: null          # null = KNOWN GAP, elicit in Phase 3; never leave blank silently
+        set_by: "human: SDR"
+
+  # --- AI-filled property: prompt provenance is mandatory ---
+  - id: ai_qualification_summary
+    name: AI Qualification Summary
+    type: text
+    semantics: LLM-generated qualification digest based on the first discovery call.
+    filled_by: ai
+    ai:
+      prompt_ref: prompt:lead-qualification
+      inputs: [call transcript (Fireflies), deal.amount, org.industry]
+      trigger: "automation:qualify-from-transcript after call logged"
+      regenerate_policy: "agent may regenerate if a newer transcript exists"
+    quality_notes: "Empty if transcript missing — do not treat as 'not qualified'."
+
+links:
+  - id: organization
+    label: BELONGS_TO             # UPPER_SNAKE_CASE
+    target: object:organization
+    cardinality: many-to-one
+    semantics: The account this deal is with.

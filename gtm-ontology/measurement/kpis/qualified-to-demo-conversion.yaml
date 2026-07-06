@@ -1,0 +1,16 @@
+kind: kpi
+id: qualified-to-demo-conversion
+name: Qualified → Demo Conversion
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+level: stage
+scope: process:new-business/qualified
+definition: Share of deals entering Qualified that reach Demo (cohort by Qualified-entry month).
+formula: "count(deal entered demo) / count(deal entered qualified), cohort by qualified-entry month"
+terms:
+  entered: "first transition into the stage per process:new-business.transitions"
+  cohort: "deals grouped by month they entered Qualified; measured after full cycle (8 weeks)"
+grain: monthly
+segments: [property:deal.source_channel]
+target: {operator: ">=", value: 60, unit: "%"}
+owner: Head of Sales
+source_of_truth: "computed from Pipedrive stage-change history (deal flow report)"

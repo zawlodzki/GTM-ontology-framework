@@ -1,0 +1,21 @@
+# A13 — agent policy: who may do what. Checked BEFORE any action execution.
+kind: agent-policy
+id: agent-policy
+meta: {source: declared, status: draft, updated: 2026-01-01}
+agents:
+  - id: sdr-agent
+    description: Qualifies inbound leads, keeps CRM hygiene.
+    allowed_actions:
+      - action:qualify-lead
+      - action:advance-deal-stage
+      - action:log-activity
+    approval_overrides:
+      - {action: action:advance-deal-stage, approval: required, condition: "target stage terminal"}
+    prohibitions:                  # hard NOs — override everything else
+      - Never delete any record.
+      - Never send external communication (email/LinkedIn) — separate agent + approval.
+      - Never write fields marked writable:false in bindings.
+    rate_limits: {actions_per_hour: 30}
+defaults:
+  unlisted_actions: forbidden
+  draft_artifacts: read-as-hypothesis-only

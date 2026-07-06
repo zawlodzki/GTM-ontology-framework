@@ -1,0 +1,58 @@
+# A10 — agent action: a CONTRACT for what an agent may execute.
+kind: action
+id: advance-deal-stage
+name: Advance deal to next stage
+description: Move a deal forward in the New Business pipeline, respecting all criteria.
+meta: {source: declared, status: draft, updated: 2026-01-01}
+object: object:deal
+intent: >
+  When to reach for this action — e.g. "user asks to progress a deal, or agent
+  verified during review that all exit criteria are met".
+executor: agent                    # agent | human | either
+approval: conditional              # none | required | conditional
+approval_condition: "required when target stage is 'won' or amount > 50000"
+
+preconditions:                     # verifiable BEFORE executing
+  - description: All exit criteria of the current stage are met
+    check: "process:new-business.current_stage.exit_criteria all true"
+  - description: Target stage is an allowed transition
+  - description: All required_properties of target stage are non-empty
+
+inputs:
+  - {id: deal_id, type: reference, required: true, description: the deal to move}
+  - {id: target_stage, type: string, required: true, description: stage id from process:new-business}
+
+workflow:                          # ORDERED — the correct sequence matters
+  - step: 1
+    description: Load deal; evaluate preconditions against live data (not cache).
+    on_failure: abort — report which criterion failed
+  - step: 2
+    description: Fill any missing required_properties from available context; if impossible, abort.
+    on_failure: abort
+  - step: 3
+    description: Update stage field via implementation below.
+    on_failure: abort and report
+  - step: 4
+    description: Add note documenting who/why (agent attribution).
+    on_failure: continue — log warning
+
+effects:
+  - {target: property:deal.stage, operation: write, detail: set to target_stage}
+  - {target: object:deal, operation: create, detail: attribution note}
+
+side_effects:                      # REQUIRED — empty list is an explicit "none"
+  - "automation:create-demo-activity fires if target is 'demo'"
+
+postconditions:
+  - deal.stage == target_stage when re-read
+
+idempotency: conditional           # safe_to_retry | not_idempotent | conditional
+idempotency_notes: retry safe only if stage not yet changed
+
+implementations:
+  - system: system:pipedrive
+    via: mcp
+    tool_or_endpoint: update_deal
+    notes: stage_id from binding/mappings/pipedrive.yaml enum_map
+
+error_handling: on any write failure, report state and stop — never partial-retry blindly

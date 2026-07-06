@@ -1,0 +1,20 @@
+# A4 — system profile. One per connected app.
+kind: system
+id: pipedrive
+name: Pipedrive
+meta: {source: declared, status: draft, updated: 2026-01-01}
+role: crm                          # crm|email-marketing|erp|billing|support|enrichment|automation-platform|other
+vendor: Pipedrive OÜ
+access:
+  - via: mcp
+    server: pipedrive-mcp          # server name as configured
+    key_tools: [search_deals, get_deal, update_deal, list_deal_fields]
+    notes: preferred access path for agents
+  - via: api
+    base_url: https://api.pipedrive.com/v2
+    auth: api-token (env PIPEDRIVE_API_TOKEN)
+    docs_url: https://developers.pipedrive.com/docs/api/v1
+write_access: limited              # none|limited|full
+write_access_notes: agents write only fields marked writable in bindings
+rate_limits: "API: token-budget per day; be conservative in bulk ops"
+environment_notes: no sandbox — all writes hit production

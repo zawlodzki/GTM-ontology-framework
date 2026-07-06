@@ -1,0 +1,18 @@
+kind: identity
+id: identity
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+resolutions:
+  - object: object:person
+    natural_keys: [email]
+    sources:
+      - {system: system:pipedrive, role: master}
+    inclusion: union
+    conflict_strategy: master_wins
+    # When email marketing (e.g. Mailerlite) is added: append as secondary source,
+    # keep email as key, decide per_field precedence for engagement data.
+  - object: object:organization
+    natural_keys: [domain]
+    sources:
+      - {system: system:pipedrive, role: master}
+    inclusion: union
+    conflict_strategy: master_wins

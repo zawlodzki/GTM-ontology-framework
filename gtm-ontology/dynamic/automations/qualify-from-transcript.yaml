@@ -1,0 +1,39 @@
+kind: automation
+id: qualify-from-transcript
+name: Qualify deal from call transcript
+description: >
+  n8n workflow: when Fireflies delivers a transcript matched to a deal contact,
+  run prompt:lead-qualification and write AI qualification fields on the deal.
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+platform: n8n
+status_live: active
+owner: RevOps (Anna)
+definition_url: https://n8n.acme-analytics.internal/workflow/42
+
+trigger:
+  event: Fireflies webhook — new transcript ready
+  object: object:deal
+  conditions:
+    - transcript attendee email matches a person linked to an open deal
+    - deal stage is qualified or earlier
+
+effects:
+  - {target: "property:deal.ai_qualification_summary", operation: write, detail: "LLM output per prompt:lead-qualification"}
+  - {target: "property:deal.ai_qualification_score", operation: write, detail: "0-100 parsed from SCORE line"}
+  - {target: "object:deal", operation: create, detail: "note '[auto] qualification updated'"}
+
+data_fingerprint:
+  acting_user: "api-bot@acme-analytics.com (Pipedrive user id 42)"
+  field_patterns:
+    - "ai_qualification_summary starts with '## Qualification'"
+    - "summary and score updated in the same minute"
+  marker: "note '[auto] qualification updated' on the deal"
+  timing: "within ~10 min after call end"
+
+failure_modes:
+  - symptom: attendee email mismatch (personal vs work email)
+    impact: fields stay empty — NOT a signal of poor qualification
+    detection: "completed call activity exists but summary empty > 1h"
+  - symptom: LLM returns malformed SCORE line
+    impact: summary written, score null — treat as 'needs human read'
+    detection: "summary present, score null"

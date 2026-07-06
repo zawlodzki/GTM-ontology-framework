@@ -1,0 +1,15 @@
+kind: kpi
+id: new-arr
+name: New ARR
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+level: company
+definition: New annual recurring revenue signed in the month.
+formula: "sum(deal.amount where deal.stage == won, by month of won transition)"
+terms:
+  won: "terminal stage 'won' of process:new-business"
+  amount: "property:deal.amount — first-year contract value EUR excl. VAT"
+grain: monthly
+segments: [property:deal.source_channel]
+target: {operator: ">=", value: 100000, unit: EUR}
+owner: Head of Sales
+source_of_truth: "Pipedrive Insights dashboard 'Revenue'"

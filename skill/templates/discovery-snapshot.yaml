@@ -1,0 +1,30 @@
+# A5 — discovery snapshot: raw introspection. IMMUTABLE; new run = new file.
+kind: discovery-snapshot
+id: pipedrive-2026-01-01
+system: system:pipedrive
+meta:
+  source: discovered
+  status: confirmed        # raw facts need no human confirmation
+  retrieved_at: 2026-01-01T09:00:00Z
+  via: mcp                 # mcp | api | warehouse
+entities:
+  - name: deals
+    kind: collection
+    record_count: 1240
+    fields:
+      - {key: value, name: Value, type: monetary, custom: false}
+      - key: "9f1ac7e2b8d4f6a1c3e5b7d9f1a3c5e7b9d1f3a5"
+        name: Lifecycle Stage
+        type: enum
+        custom: true
+        enum_options: [{id: 123, label: MQL}, {id: 124, label: SQL}]
+pipelines:
+  - id: 1
+    name: New Business
+    stages: [{id: 1, name: Incoming, order: 1}, {id: 2, name: Qualified, order: 2}]
+users:
+  - {id: 42, name: api-bot, email: api-bot@company.com, is_bot_or_api: true}
+automations_found:
+  - {name: "Create demo activity", trigger_hint: "deal stage -> Demo", platform: crm-native}
+profiling:
+  - {field: "deals.9f1a...f3a5", fill_rate: 0.62, distinct_values_sample: [MQL, SQL]}

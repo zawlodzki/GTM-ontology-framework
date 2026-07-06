@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/process.schema.json",
+  "title": "GOF Process (A8)",
+  "type": "object",
+  "required": ["kind", "id", "name", "description", "meta", "type", "object", "state_property", "stages", "transitions"],
+  "properties": {
+    "kind": {"const": "process"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "name": {"type": "string"},
+    "description": {"type": "string"},
+    "meta": {"$ref": "#/$defs/meta"},
+    "type": {"enum": ["pipeline", "lifecycle", "workflow"]},
+    "object": {"type": "string", "pattern": "^object:"},
+    "state_property": {"type": "string", "pattern": "^property:"},
+    "stages": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/stage"}},
+    "transitions": {
+      "type": "object",
+      "required": ["allowed", "skip_policy"],
+      "properties": {
+        "allowed": {"type": "array", "items": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2}},
+        "skip_policy": {"enum": ["forbidden", "allowed", "approval"]},
+        "backward_policy": {"type": "string"}
+      }
+    },
+    "kpis": {"type": "array", "items": {"type": "string", "pattern": "^kpi:"}}
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "required": ["source", "status"],
+      "properties": {
+        "source": {"enum": ["discovered", "inferred", "declared"]},
+        "status": {"enum": ["draft", "confirmed"]},
+        "confirmed_by": {"type": "string"},
+        "updated": {"type": "string"}
+      }
+    },
+    "criterion": {
+      "type": "object",
+      "required": ["description"],
+      "properties": {
+        "description": {"type": "string"},
+        "check": {"type": "string"}
+      }
+    },
+    "stage": {
+      "type": "object",
+      "required": ["id", "name", "order", "definition", "entry_criteria", "exit_criteria"],
+      "properties": {
+        "id": {"type": "string"},
+        "name": {"type": "string"},
+        "order": {"type": "integer"},
+        "definition": {"type": "string"},
+        "entry_criteria": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/criterion"}},
+        "exit_criteria": {"type": "array", "items": {"$ref": "#/$defs/criterion"}},
+        "bad_examples": {"type": "array", "items": {"type": "string"}},
+        "customer_verifier": {
+          "type": "object",
+          "required": ["description"],
+          "properties": {"description": {"type": "string"}, "check": {"type": "string"}}
+        },
+        "probability": {"type": "number", "minimum": 0, "maximum": 1},
+        "required_properties": {"type": "array", "items": {"type": "string"}},
+        "owner_role": {"type": "string"},
+        "sla": {
+          "type": "object",
+          "properties": {
+            "target_duration_days": {"type": "number"},
+            "rotting_threshold_days": {"type": "number"},
+            "stuck_action": {"type": "string"}
+          }
+        },
+        "tasks": {
+          "type": "object",
+          "properties": {
+            "mandatory": {"type": "array", "items": {"type": "string"}},
+            "optional": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "drafts": {
+          "type": "object",
+          "properties": {
+            "email": {"type": ["string", "null"], "pattern": "^draft:"},
+            "sms": {"type": ["string", "null"], "pattern": "^draft:"}
+          }
+        },
+        "tips": {"type": "string"},
+        "loss_reasons": {"type": "array", "items": {"type": "string"}},
+        "automations_triggered": {"type": "array", "items": {"type": "string", "pattern": "^automation:"}},
+        "kpis": {"type": "array", "items": {"type": "string", "pattern": "^kpi:"}},
+        "terminal": {"type": "boolean"},
+        "outcome": {"enum": ["positive", "negative"]}
+      }
+    }
+  }
+}

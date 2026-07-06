@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/automation.schema.json",
+  "title": "GOF Automation (A9)",
+  "type": "object",
+  "required": ["kind", "id", "name", "description", "meta", "platform", "status_live", "trigger", "effects", "data_fingerprint"],
+  "properties": {
+    "kind": {"const": "automation"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "name": {"type": "string"},
+    "description": {"type": "string"},
+    "meta": {"$ref": "#/$defs/meta"},
+    "platform": {"enum": ["crm-native", "n8n", "zapier", "make", "custom-script", "other"]},
+    "status_live": {"enum": ["active", "paused", "unknown"]},
+    "trigger": {
+      "type": "object",
+      "required": ["event"],
+      "properties": {
+        "event": {"type": "string"},
+        "object": {"type": "string"},
+        "conditions": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "effects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["target", "operation"],
+        "properties": {
+          "target": {"type": "string"},
+          "operation": {"enum": ["write", "create", "delete", "notify", "external"]},
+          "detail": {"type": "string"}
+        }
+      }
+    },
+    "data_fingerprint": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "acting_user": {"type": "string"},
+        "field_patterns": {"type": "array", "items": {"type": "string"}},
+        "marker": {"type": "string"},
+        "timing": {"type": "string"}
+      }
+    },
+    "failure_modes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["symptom"],
+        "properties": {
+          "symptom": {"type": "string"},
+          "impact": {"type": "string"},
+          "detection": {"type": "string"}
+        }
+      }
+    },
+    "owner": {"type": "string"},
+    "definition_url": {"type": "string"}
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "required": ["source", "status"],
+      "properties": {
+        "source": {"enum": ["discovered", "inferred", "declared"]},
+        "status": {"enum": ["draft", "confirmed"]},
+        "confirmed_by": {"type": "string"},
+        "updated": {"type": "string"}
+      }
+    }
+  }
+}

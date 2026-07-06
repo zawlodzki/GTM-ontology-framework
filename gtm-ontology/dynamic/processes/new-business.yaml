@@ -1,0 +1,144 @@
+kind: process
+id: new-business
+name: New Business Pipeline
+description: >
+  From accepted lead to signed contract. Runs on Pipedrive pipeline 'New Business';
+  terminal won/lost map to Pipedrive deal status (see bindings notes).
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+type: pipeline
+object: object:deal
+state_property: property:deal.stage
+
+stages:
+  - id: incoming
+    name: Incoming
+    order: 1
+    definition: A raw opportunity accepted into the pipeline, not yet human-verified.
+    entry_criteria:
+      - description: Person is MQL (inbound) or replied positively to sequence (outbound)
+        check: "person.lifecycle_stage in [mql, sql] || deal.source_channel == outbound"
+      - description: Organization identified with domain
+        check: "organization.domain != null"
+    exit_criteria:
+      - description: SDR verified ICP fit and reached the person
+        check: "organization.icp_fit == true"
+    probability: 0.10
+    required_properties: [title, source_channel]
+    owner_role: SDR
+    sla: {target_duration_days: 2, rotting_threshold_days: 3, stuck_action: "auto-flag in SDR daily queue"}
+    kpis: [kpi:qualified-to-demo-conversion]
+
+  - id: qualified
+    name: Qualified
+    order: 2
+    definition: Fit and intent verified by a human; worth AE time.
+    entry_criteria:
+      - description: ICP fit confirmed
+        check: "organization.icp_fit == true"
+      - description: Qualification call held or scheduled with the buyer persona
+      - description: Person marked SQL
+        check: "person.lifecycle_stage in [sql, opportunity]"
+    exit_criteria:
+      - description: Budget confirmed within plan range
+        check: "deal.budget_confirmed == true"
+      - description: AI qualification available with supporting score
+        check: "deal.ai_qualification_score >= 70"
+    bad_examples:
+      - "Prospect said 'looks interesting' on a cold call — no qualification call held"
+      - "Budget assumed from company size, never stated by the prospect"
+      - "ai_qualification_score >= 70 alone, without budget confirmation"
+    customer_verifier:
+      description: Prospect booked the demo slot themselves via the calendar link
+      check: "activity(type=meeting, source=calendar-link) exists"
+    probability: 0.25
+    required_properties: [amount, expected_close_date]
+    owner_role: SDR
+    sla: {target_duration_days: 7, rotting_threshold_days: 14, stuck_action: "flag to Head of Sales in weekly review"}
+    tasks:
+      mandatory: ["Hold qualification call", "Confirm budget range"]
+      optional: ["Send industry-matched case study"]
+    drafts: {email: draft:qualification-followup-email, sms: null}
+    tips: "Ask about the decision process before showing pricing."
+    loss_reasons: ["No budget", "No decision power", "Bad timing"]
+    automations_triggered: []
+    kpis: [kpi:qualified-to-demo-conversion]
+
+  - id: demo
+    name: Demo
+    order: 3
+    definition: AE actively demonstrating the product to the buying group.
+    entry_criteria:
+      - description: All Qualified exit criteria met
+      - description: Demo meeting scheduled with buyer persona present
+    exit_criteria:
+      - description: Demo held; next step agreed in writing
+    probability: 0.40
+    required_properties: [amount, expected_close_date]
+    owner_role: AE
+    sla: {target_duration_days: 14, rotting_threshold_days: 21, stuck_action: "AE nudge + weekly review"}
+    automations_triggered: [automation:create-demo-activity]
+
+  - id: proposal
+    name: Proposal
+    order: 4
+    definition: Formal proposal sent; amount now equals proposal value.
+    entry_criteria:
+      - description: Proposal document sent and logged on the deal
+    exit_criteria:
+      - description: Prospect responded to proposal (accept/negotiate)
+    probability: 0.60
+    required_properties: [amount, expected_close_date]
+    owner_role: AE
+    sla: {target_duration_days: 7, rotting_threshold_days: 14, stuck_action: "follow-up sequence"}
+    loss_reasons: ["Too expensive", "Chose competitor"]
+
+  - id: negotiation
+    name: Negotiation
+    order: 5
+    definition: Commercial/legal negotiation of an accepted-in-principle proposal.
+    entry_criteria:
+      - description: Prospect engaged on terms (redlines, procurement, security review)
+    exit_criteria:
+      - description: Final terms agreed by both sides
+    probability: 0.80
+    owner_role: AE
+    sla: {target_duration_days: 21, rotting_threshold_days: 30, stuck_action: "escalate to Head of Sales"}
+
+  - id: won
+    name: Won
+    order: 6
+    definition: Contract signed by both parties and stored on the deal.
+    entry_criteria:
+      - description: Signed contract file attached to the deal
+    exit_criteria: []
+    probability: 1.0
+    terminal: true
+    outcome: positive
+
+  - id: lost
+    name: Lost
+    order: 7
+    definition: Deal closed without signature; reason recorded in a note.
+    entry_criteria:
+      - description: Loss reason recorded (price/competitor/no-decision/disqualified)
+    exit_criteria: []
+    probability: 0.0
+    terminal: true
+    outcome: negative
+
+transitions:
+  allowed:
+    - [incoming, qualified]
+    - [qualified, demo]
+    - [demo, proposal]
+    - [proposal, negotiation]
+    - [negotiation, won]
+    - [incoming, lost]
+    - [qualified, lost]
+    - [demo, lost]
+    - [proposal, lost]
+    - [negotiation, lost]
+  skip_policy: forbidden
+  backward_policy: allowed with reason logged as note; agents never move backward
+
+kpis: [kpi:win-rate]

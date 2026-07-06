@@ -1,0 +1,65 @@
+# A8 — process: pipeline/lifecycle as a state machine.
+kind: process
+id: new-business
+name: New Business Pipeline
+description: From inbound/outbound lead to closed deal.
+meta: {source: declared, status: draft, updated: 2026-01-01}
+type: pipeline                     # pipeline | lifecycle | workflow
+object: object:deal
+state_property: property:deal.stage    # which property holds current state
+
+stages:
+  - id: qualified
+    name: Qualified
+    order: 2
+    definition: >
+      What being in this stage MEANS — e.g. "we verified fit and buying intent;
+      worth an AE's time".
+    entry_criteria:
+      - description: ICP fit confirmed (industry + size in range)
+        check: "org.icp_fit == true"          # optional machine-checkable expression
+      - description: Budget range stated by prospect
+        check: "deal.budget_confirmed == true"
+    exit_criteria:                             # to move FORWARD
+      - description: Discovery call held and summarized
+        check: "deal.ai_qualification_summary != null"
+    bad_examples:                              # what does NOT suffice to exit (guard for AI + reps)
+      - "Prospect said 'sounds interesting' on a cold call — no discovery held"
+      - "Budget assumed from company size, never stated by prospect"
+    customer_verifier:                         # objective proof on the CUSTOMER side, not rep opinion
+      description: Prospect booked the demo slot themselves via calendar link
+      check: "activity(type=meeting, source=calendar-link) exists"
+    probability: 0.25                          # forecast weight 0.0-1.0 (pipeline processes)
+    required_properties: [amount, expected_close_date]
+    owner_role: Account Executive
+    sla:
+      target_duration_days: 7                  # expected time in stage (feeds stage-time KPI)
+      rotting_threshold_days: 14               # no activity for N days -> deal is rotting, alert
+      stuck_action: "flag to sales lead in weekly review"
+    tasks:
+      mandatory: ["Hold qualification call", "Confirm budget range"]
+      optional: ["Send case study relevant to industry"]
+    drafts:                                    # communication templates (draft: refs -> dynamic/drafts/)
+      email: draft:qualification-followup-email
+      sms: null
+    tips: "Ask about the decision process before showing price."
+    loss_reasons: ["No budget", "No decision power", "Bad timing"]
+    automations_triggered: [automation:create-demo-activity]
+    kpis: [kpi:qualified-to-demo-conversion]
+
+  - id: won
+    name: Won
+    order: 6
+    definition: Contract signed.
+    entry_criteria:
+      - description: Signed contract stored on the deal
+    exit_criteria: []
+    terminal: true
+    outcome: positive
+
+transitions:
+  allowed: [[qualified, demo], [qualified, lost], [demo, proposal]]
+  skip_policy: forbidden           # forbidden | allowed | approval
+  backward_policy: "allowed with reason logged as note"
+
+kpis: [kpi:win-rate, kpi:pipeline-velocity]

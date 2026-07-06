@@ -1,0 +1,62 @@
+# CRM Ontology Skill — Pipedrive, HubSpot, Attio
+
+Make your CRM understandable for AI agents.
+
+A schema export tells an agent that a dropdown called `lifecycle_stage` exists with
+values Lead / MQL / SQL. It doesn't tell it when a lead actually becomes an SQL, which
+n8n workflow writes the AI summary field and from what prompt, or that moving a deal to
+"Demo" fires an automation that creates a task. That knowledge sits in people's heads
+and breaks the moment an agent starts writing to your CRM.
+
+This repo is a method for writing it down once — in a form that works for three
+audiences at the same time: your client (rendered tables and funnel diagrams), AI
+agents (small, indexed YAML artifacts), and the CRM API (field keys, enum maps,
+stage ids).
+
+## What's inside
+
+| Folder | What it is |
+|---|---|
+| `skill/` | The **gtm-ontology-builder** skill. Install it in Claude, say "map my CRM" — it interviews you, introspects the CRM through MCP or API, and builds the ontology folder with you. |
+| `gtm-ontology/` | A complete, validated example: fictional B2B SaaS on Pipedrive. Pipeline with entry/exit criteria, AI-filled fields with their prompt, 3 automations with data fingerprints, agent actions, KPIs. This is exactly what the skill produces. |
+| `docs/` | The method: 4 layers, a 7-phase process with interview question banks, a format spec for every artifact, CRM type mappings, extension and anti-pattern notes. |
+| `schemas/` | JSON Schema for each artifact type — validate everything, trust nothing. |
+| `templates/` | Commented starter files. |
+| `tools/render_ontology.py` | One command: ontology → client table, Mermaid funnel, field dictionary, action catalog, interactive `explorer.html`. |
+
+## How it works
+
+Four layers. **Semantic** — what exists in the business: objects, fields with meaning,
+conditions behind every dropdown value. **Binding** — where the data physically lives:
+systems, field-key mappings, cross-system identity. **Dynamic** — what happens: pipelines
+as state machines, existing automations with fingerprints so agents can tell who wrote
+a value, and action contracts defining what an agent may do, in what order, with what
+approvals. **Measurement & governance** — KPIs defined in ontology terms and hard limits
+for agents.
+
+Everything the system can't tell you gets collected in a structured interview. Every
+statement carries its provenance (`discovered` / `inferred` / `declared`) and a status —
+agents never act on drafts.
+
+## Quickstart
+
+1. Install the skill: grab `gtm-ontology-builder.skill` from this repo and add it to
+   Claude (Cowork or Claude Code), or copy `skill/` into your skills folder.
+2. Connect your CRM — an MCP server is best, an API token works too.
+3. Say: *"Build an ontology of my CRM."* The skill runs the phases, asks before it
+   writes, and ends with a `gtm-ontology/` folder in your repo plus an entry in your
+   root `CLAUDE.md` so every future agent knows where to look.
+
+Before running anything, open `gtm-ontology/render/explorer.html` from the example —
+funnel, business logic per stage, actions, automations and the reference graph, all
+in one file. That's the end state you're building toward.
+
+## Why this exists
+
+I implement CRMs for a living. On every project the same process knowledge had to be
+written three times: a table for the client, context for AI agents, configuration for
+the API. Three copies, three places to drift apart. This framework keeps one source of
+truth in YAML and renders the rest. The example in `gtm-ontology/` is small on purpose —
+read it in ten minutes, then decide if the method fits your stack.
+
+Questions? grzesiek@zawlodzki.pl

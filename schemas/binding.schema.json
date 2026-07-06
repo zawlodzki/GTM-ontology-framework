@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/binding.schema.json",
+  "title": "GOF Binding (A6)",
+  "type": "object",
+  "required": ["kind", "id", "system", "meta", "objects"],
+  "properties": {
+    "kind": {"const": "binding"},
+    "id": {"type": "string"},
+    "system": {"type": "string", "pattern": "^system:"},
+    "meta": {"$ref": "#/$defs/meta"},
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["object", "entity", "id_field", "properties"],
+        "properties": {
+          "object": {"type": "string", "pattern": "^object:"},
+          "entity": {"type": "string"},
+          "id_field": {"type": "string"},
+          "properties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["property", "field_key", "writable"],
+              "properties": {
+                "property": {"type": "string"},
+                "field_key": {"type": "string"},
+                "transform": {"enum": ["none", "enum_options", "currency", "datetime_tz", "expression"]},
+                "enum_map": {"type": "object"},
+                "expression": {"type": "string"},
+                "writable": {"type": "boolean"},
+                "visibility": {
+                  "type": "object",
+                  "properties": {
+                    "pipelines": {"type": "array", "items": {"type": "string"}},
+                    "important_on_stage": {"type": "string"}
+                  }
+                },
+                "notes": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "required": ["source", "status"],
+      "properties": {
+        "source": {"enum": ["discovered", "inferred", "declared"]},
+        "status": {"enum": ["draft", "confirmed"]},
+        "confirmed_by": {"type": "string"},
+        "updated": {"type": "string"}
+      }
+    }
+  }
+}
