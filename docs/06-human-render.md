@@ -1,6 +1,6 @@
-# Client Render
+# Human Render
 
-Principle: **the client never reads YAML.** The ontology is the single source of truth;
+Principle: **the sales team never reads YAML.** The ontology is the single source of truth;
 humans get renders. One place to edit, no drifting copies.
 
 Tooling: `python tools/render_ontology.py <ontology-dir>` generates everything below
@@ -24,7 +24,7 @@ Skip empty rows. Use property/automation display `name`s, never ids or field key
 ### 2. Kanban (from A8)
 
 Mermaid flowchart: one node per stage (`name` + probability), arrows = `transitions.allowed`,
-terminal stages styled by `outcome`. Gives the client the shape of the funnel at a glance.
+terminal stages styled by `outcome`. Gives the sales team the shape of the funnel at a glance.
 
 ### 3. Field dictionary (from A3 + A6)
 
@@ -34,6 +34,6 @@ options (enum labels). Physical field keys and bindings stay out — implementat
 ## Rules
 
 - Renders are **generated, never hand-edited**; regenerate after every ontology version bump.
-- Render language follows the client (labels/values may be Polish while ontology ids stay English).
+- Render language follows the sales team (labels/values may be Polish while ontology ids stay English).
 - Renders carry a footer: ontology id, version, `updated` date — so a stale printout is detectable.
 - The agent-facing view is the ontology itself (manifest + artifacts); renders are for humans only.

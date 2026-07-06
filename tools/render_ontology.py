@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Render a GOF ontology instance into human-facing views (docs/06-client-render.md).
+"""Render a GOF ontology instance into human-facing views (docs/06-human-render.md).
 
 Usage:
     python render_ontology.py <ontology-dir> [out-dir]
 
 Outputs (default out-dir: <ontology-dir>/render):
-    process-<id>.md   client table (columns = stages) + Mermaid funnel diagram
+    process-<id>.md   human-readable table (columns = stages) + Mermaid funnel diagram
     fields.md         field dictionary per object (no field keys, no YAML)
     actions.md        agent action catalog
     graph.md          Mermaid graph of artifacts and their references

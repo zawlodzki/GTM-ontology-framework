@@ -179,7 +179,7 @@ with CRM data, sales processes, pipelines, or agent actions, read
 <!-- gtm-ontology:end -->
 ```
 
-Optionally generate human-facing views (client table, funnel, explorer.html) with
+Optionally generate human-facing views (process table, funnel, explorer.html) with
 the framework's `tools/render_ontology.py gtm-ontology/` when the framework repo
 is available.
 

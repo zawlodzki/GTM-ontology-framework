@@ -111,7 +111,7 @@ Then compile the agent entry points:
    into the workspace root `CLAUDE.md` and/or `AGENTS.md` (whichever exist; create root
    `CLAUDE.md` if neither does) pointing to `gtm-ontology/CLAUDE.md`. Replace the block
    on re-runs — idempotent, never duplicated.
-4. Optionally human renders via `tools/render_ontology.py` (see `06-client-render.md`).
+4. Optionally human renders via `tools/render_ontology.py` (see `06-human-render.md`).
 
 **Outputs:** `manifest.yaml`, `gtm-ontology/CLAUDE.md`, root registration, validation report, `CHANGELOG.md` entry.
 **Gate:** user sign-off on the validation report → version bump.
