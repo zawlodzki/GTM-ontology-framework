@@ -1,0 +1,15 @@
+# A2 — glossary: business vocabulary and synonym map.
+kind: glossary
+id: glossary
+meta: {source: declared, status: draft, updated: 2026-01-01}
+terms:
+  - term: MQL
+    definition: >
+      Marketing-qualified lead — matches ICP and crossed the engagement threshold.
+      Exact conditions: see property:person.lifecycle_stage enum value 'mql'.
+    synonyms: [marketing qualified lead]
+    maps_to: "property:person.lifecycle_stage=mql"
+  - term: hot lead
+    definition: Informal term the team uses for MQL with ai_qualification_score >= 80.
+    synonyms: []
+    maps_to: null                  # informal — no single field; keep for language grounding

@@ -1,0 +1,17 @@
+{
+  "name": "gtm-ontology-framework",
+  "description": "GTM Ontology Framework plugins — build agent-ready business ontologies of your CRM/GTM stack.",
+  "owner": {
+    "name": "Grzegorz Zawłodzki",
+    "email": "grzesiek@zawlodzki.pl"
+  },
+  "plugins": [
+    {
+      "name": "gtm-ontology-builder",
+      "source": "./plugin",
+      "description": "Build an agent-ready business ontology for GTM systems (Pipedrive, HubSpot, Attio, Salesforce, email marketing, ERP): objects, custom fields, pipelines, automations, agent actions, and KPIs as a 4-layer machine-readable model. Bundles the renderer, JSON schemas, and a complete worked example.",
+      "category": "productivity",
+      "keywords": ["crm", "gtm", "ontology", "pipedrive", "hubspot", "salesforce", "sales", "agents"]
+    }
+  ]
+}

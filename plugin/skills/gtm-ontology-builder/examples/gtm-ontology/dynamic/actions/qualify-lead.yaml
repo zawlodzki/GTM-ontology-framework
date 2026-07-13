@@ -1,0 +1,62 @@
+kind: action
+id: qualify-lead
+name: Qualify lead from transcript
+description: >
+  Generate (or regenerate) the AI qualification for a deal from the latest call
+  transcript, write summary + score, and report whether Demo criteria are met.
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+object: object:deal
+intent: >
+  User asks to qualify a lead/deal; or agent finds a deal with a newer transcript
+  than its current qualification; or qualification is empty despite a logged call.
+executor: agent
+approval: none
+
+preconditions:
+  - description: Deal exists and is in stage incoming or qualified
+    check: "deal.stage in [incoming, qualified]"
+  - description: A call transcript matched to a linked person is available
+  - description: automation:qualify-from-transcript did not already process this transcript
+    check: "no '[auto] qualification updated' note newer than transcript"
+
+inputs:
+  - {id: deal_id, type: reference, required: true, description: the deal to qualify}
+  - {id: transcript, type: text, required: true, description: full transcript (Fireflies)}
+
+workflow:
+  - step: 1
+    description: Load deal, org, person context via bindings; verify preconditions live.
+    on_failure: abort; report failed precondition
+  - step: 2
+    description: Run prompt:lead-qualification with transcript + deal context. Validate output contract ('## Qualification' header, SCORE line).
+    on_failure: abort; malformed output must not be written
+  - step: 3
+    description: Write ai_qualification_summary and ai_qualification_score via update_deal.
+    on_failure: abort and report
+  - step: 4
+    description: "Add note: '[agent] qualification generated from transcript <date>'."
+    on_failure: continue; log warning
+  - step: 5
+    description: Evaluate Qualified exit criteria; if met, PROPOSE advance-deal-stage to user (do not execute).
+    on_failure: continue
+
+effects:
+  - {target: "property:deal.ai_qualification_summary", operation: write}
+  - {target: "property:deal.ai_qualification_score", operation: write}
+  - {target: "object:deal", operation: create, detail: attribution note}
+
+side_effects: []   # explicit none; no automation listens to these fields
+
+postconditions:
+  - summary re-read starts with '## Qualification'; score in 0-100
+
+idempotency: safe_to_retry
+idempotency_notes: overwrites its own output; attribution note disambiguates from automation runs
+
+implementations:
+  - system: system:pipedrive
+    via: mcp
+    tool_or_endpoint: update_deal + add_note
+    notes: field keys from binding/mappings/pipedrive.yaml
+
+error_handling: never write partial output (summary without score or vice versa)

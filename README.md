@@ -19,6 +19,7 @@ sales process, this is for you.
 | Folder | What it is |
 |---|---|
 | `skill/` | The **gtm-ontology-builder** skill. Install it in Claude, say "map my CRM" and it interviews you, introspects the CRM through MCP or API, and builds the ontology folder with you. |
+| `plugin/` | The same skill packaged as a Claude Code plugin, installable from this repo's marketplace (see [Install](#install)). |
 | `gtm-ontology/` | A complete, validated example: fictional B2B SaaS on Pipedrive. Pipeline with entry/exit criteria, AI-filled fields with their prompt, 3 automations with data fingerprints, agent actions, KPIs. This is exactly what the skill produces. |
 | `docs/` | The method: 4 layers, a 7-phase process with interview question banks, a format spec for every artifact, CRM type mappings, extension and anti-pattern notes. |
 | `schemas/` | JSON Schema for each artifact type: validate everything, trust nothing. |
@@ -39,10 +40,24 @@ Everything the system can't tell you gets collected in a structured interview. E
 statement carries its provenance (`discovered` / `inferred` / `declared`) and a status:
 agents never act on drafts.
 
+## Install
+
+As a **Claude Code plugin** (recommended):
+
+```
+/plugin marketplace add zawlodzki/GTM-ontology-framework
+/plugin install gtm-ontology-builder@gtm-ontology-framework
+```
+
+As a **standalone skill**: grab `gtm-ontology-builder.skill` from this repo and add it
+to Claude (Cowork or Claude Code), or copy `skill/` into your skills folder.
+
+Either way the skill is self-contained — it bundles the renderer, JSON schemas, and the
+complete worked example.
+
 ## Quickstart
 
-1. Install the skill: grab `gtm-ontology-builder.skill` from this repo and add it to
-   Claude (Cowork or Claude Code), or copy `skill/` into your skills folder.
+1. Install the skill or plugin (see [Install](#install)).
 2. Connect your CRM. An MCP server is best, an API token works too. Salesforce works
    as well; for platform CRMs (Salesforce, HubSpot) the skill scopes itself to the CRM
    module: Sales Cloud objects, not the whole platform.
@@ -65,6 +80,8 @@ purpose: read it in ten minutes, then decide if the method fits your stack.
 ## License
 
 MIT. Use it, change it, ship it; just keep the copyright notice.
+
+## Work with me
 
 Want to talk about AI in B2B sales, or about implementing and optimizing a CRM?
 grzesiek@zawlodzki.pl · [zawlodzki.pl](https://zawlodzki.pl)

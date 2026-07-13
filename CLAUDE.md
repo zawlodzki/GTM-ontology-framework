@@ -68,10 +68,18 @@ repo root, mirror the change into `skill/` in the same commit — otherwise the 
 skill drifts and breaks for outside users. Likewise, changes to `skill/SKILL.md`,
 `skill/references/`, or `skill/templates/` stay inside the skill.
 
-After any edit under `skill/`, rebuild the distributable: repackage `skill/` as
-`gtm-ontology-builder.skill` (a zip whose single top-level folder is
-`gtm-ontology-builder/`, `.DS_Store` stripped). The `.skill` file is generated — an
-edit to `skill/` isn't shipped until it's repackaged.
+The skill is also redistributed two more ways, both generated from `skill/`:
+
+- `gtm-ontology-builder.skill` — a zip whose single top-level folder is
+  `gtm-ontology-builder/`, `.DS_Store` stripped.
+- `plugin/` — the Claude Code plugin. Its payload lives at
+  `plugin/skills/gtm-ontology-builder/` and must stay a `.DS_Store`-free mirror of
+  `skill/`; the manifest is `plugin/.claude-plugin/plugin.json`.
+
+After any edit under `skill/`, update both: repackage the `.skill` zip and re-sync
+`plugin/skills/gtm-ontology-builder/`. Neither is shipped until regenerated. Bump
+`version` in `plugin/.claude-plugin/plugin.json` on a released change, and validate
+with `claude plugin validate ./plugin`.
 
 ## Artifact & Schema Conventions
 

@@ -1,0 +1,28 @@
+# A6 — binding: semantic property -> physical field. One file per system.
+# Every field_key MUST exist in the latest discovery snapshot.
+kind: binding
+id: pipedrive
+system: system:pipedrive
+meta: {source: discovered, status: draft, updated: 2026-01-01}
+objects:
+  - object: object:deal
+    entity: deals                  # physical collection/endpoint/table
+    id_field: id
+    properties:
+      - property: amount
+        field_key: value           # standard field
+        transform: currency
+        writable: true
+      - property: lifecycle_stage
+        field_key: "9f1ac7e2b8d4f6a1c3e5b7d9f1a3c5e7b9d1f3a5"   # Pipedrive custom-field hash
+        transform: enum_options
+        enum_map: {"123": mql, "124": sql, "125": opportunity}   # option-id -> canonical value
+        writable: false            # bot-managed; see automation:lead-scoring
+        notes: "written by lead-scoring automation — agents must not write"
+      - property: ai_qualification_summary
+        field_key: "1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d"
+        transform: none
+        writable: true
+        visibility:                # CRM UI config (binding — lives here, not in semantics)
+          pipelines: [New Business]          # [] = visible in all pipelines
+          important_on_stage: qualified      # stage where CRM highlights the field

@@ -1,0 +1,24 @@
+kind: agent-policy
+id: agent-policy
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+agents:
+  - id: sdr-agent
+    description: >
+      Pipeline hygiene and qualification assistant. Reads everything; writes only
+      through its allowed actions.
+    allowed_actions:
+      - action:qualify-lead
+      - action:advance-deal-stage
+    approval_overrides:
+      - {action: action:advance-deal-stage, approval: required,
+         condition: "target stage terminal OR deal.amount > 50000"}
+    prohibitions:
+      - Never delete any record (deal, person, organization, activity, note).
+      - Never send external communication: no emails, no LinkedIn, no sequences.
+      - Never write fields marked writable:false in bindings (lifecycle_stage, engagement_score, icp_fit, source_channel, email, domain).
+      - Never move deals backward or between non-adjacent stages.
+      - Never create or modify Pipedrive automations, filters, or fields.
+    rate_limits: {actions_per_hour: 30}
+defaults:
+  unlisted_actions: forbidden
+  draft_artifacts: read-as-hypothesis-only

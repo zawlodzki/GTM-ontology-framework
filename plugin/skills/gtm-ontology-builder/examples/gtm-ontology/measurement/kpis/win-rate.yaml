@@ -1,0 +1,17 @@
+kind: kpi
+id: win-rate
+name: Win Rate
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+level: process
+scope: process:new-business
+definition: Share of decided deals that were won, by month of decision.
+formula: "count(deal where stage == won) / count(deal where stage in [won, lost])"
+terms:
+  won: "terminal stage 'won'"
+  lost: "terminal stage 'lost'"
+  period: "month of terminal transition, not creation"
+grain: monthly
+segments: [property:deal.source_channel]
+target: {operator: ">=", value: 25, unit: "%"}
+owner: Head of Sales
+source_of_truth: "Pipedrive Insights dashboard 'Sales KPIs'"

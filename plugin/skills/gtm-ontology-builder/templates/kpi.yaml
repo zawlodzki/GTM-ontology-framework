@@ -1,0 +1,18 @@
+# A12 — KPI bound to ontology terms. Grouping multiple KPIs in one file is fine while small.
+kind: kpi
+id: win-rate
+name: Win Rate
+meta: {source: declared, status: draft, updated: 2026-01-01}
+level: process                     # company | process | stage
+scope: process:new-business       # required for process/stage level; stage: "process:id/stage-id"
+definition: Share of decided deals that were won, per closing month.
+formula: "count(deal where stage == won) / count(deal where stage in [won, lost])"
+terms:                             # every formula term explained with ontology refs
+  won: "deal reached terminal stage 'won' (process:new-business)"
+  lost: "deal reached terminal stage 'lost'"
+  period: "by month of terminal transition, not creation"
+grain: monthly                     # daily | weekly | monthly | quarterly
+segments: [property:deal.source_channel]
+target: {operator: ">=", value: 25, unit: "%"}
+owner: Head of Sales
+source_of_truth: "Pipedrive Insights dashboard 'Sales KPIs'"

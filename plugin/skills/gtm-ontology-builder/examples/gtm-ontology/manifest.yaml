@@ -1,0 +1,99 @@
+kind: manifest
+ontology: acme-analytics
+version: 1.2.0
+updated: 2026-07-13
+business_summary: >
+  Acme Analytics sells a product-analytics SaaS to mid-market e-commerce companies
+  (ACV EUR 12-40k, sales cycle 4-8 weeks). GTM: inbound content + outbound SDR.
+  Stack: Pipedrive (CRM, via MCP), Fireflies (call transcripts), n8n (automations).
+  Sales runs through the New Business pipeline; person lifecycle tracked
+  lead -> MQL -> SQL -> opportunity -> customer.
+agent_instructions: >
+  Read this manifest first; load artifacts per load_when. Never act on artifacts
+  with meta.status: draft. Check governance/agent-policy.yaml before executing
+  any action. Field-level authorship is in semantic objects (filled_by) and
+  automation fingerprints; never overwrite bot-managed fields.
+systems:
+  - {id: pipedrive, role: crm, access: [mcp, api]}
+  - {id: n8n, role: automation-platform, access: [api]}
+artifacts:
+  - path: context/business-context.md
+    kind: business-context
+    summary: "Company, ICP, GTM motion, team roles, agent use cases"
+    load_when: "understanding the business, scoping new work"
+  - path: semantic/objects/deal.yaml
+    kind: object-type
+    summary: "Deal: revenue opportunity; stage, source, budget, AI qualification fields"
+    load_when: "anything involving deals, pipeline, forecasting"
+  - path: semantic/objects/person.yaml
+    kind: object-type
+    summary: "Person: contact/lead; lifecycle_stage enum with per-value conditions"
+    load_when: "working with contacts, leads, lifecycle stages"
+  - path: semantic/objects/organization.yaml
+    kind: object-type
+    summary: "Organization: account; domain, industry, icp_fit (enrichment-filled)"
+    load_when: "working with accounts, ICP checks"
+  - path: binding/systems/pipedrive.yaml
+    kind: system
+    summary: "Pipedrive profile: MCP server + API v2 access, limited write"
+    load_when: "before any read/write to Pipedrive"
+  - path: binding/mappings/pipedrive.yaml
+    kind: binding
+    summary: "Semantic->Pipedrive field keys incl. custom-field hashes and enum maps"
+    load_when: "before any read/write to Pipedrive fields"
+  - path: binding/identity.yaml
+    kind: identity
+    summary: "Person by email, Organization by domain; Pipedrive master; dedup match/merge rules"
+    load_when: "matching records across systems, deduplicating or merging records"
+  - path: binding/discovery/pipedrive/snapshot-2026-07-01.yaml
+    kind: discovery-snapshot
+    summary: "Raw Pipedrive introspection 2026-07-01 (fields, stages, users, automations)"
+    load_when: "validating bindings, investigating drift"
+  - path: dynamic/processes/new-business.yaml
+    kind: process
+    summary: "New Business pipeline: 7 stages with entry/exit criteria, SLAs, transitions"
+    load_when: "moving deals between stages, pipeline analysis, stuck-deal review"
+  - path: dynamic/automations/lead-scoring.yaml
+    kind: automation
+    summary: "n8n: scores new persons, sets lifecycle_stage=MQL; acts as api-bot"
+    load_when: "interpreting lifecycle_stage values or engagement scores"
+  - path: dynamic/automations/qualify-from-transcript.yaml
+    kind: automation
+    summary: "n8n: fills AI qualification fields from Fireflies transcript"
+    load_when: "interpreting ai_qualification_* fields"
+  - path: dynamic/automations/create-demo-activity.yaml
+    kind: automation
+    summary: "Pipedrive-native: creates demo prep activity when deal enters Demo"
+    load_when: "moving deals to Demo, interpreting auto-created activities"
+  - path: dynamic/actions/qualify-lead.yaml
+    kind: action
+    summary: "Agent action: generate qualification from transcript, write fields"
+    load_when: "asked to qualify a lead/deal"
+  - path: dynamic/actions/advance-deal-stage.yaml
+    kind: action
+    summary: "Agent action: move deal forward respecting criteria; approval for won/>50k"
+    load_when: "asked to progress a deal"
+  - path: dynamic/prompts/lead-qualification.md
+    kind: prompt
+    summary: "Production prompt behind ai_qualification_summary/score (v3)"
+    load_when: "regenerating or auditing AI qualification output"
+  - path: dynamic/drafts/qualification-followup-email.md
+    kind: draft
+    summary: "Approved follow-up email template after qualification call (approval required)"
+    load_when: "drafting post-qualification outreach"
+  - path: measurement/kpis/new-arr.yaml
+    kind: kpi
+    summary: "Company KPI: new ARR from won deals, monthly, target 100k EUR"
+    load_when: "reporting, forecasting"
+  - path: measurement/kpis/win-rate.yaml
+    kind: kpi
+    summary: "Process KPI: won / decided deals, monthly, target >= 25%"
+    load_when: "pipeline analysis, reporting"
+  - path: measurement/kpis/qualified-to-demo-conversion.yaml
+    kind: kpi
+    summary: "Stage KPI: Qualified->Demo conversion, monthly, target >= 60%"
+    load_when: "stage analysis, SDR performance"
+  - path: governance/agent-policy.yaml
+    kind: agent-policy
+    summary: "sdr-agent may qualify/advance/log; no deletes, no external comms"
+    load_when: "ALWAYS before executing any action"

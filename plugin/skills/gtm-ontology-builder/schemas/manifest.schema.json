@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/manifest.schema.json",
+  "title": "GOF Manifest (A0)",
+  "type": "object",
+  "required": ["kind", "ontology", "version", "updated", "business_summary", "systems", "artifacts"],
+  "properties": {
+    "kind": {"const": "manifest"},
+    "ontology": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "updated": {"type": "string", "format": "date"},
+    "business_summary": {"type": "string", "maxLength": 1500},
+    "agent_instructions": {"type": "string"},
+    "systems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "access"],
+        "properties": {
+          "id": {"type": "string"},
+          "role": {"type": "string"},
+          "access": {"type": "array", "items": {"enum": ["mcp", "api", "warehouse"]}}
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "kind", "summary"],
+        "properties": {
+          "path": {"type": "string"},
+          "kind": {"type": "string"},
+          "summary": {"type": "string", "maxLength": 140},
+          "load_when": {"type": "string"}
+        }
+      }
+    }
+  }
+}
