@@ -1,0 +1,77 @@
+kind: binding
+id: pipedrive
+system: system:pipedrive
+meta: {source: discovered, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+objects:
+  - object: object:deal
+    entity: deals
+    id_field: id
+    properties:
+      - {property: title, field_key: title, transform: none, writable: true}
+      - {property: amount, field_key: value, transform: currency, writable: true,
+         notes: "currency field 'currency' must be EUR"}
+      - property: stage
+        field_key: stage_id
+        transform: enum_options
+        enum_map: {"11": incoming, "12": qualified, "13": demo, "14": proposal, "15": negotiation}
+        writable: true
+        notes: >
+          won/lost are NOT stage_ids; they map to Pipedrive deal.status
+          ('won'/'lost'). Writing terminal states = update status, not stage_id.
+      - {property: expected_close_date, field_key: expected_close_date, transform: none, writable: true}
+      - property: source_channel
+        field_key: "b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5"
+        transform: enum_options
+        enum_map: {"201": inbound-form, "202": outbound, "203": referral}
+        writable: false
+        notes: set once at creation; agents never change origin
+      - property: budget_confirmed
+        field_key: "5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c"
+        transform: enum_options
+        enum_map: {"301": true, "302": false}
+        writable: true
+      - property: ai_qualification_summary
+        field_key: "1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d"
+        transform: none
+        writable: true
+        notes: normally written by automation:qualify-from-transcript; agents via action:qualify-lead
+      - property: ai_qualification_score
+        field_key: "3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e"
+        transform: none
+        writable: true
+
+  - object: object:person
+    entity: persons
+    id_field: id
+    properties:
+      - {property: full_name, field_key: name, transform: none, writable: true}
+      - {property: email, field_key: email, transform: none, writable: false,
+         notes: natural key; corrections by humans only}
+      - {property: job_title, field_key: job_title, transform: none, writable: true}
+      - property: lifecycle_stage
+        field_key: "9f1ac7e2b8d4f6a1c3e5b7d9f1a3c5e7b9d1f3a5"
+        transform: enum_options
+        enum_map: {"121": lead, "122": mql, "123": sql, "124": opportunity, "125": customer}
+        writable: false
+        notes: "lead/mql managed by automation:lead-scoring; sql+ by humans; agents propose, never write"
+      - property: engagement_score
+        field_key: "7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b"
+        transform: none
+        writable: false
+        notes: bot-managed (automation:lead-scoring)
+
+  - object: object:organization
+    entity: organizations
+    id_field: id
+    properties:
+      - {property: name, field_key: name, transform: none, writable: true}
+      - {property: domain, field_key: "d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9", transform: none, writable: false,
+         notes: natural key}
+      - {property: industry, field_key: "f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3", transform: none, writable: false}
+      - {property: employee_count, field_key: "a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7", transform: none, writable: false}
+      - property: icp_fit
+        field_key: "e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1"
+        transform: enum_options
+        enum_map: {"401": true, "402": false}
+        writable: false
+        notes: computed by automation:lead-scoring enrichment step

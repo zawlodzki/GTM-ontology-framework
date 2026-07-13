@@ -1,0 +1,84 @@
+kind: object-type
+id: person
+name: Person
+description: An individual we market or sell to, i.e. lead, contact, or user at a customer.
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+aliases: [contact, lead]
+
+properties:
+  - id: email
+    name: Email
+    type: string
+    semantics: Primary work email. Natural key across all systems (see binding/identity.yaml).
+    filled_by: mixed
+
+  - id: full_name
+    name: Full Name
+    type: string
+    semantics: Display name as entered from form or SDR research.
+    filled_by: mixed
+
+  - id: job_title
+    name: Job Title
+    type: string
+    semantics: Self-reported or researched; drives persona matching against ICP.
+    filled_by: mixed
+
+  - id: engagement_score
+    name: Engagement Score
+    type: number
+    semantics: >
+      0-100 rolling engagement (site visits, content downloads, email opens over
+      last 30 days). Recomputed nightly by automation:lead-scoring. Stale if the
+      automation is down; check its fingerprint timing.
+    filled_by: automation
+    filled_by_detail: automation:lead-scoring
+
+  - id: lifecycle_stage
+    name: Lifecycle Stage
+    type: enum
+    semantics: >
+      Where this person sits in the overall customer lifecycle. Distinct from deal
+      pipeline stage: lifecycle is per-person and mostly monotonic.
+    filled_by: mixed
+    enum:
+      - value: lead
+        label: Lead
+        definition: "Known email, no ICP/engagement threshold crossed yet."
+        set_by: "automation:lead-scoring at creation"
+      - value: mql
+        label: MQL
+        definition: >
+          Organization matches ICP (org.icp_fit == true) AND engagement_score >= 40
+          within the last 30 days.
+        set_by: "automation:lead-scoring"
+        entry_conditions:
+          - "organization.icp_fit == true"
+          - "engagement_score >= 40"
+        reversible: false
+      - value: sql
+        label: SQL
+        definition: >
+          SDR spoke with the person, confirmed fit and interest, and a deal was
+          created or is being created. Human judgment call; no automation sets this.
+        set_by: "human: SDR"
+        entry_conditions:
+          - "at least one completed call/meeting activity with this person"
+          - "linked deal exists or is created within 2 business days"
+        reversible: false
+      - value: opportunity
+        label: Opportunity
+        definition: "Primary contact on a deal that reached Qualified or beyond."
+        set_by: "human: AE"
+      - value: customer
+        label: Customer
+        definition: "Contact at an organization with at least one won deal."
+        set_by: "human: AE after won"
+        reversible: false
+
+links:
+  - id: organization
+    label: WORKS_AT
+    target: object:organization
+    cardinality: many-to-one
+    semantics: Current employer; basis for inheriting icp_fit.

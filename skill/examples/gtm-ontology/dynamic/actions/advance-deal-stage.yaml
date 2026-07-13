@@ -1,0 +1,59 @@
+kind: action
+id: advance-deal-stage
+name: Advance deal to next stage
+description: Move a deal forward in the New Business pipeline, enforcing all process criteria.
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+object: object:deal
+intent: >
+  User asks to progress a deal, or a proposal from action:qualify-lead was accepted.
+  Never for backward moves (humans only) and never to skip stages.
+executor: agent
+approval: conditional
+approval_condition: "required when target stage is won or lost, or deal.amount > 50000"
+
+preconditions:
+  - description: Target stage is a directly allowed transition from current stage
+    check: "[current, target] in process:new-business.transitions.allowed"
+  - description: All exit criteria of the current stage evaluate true on live data
+  - description: All required_properties of the target stage are non-empty
+  - description: All entry criteria of the target stage evaluate true
+
+inputs:
+  - {id: deal_id, type: reference, required: true, description: deal to move}
+  - {id: target_stage, type: string, required: true, description: "stage id from process:new-business"}
+  - {id: reason, type: text, required: false, description: context for the attribution note}
+
+workflow:
+  - step: 1
+    description: Re-read deal from Pipedrive (never cache); evaluate all preconditions.
+    on_failure: abort; report exactly which criterion failed and what would fix it
+  - step: 2
+    description: If approval_condition triggers, request human approval; proceed only on explicit yes.
+    on_failure: abort
+  - step: 3
+    description: "Terminal states: update deal status (won/lost) per bindings note. Others: update stage_id via enum_map."
+    on_failure: abort and report
+  - step: 4
+    description: "Add note: '[agent] moved <from> -> <to>: <reason>'."
+    on_failure: continue; log warning
+
+effects:
+  - {target: "property:deal.stage", operation: write, detail: set to target_stage}
+  - {target: "object:deal", operation: create, detail: attribution note}
+
+side_effects:
+  - "automation:create-demo-activity fires when target is demo; do NOT create a demo prep activity manually"
+
+postconditions:
+  - re-read deal.stage == target_stage
+
+idempotency: conditional
+idempotency_notes: retry only if re-read shows stage unchanged
+
+implementations:
+  - system: system:pipedrive
+    via: mcp
+    tool_or_endpoint: update_deal
+    notes: "stage_id map + won/lost status handling in binding/mappings/pipedrive.yaml"
+
+error_handling: on write failure report state and stop; never retry blindly

@@ -58,6 +58,21 @@ parallel sub-agents, one per source, each with its own context window. A single
 agent reading dozens of external pages decays; parallel agents keep each search
 focused and return only the conclusion you need.
 
+## Keep the Skill in Sync With the Repo
+
+`skill/` is a **standalone, shareable copy** of the framework. It bundles its own
+copies of things that also live at the repo root: `tools/render_ontology.py` →
+`skill/tools/`, `schemas/*.json` → `skill/schemas/`, and the example ontology
+`gtm-ontology/` → `skill/examples/gtm-ontology/`. When you change any of those at the
+repo root, mirror the change into `skill/` in the same commit — otherwise the shared
+skill drifts and breaks for outside users. Likewise, changes to `skill/SKILL.md`,
+`skill/references/`, or `skill/templates/` stay inside the skill.
+
+After any edit under `skill/`, rebuild the distributable: repackage `skill/` as
+`gtm-ontology-builder.skill` (a zip whose single top-level folder is
+`gtm-ontology-builder/`, `.DS_Store` stripped). The `.skill` file is generated — an
+edit to `skill/` isn't shipped until it's repackaged.
+
 ## Artifact & Schema Conventions
 
 - Artifacts reference each other by typed refs (`object:...`, `process:...`,

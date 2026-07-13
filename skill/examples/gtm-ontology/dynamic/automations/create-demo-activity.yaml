@@ -1,0 +1,30 @@
+kind: automation
+id: create-demo-activity
+name: Demo prep activity on stage entry
+description: >
+  Pipedrive-native automation: when a deal enters Demo, create a 'Prepare demo
+  environment' activity assigned to the deal owner, due in 2 business days.
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+platform: crm-native
+status_live: active
+owner: RevOps (Anna)
+
+trigger:
+  event: deal stage changed to Demo (stage_id 13)
+  object: object:deal
+
+effects:
+  - target: object:deal
+    operation: create
+    detail: "activity type 'task', subject 'Prepare demo environment', assigned to deal owner, due +2bd"
+
+data_fingerprint:
+  acting_user: "created under deal owner's user, but creation timestamp == stage-change timestamp"
+  field_patterns:
+    - "activity subject exactly 'Prepare demo environment'"
+  timing: instant on stage change
+
+failure_modes:
+  - symptom: automation silently disabled by Pipedrive plan change
+    impact: AEs miss demo prep; agents should not assume the activity exists
+    detection: "deals in Demo without the prep activity"

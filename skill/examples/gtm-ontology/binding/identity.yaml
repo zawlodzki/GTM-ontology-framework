@@ -1,0 +1,45 @@
+kind: identity
+id: identity
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-13}
+resolutions:
+  - object: object:person
+    natural_keys: [email]
+    sources:
+      - {system: system:pipedrive, role: master}
+    inclusion: union
+    conflict_strategy: master_wins
+    # When email marketing (e.g. Mailerlite) is added: append as secondary source,
+    # keep email as key, decide per_field precedence for engagement data.
+    match:
+      keys:
+        - {fields: [email], type: deterministic}
+      never_match_on:
+        - {fields: [full_name], reason: "namesakes; two different people share a name"}
+      merge:
+        auto: "email matches (after lower-case + trim)"
+        review: "no email key match but full_name is highly similar"
+        loser: redirect_refs
+
+  - object: object:organization
+    natural_keys: [domain]
+    sources:
+      - {system: system:pipedrive, role: master}
+    inclusion: union
+    conflict_strategy: master_wins
+    match:
+      # domain is the join key but NOT a safe merge key on its own: every branch office
+      # of a company shares one domain and one name. Modeled fields (domain, name) cannot
+      # tell two branches apart, so domain matches are routed to review, never auto-merged.
+      keys:
+        - {fields: [domain], type: probabilistic, on_match: review}
+      never_match_on:
+        - {fields: [domain], reason: "all branches / subsidiaries share one domain"}
+        - {fields: [name], reason: "non-unique; parent and subsidiary collide"}
+      # GAP: no address or vat_id modeled yet — the fields that would distinguish branch
+      # offices and let domain matches auto-merge safely. Add them (Pipedrive orgs carry
+      # both) before enabling org auto-dedup; until then org merges are human-reviewed.
+      distinguishing_fields: []
+      merge:
+        auto: "disabled — no distinguishing_field modeled to rule out branch offices"
+        review: "same domain (candidate only; a human confirms same site vs. branch)"
+        loser: keep_linked

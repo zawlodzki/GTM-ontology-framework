@@ -1,0 +1,109 @@
+kind: object-type
+id: deal
+name: Deal
+description: >
+  A concrete revenue opportunity with an identified organization: someone at the
+  account has shown buying intent worth SDR/AE time. Not every form-fill becomes
+  a deal; see process:new-business Incoming entry criteria.
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+aliases: [opportunity]
+
+properties:
+  - id: title
+    name: Title
+    type: string
+    semantics: "Convention: '<Org name> - <plan>'. Set at creation."
+    filled_by: mixed
+    filled_by_detail: "human or automation:lead-scoring at deal creation"
+
+  - id: stage
+    name: Pipeline Stage
+    type: enum
+    semantics: >
+      Current stage in the New Business pipeline. Full state machine (criteria,
+      transitions, SLAs) in process:new-business; this enum only lists values.
+    filled_by: mixed
+    filled_by_detail: "SDR/AE manually; agents via action:advance-deal-stage"
+    enum:
+      - {value: incoming, definition: "see process:new-business/incoming", set_by: "human or automation:lead-scoring"}
+      - {value: qualified, definition: "see process:new-business/qualified", set_by: "human: SDR; agent with action:advance-deal-stage"}
+      - {value: demo, definition: "see process:new-business/demo", set_by: "human: AE; agent with action:advance-deal-stage"}
+      - {value: proposal, definition: "see process:new-business/proposal", set_by: "human: AE"}
+      - {value: negotiation, definition: "see process:new-business/negotiation", set_by: "human: AE"}
+      - {value: won, definition: "see process:new-business/won", set_by: "human: AE (agent needs approval)", reversible: false}
+      - {value: lost, definition: "see process:new-business/lost", set_by: "human: SDR/AE", reversible: false}
+
+  - id: amount
+    name: Amount
+    type: currency
+    semantics: >
+      Expected first-year contract value, EUR, excl. VAT. Rough estimate at
+      Qualified; must equal proposal value from Proposal onward.
+    filled_by: human
+    filled_by_detail: AE
+    required: {from_stage: "process:new-business/qualified"}
+
+  - id: expected_close_date
+    name: Expected Close Date
+    type: date
+    semantics: AE's best estimate of signature date; drives forecast and velocity KPIs.
+    filled_by: human
+    required: {from_stage: "process:new-business/qualified"}
+
+  - id: source_channel
+    name: Source Channel
+    type: enum
+    semantics: How this opportunity originated. Never changed after creation.
+    filled_by: mixed
+    filled_by_detail: "automation:lead-scoring for inbound; SDR for outbound"
+    enum:
+      - {value: inbound-form, definition: "Website demo-request or content form submission", set_by: "automation:lead-scoring"}
+      - {value: outbound, definition: "Sourced by SDR sequence (email/LinkedIn)", set_by: "human: SDR"}
+      - {value: referral, definition: "Introduced by existing customer or partner", set_by: "human"}
+
+  - id: budget_confirmed
+    name: Budget Confirmed
+    type: boolean
+    semantics: >
+      Prospect verbally confirmed budget within plan range. Checked in the
+      qualification call. Null = not yet asked (NOT 'no budget').
+    filled_by: human
+    filled_by_detail: SDR during qualification call
+
+  - id: ai_qualification_summary
+    name: AI Qualification Summary
+    type: text
+    semantics: >
+      LLM digest of the discovery call (BANT structure). Effect of
+      automation:qualify-from-transcript; empty if no transcript matched,
+      never interpret empty as 'poorly qualified'.
+    filled_by: ai
+    ai:
+      prompt_ref: prompt:lead-qualification
+      inputs: [Fireflies transcript, deal.amount, organization.industry, deal.source_channel]
+      trigger: "automation:qualify-from-transcript after call logged"
+      regenerate_policy: "agent may regenerate via action:qualify-lead when newer transcript exists"
+
+  - id: ai_qualification_score
+    name: AI Qualification Score
+    type: number
+    semantics: >
+      0-100, parsed from the SCORE line of ai_qualification_summary. >= 70 supports
+      advancing to Demo. A score, not a verdict; humans/agents weigh it with context.
+    filled_by: ai
+    ai:
+      prompt_ref: prompt:lead-qualification
+      trigger: "same run as ai_qualification_summary"
+    quality_notes: "Scores before 2026-03 used prompt v2 (stricter scale); not comparable."
+
+links:
+  - id: organization
+    label: BELONGS_TO
+    target: object:organization
+    cardinality: many-to-one
+    semantics: The account this deal is with. Required from Qualified.
+  - id: primary-contact
+    label: HAS_CONTACT
+    target: object:person
+    cardinality: many-to-many
+    semantics: People involved in the deal; exactly one marked primary in Pipedrive.

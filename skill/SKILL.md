@@ -18,6 +18,8 @@ model of the business: semantic (what exists), binding (where data lives), dynam
 
 Artifact formats: `references/artifact-formats.md` (field-by-field spec).
 Starter templates: `templates/`. Copy a template, fill it, keep the structure.
+Worked example: `examples/gtm-ontology/` — a complete validated ontology (fictional
+B2B SaaS on Pipedrive), exactly what these phases produce.
 
 Core rules (apply throughout):
 
@@ -179,9 +181,17 @@ with CRM data, sales processes, pipelines, or agent actions, read
 <!-- gtm-ontology:end -->
 ```
 
-Optionally generate human-facing views (process table, funnel, explorer.html) with
-the framework's `tools/render_ontology.py gtm-ontology/` when the framework repo
-is available.
+**Rendering (for the user).** This skill bundles the renderer at
+`tools/render_ontology.py`. To generate human-facing views of the ontology:
+
+- Prerequisite (once): `pip install pyyaml`.
+- Run: `python <path-to-this-skill>/tools/render_ontology.py gtm-ontology/`
+  (pass the ontology folder as the argument).
+- Output: written to `gtm-ontology/render/` — a process table, a Mermaid funnel, a
+  field dictionary, an action catalog, and an interactive `explorer.html`.
+- `render/` is GENERATED. Never hand-edit it; regenerate after any ontology change.
+
+See `examples/gtm-ontology/render/` for what the output looks like.
 
 **GATE:** present validation report; user signs off.
 

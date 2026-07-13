@@ -1,0 +1,21 @@
+kind: system
+id: pipedrive
+name: Pipedrive
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+role: crm
+vendor: Pipedrive OÜ
+access:
+  - via: mcp
+    server: pipedrive-mcp
+    key_tools: [search_deals, get_deal, update_deal, add_note, list_deal_fields, get_person, update_person, list_stages]
+    notes: preferred path for agents
+  - via: api
+    base_url: https://api.pipedrive.com/v2
+    auth: api-token (env PIPEDRIVE_API_TOKEN, RevOps-owned)
+    docs_url: https://developers.pipedrive.com/docs/api/v1
+write_access: limited
+write_access_notes: >
+  Agents write only fields marked writable:true in binding/mappings/pipedrive.yaml.
+  Stage writes only via action:advance-deal-stage.
+rate_limits: "token-budget per day (v2 API); batch reads, avoid per-record loops"
+environment_notes: "No sandbox, all writes hit production. api-bot user id 42 is the automation identity."
