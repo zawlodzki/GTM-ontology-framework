@@ -1,7 +1,7 @@
 kind: manifest
 ontology: acme-analytics
-version: 1.1.0
-updated: 2026-07-06
+version: 1.2.0
+updated: 2026-07-13
 business_summary: >
   Acme Analytics sells a product-analytics SaaS to mid-market e-commerce companies
   (ACV EUR 12-40k, sales cycle 4-8 weeks). GTM: inbound content + outbound SDR.
@@ -43,8 +43,8 @@ artifacts:
     load_when: "before any read/write to Pipedrive fields"
   - path: binding/identity.yaml
     kind: identity
-    summary: "Person by email, Organization by domain; Pipedrive is master"
-    load_when: "matching records across systems"
+    summary: "Person by email, Organization by domain; Pipedrive master; dedup match/merge rules"
+    load_when: "matching records across systems, deduplicating or merging records"
   - path: binding/discovery/pipedrive/snapshot-2026-07-01.yaml
     kind: discovery-snapshot
     summary: "Raw Pipedrive introspection 2026-07-01 (fields, stages, users, automations)"

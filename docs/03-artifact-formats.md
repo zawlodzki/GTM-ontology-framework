@@ -137,7 +137,9 @@ Every `field_key` must exist in the latest discovery snapshot (validation check 
 
 ## A7: `identity.yaml`
 
-Cross-system identity resolution (record linkage with MDM-style survivorship):
+Cross-system identity resolution (record linkage with MDM-style survivorship) **and**
+intra-base deduplication (which records are the same real-world entity, which merely
+look alike):
 
 ```yaml
 kind: identity
@@ -152,7 +154,53 @@ resolutions:
     inclusion: union                   # union | intersection
     conflict_strategy: master_wins     # master_wins | most_recent | per_field
     per_field: []                      # if per_field: [{property, winner: system ref}]
+    match: {...}                       # dedup rules, see below (optional)
 ```
+
+### `match`: deduplication rules (optional per resolution)
+
+`natural_keys` answer "what *joins* two records"; `match` answers the harder question:
+"what proves two records are the **same** entity, and what proves they are genuinely
+**different**." Without it, a naive dedup on a shared key merges records that should stay
+apart — e.g. two branch offices of one company: same `name`, same `domain`, different
+`address` are **not** duplicates.
+
+```yaml
+    match:
+      keys:                            # combinations that assert "same record"; strongest first
+        - {fields: [vat_id], type: deterministic}                 # one field, exact
+        - {fields: [domain, address_locality], type: deterministic} # combination, ALL equal (after normalize)
+        - {fields: [name, address_postal_code], type: probabilistic,
+           similarity: {name: 0.9}, on_match: review}             # fuzzy → never auto-merge
+      distinguishing_fields:           # differ ⇒ records are DISTINCT; vetoes an auto-merge even if a key matches
+        - {field: address, reason: "branch offices share domain+name but are separate sites"}
+        - {field: vat_id,  reason: "distinct legal entities never merge"}
+      never_match_on:                  # forbidden as a whole/sole key: non-unique or shared across legit-distinct records
+        - {fields: [domain], reason: "every branch shares one domain"}
+        - {fields: [name],   reason: "non-unique; parent and subsidiary collide"}
+      merge:
+        auto: "a deterministic key matches AND no distinguishing_field differs"
+        review: "a probabilistic key matches OR any distinguishing_field differs"
+        loser: redirect_refs           # fate of the merged-away record: redirect_refs | soft_delete | keep_linked
+```
+
+**Rules for choosing fields** (the whole point of this block):
+
+- **A match key must be unique per real entity.** A national tax/VAT id or a personal
+  email is a valid single-field key. A `domain`, company `name`, or generic
+  `info@`-style email is **not** — put those in `never_match_on`, or use them only
+  inside a *combination* that adds a distinguishing dimension (`[domain, address_locality]`).
+- **`distinguishing_fields` are the veto.** If any of them differs beyond its tolerance,
+  the records are different entities regardless of what the keys say. This is what keeps
+  branches, franchises, `ship-to`/`bill-to` sites, and namesakes from collapsing into one.
+- **Deterministic vs. probabilistic.** Deterministic keys (exact match after
+  normalization) may auto-merge. Probabilistic keys (`similarity` thresholds, fuzzy name
+  match) must route to `review` — they surface candidates, they never merge on their own.
+- **Normalization is assumed.** Compare lower-cased, trimmed, punctuation-stripped values
+  (domains without `www.`/scheme, phones in E.164). State non-obvious normalization in the
+  field's `semantics` or a `reason`.
+- **`merge.loser`** declares what happens to the record that loses survivorship, so refs
+  (`object:` links, deal history) are not orphaned.
 
 ## A8: `processes/<id>.yaml`
 

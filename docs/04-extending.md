@@ -7,7 +7,7 @@ Adding e.g. Mailerlite or an ERP does **not** restructure the ontology. Run the 
 1. **Phase 0 (scoped):** add `binding/systems/<new>.yaml`; extend use cases.
 2. **Phase 1:** discovery snapshot for the new system.
 3. **Phase 2:** map discovered entities onto *existing* object types first (Mailerlite "subscriber" → existing `object:person`, add to its `aliases`). Create new object types only for genuinely new concepts (`Campaign`, `Invoice`, `PurchaseOrder`). Add links to existing objects (`Invoice BELONGS_TO Organization`).
-4. **Identity resolution:** extend `binding/identity.yaml`: natural keys joining the new system to existing objects (person: `email`; organization: `domain`, VAT/tax ID for ERP), master source, conflict strategy per MDM survivorship practice (master_wins / most_recent / per_field; union vs. intersection).
+4. **Identity resolution & deduplication:** extend `binding/identity.yaml`: natural keys joining the new system to existing objects (person: `email`; organization: `domain`, VAT/tax ID for ERP), master source, conflict strategy per MDM survivorship practice (master_wins / most_recent / per_field; union vs. intersection). Also fill each resolution's `match` block (A7 format): which field combinations prove two records are the same, which fields *distinguish* legitimately-separate records (an org's `address` separates branch offices; a person's `email` separates shared-phone family members), and which fields are forbidden as sole keys (`domain`, company `name`). Get this wrong and dedup silently merges branches, franchises, or namesakes.
 5. **Phases 3–5:** elicit the new system's processes/automations/KPIs; define new agent actions; extend `agent-policy.yaml`; re-validate; bump minor version.
 
 Typical additions per system class:
@@ -47,3 +47,4 @@ Standard ontology-engineering and data-modeling anti-patterns, applied to GTM:
 7. **Skipping confirmation.** Shipping `inferred` artifacts as truth. Draft ≠ confirmed; agents must not act on drafts.
 8. **Manifest bloat.** Copying artifact bodies into the manifest. Manifest = index with one-liners; details stay in Tier 2.
 9. **Modeling everything.** Ontology scope = agent use cases (Phase 0). Unused corners of the CRM can stay unmodeled; record them as out-of-scope.
+10. **Dedup on a shared key.** Merging Organizations by `domain` alone, or Persons by company phone — collapsing branch offices, franchises, and colleagues into one record. A match key must be unique per real entity; put shared fields in `never_match_on` and name the `distinguishing_fields` that keep separate records apart (A7 `match`).

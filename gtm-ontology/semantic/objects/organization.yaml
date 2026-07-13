@@ -9,13 +9,17 @@ properties:
   - id: name
     name: Name
     type: string
-    semantics: Legal or common name; deduplicated by domain, not name.
+    semantics: >
+      Legal or common name. NOT a dedup key: non-unique and shared across a company's
+      branch offices and subsidiaries (see binding/identity.yaml match rules).
     filled_by: mixed
 
   - id: domain
     name: Domain
     type: string
-    semantics: Primary website domain. Natural key across systems (see binding/identity.yaml).
+    semantics: >
+      Primary website domain. Join key across systems, but branch offices share it, so
+      it is a dedup candidate only, not a sole merge key (see binding/identity.yaml).
     filled_by: mixed
 
   - id: industry

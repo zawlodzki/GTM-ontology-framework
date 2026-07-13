@@ -1,5 +1,13 @@
 # Changelog: acme-analytics ontology
 
+## 1.2.0 (2026-07-13)
+- Deduplication rules on identity.yaml (A7 `match`): match keys, distinguishing
+  fields, never_match_on, and merge/survivorship policy per object.
+- Fixed latent branch-merge bug: Organizations no longer auto-dedup on `domain`
+  alone (branch offices share domain+name); domain matches now route to review.
+- Known gap: org `address` / `vat_id` not modeled — needed to auto-distinguish
+  branches. Until added, org merges stay human-reviewed.
+
 ## 1.1.0 (2026-07-06)
 - Stage model extended (blueprint alignment): bad_examples, customer_verifier,
   probability (forecast weights 0.10→1.0), SLA split into target_duration_days +

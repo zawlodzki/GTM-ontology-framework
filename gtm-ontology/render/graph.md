@@ -79,4 +79,4 @@ flowchart TD
   system_pipedrive --> action_advance_deal_stage
 ```
 
-*Generated from ontology `acme-analytics` v1.1.0 (2026-07-06), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.2.0 (2026-07-13), do not hand-edit.*

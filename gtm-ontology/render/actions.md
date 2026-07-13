@@ -44,4 +44,4 @@ User asks to qualify a lead/deal; or agent finds a deal with a newer transcript 
 
 **Side effects:** none
 
-*Generated from ontology `acme-analytics` v1.1.0 (2026-07-06), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.2.0 (2026-07-13), do not hand-edit.*
