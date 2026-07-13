@@ -4,13 +4,13 @@ Field-by-field specification. JSON Schemas in `schemas/` are normative for struc
 
 Shared rules:
 - Encoding UTF-8, YAML 1.2, 2-space indent.
-- Every YAML artifact: `kind`, `id`, `meta` (provenance envelope — see `01-concepts.md` §3).
+- Every YAML artifact: `kind`, `id`, `meta` (provenance envelope; see `01-concepts.md` §3).
 - References: `kind:id` strings (`object:deal`, `property:deal.lifecycle_stage`, `automation:lead-scoring`).
 - `R` = required, `O` = optional.
 
 ---
 
-## A0 — `manifest.yaml` (Tier 0 index)
+## A0: `manifest.yaml` (Tier 0 index)
 
 | Field | R/O | Type | Notes |
 |---|---|---|---|
@@ -20,16 +20,16 @@ Shared rules:
 | `updated` | R | date | |
 | `business_summary` | R | string | ≤ 1 paragraph. The only prose an agent always has. |
 | `agent_instructions` | O | string | how to navigate tiers |
-| `systems[]` | R | list | `{id, role, access}` — role: crm/email-marketing/erp/…; access: mcp/api/warehouse |
+| `systems[]` | R | list | `{id, role, access}`; role: crm/email-marketing/erp/…; access: mcp/api/warehouse |
 | `artifacts[]` | R | list | `{path, kind, summary (≤140 chars), load_when}` |
 
 `load_when` is an agent hint: *"working with deals, stages, forecasting"*.
 
-## A1 — `business-context.md`
+## A1: `business-context.md`
 
 Markdown with YAML frontmatter (`kind: business-context`, `id`, `meta`). Required sections: `## Company & Offer`, `## ICP`, `## GTM Motion`, `## Team & Roles`, `## Agent Use Cases`. Keep ≤ 100 lines; it feeds interviews, not agent runtime (agents get `business_summary` from the manifest).
 
-## A2 — `glossary.yaml`
+## A2: `glossary.yaml`
 
 ```yaml
 kind: glossary
@@ -43,7 +43,7 @@ terms:
     maps_to: property:person.lifecycle_stage=mql   # optional ontology ref
 ```
 
-## A3 — `objects/<id>.yaml` (object type)
+## A3: `objects/<id>.yaml` (object type)
 
 | Field | R/O | Type | Notes |
 |---|---|---|---|
@@ -72,11 +72,11 @@ terms:
 | `quality_notes` | O | known issues (stale, misused) |
 | `meta` | O | per-property provenance override |
 
-**Enum value object:** `{value, label, definition (R — business conditions for this value), set_by (R — who/what sets it), entry_conditions[] (O — checkable conditions), reversible (O bool)}`.
+**Enum value object:** `{value, label, definition (R, business conditions for this value), set_by (R, who/what sets it), entry_conditions[] (O, checkable conditions), reversible (O bool)}`.
 
 The `lifecycle_stage` pattern: model as an enum property AND, if it has ordered transitions/criteria, also as a `process` of type `lifecycle` referencing the property. The enum holds per-value definitions; the process holds transition logic.
 
-## A4 — `systems/<id>.yaml`
+## A4: `systems/<id>.yaml`
 
 | Field | R/O | Notes |
 |---|---|---|
@@ -84,13 +84,13 @@ The `lifecycle_stage` pattern: model as an enum property AND, if it has ordered 
 | `id`, `name`, `meta` | R | |
 | `role` | R | `crm / email-marketing / erp / billing / support / enrichment / automation-platform / other` |
 | `vendor` | O | |
-| `scope` | O — **required for platform CRMs** (Salesforce, HubSpot, Dynamics) | `{modules_in_scope[], objects_in_scope[], excluded[], notes}` — limits discovery and bindings to the CRM module; see `05-crm-type-mapping.md` |
-| `access[]` | R | list of methods, each: `{via: mcp/api/warehouse, ...}` — mcp: `{server, key_tools[]}`; api: `{base_url, auth, docs_url}`; warehouse: `{dataset, loaded_by}` |
+| `scope` | O, **required for platform CRMs** (Salesforce, HubSpot, Dynamics) | `{modules_in_scope[], objects_in_scope[], excluded[], notes}`; limits discovery and bindings to the CRM module; see `05-crm-type-mapping.md` |
+| `access[]` | R | list of methods, each: `{via: mcp/api/warehouse, ...}`; mcp: `{server, key_tools[]}`; api: `{base_url, auth, docs_url}`; warehouse: `{dataset, loaded_by}` |
 | `write_access` | R | `none / limited / full` + notes |
 | `rate_limits` | O | |
 | `environment_notes` | O | sandboxes, admin contacts |
 
-## A5 — `discovery/<system>/snapshot.yaml`
+## A5: `discovery/<system>/snapshot.yaml`
 
 Envelope is normative; body sections normalized but system-flavored:
 
@@ -108,7 +108,7 @@ profiling: []       # {field, fill_rate, distinct_values_sample}
 
 Immutable once written. New run = new file; keep at least the previous one for diffs.
 
-## A6 — `mappings/<system>.yaml`
+## A6: `mappings/<system>.yaml`
 
 Maps semantic → physical. One file per system.
 
@@ -135,7 +135,7 @@ objects:
 
 Every `field_key` must exist in the latest discovery snapshot (validation check #3).
 
-## A7 — `identity.yaml`
+## A7: `identity.yaml`
 
 Cross-system identity resolution (record linkage with MDM-style survivorship):
 
@@ -154,7 +154,7 @@ resolutions:
     per_field: []                      # if per_field: [{property, winner: system ref}]
 ```
 
-## A8 — `processes/<id>.yaml`
+## A8: `processes/<id>.yaml`
 
 | Field | R/O | Notes |
 |---|---|---|
@@ -175,14 +175,14 @@ resolutions:
 | `definition` | R | what being in this stage MEANS |
 | `entry_criteria[]` | R | `{description (R, business terms), check (O, machine-checkable expression over properties)}` |
 | `exit_criteria[]` | R | same shape; criteria to leave *forward* |
-| `bad_examples[]` | O | what does NOT suffice to exit — negative guard for AI classification and rep discipline |
-| `customer_verifier` | O | `{description (R), check (O)}` — objective proof on the CUSTOMER side (booked slot, signed doc), not rep opinion; anti-sandbagging |
+| `bad_examples[]` | O | what does NOT suffice to exit; negative guard for AI classification and rep discipline |
+| `customer_verifier` | O | `{description (R), check (O)}`; objective proof on the CUSTOMER side (booked slot, signed doc), not rep opinion; anti-sandbagging |
 | `probability` | O | 0.0–1.0 forecast weight (pipeline processes; maps to `deal_probability` / HubSpot `metadata.probability`) |
 | `required_properties[]` | O | property ids that must be non-empty in this stage |
 | `owner_role` | O | |
 | `sla` | O | `{target_duration_days (expected time, feeds stage-time KPI), rotting_threshold_days (no activity for N days → rotting alert; Pipedrive `rotten_days`), stuck_action}` |
-| `tasks` | O | `{mandatory[], optional[]}` — rep checklists; agents verify completeness / create activities |
-| `drafts` | O | `{email: draft:<id> or null, sms: draft:<id> or null}` — refs to A14 communication templates |
+| `tasks` | O | `{mandatory[], optional[]}`; rep checklists; agents verify completeness / create activities |
+| `drafts` | O | `{email: draft:<id> or null, sms: draft:<id> or null}`; refs to A14 communication templates |
 | `tips` | O | short guidance for the rep working this stage |
 | `loss_reasons[]` | O | valid loss reasons when exiting to a negative terminal stage; keep consistent with a `lost_reason` enum property if one exists |
 | `automations_triggered[]` | O | `automation:` refs firing on entry/exit |
@@ -191,7 +191,7 @@ resolutions:
 
 `check` expressions: simple boolean expressions over `property` ids (`budget_confirmed == true && amount != null`). Not executed by the framework; they exist so agents/validators can evaluate them.
 
-## A9 — `automations/<id>.yaml`
+## A9: `automations/<id>.yaml`
 
 | Field | R/O | Notes |
 |---|---|---|
@@ -201,12 +201,12 @@ resolutions:
 | `status_live` | R | `active / paused / unknown` |
 | `trigger` | R | `{event, object (ref), conditions[]}` |
 | `effects[]` | R | `{target (property/object ref), operation: write/create/delete/notify/external, detail}` |
-| `data_fingerprint` | R | how to recognize its output: `{acting_user, field_patterns[], marker (e.g. note prefix), timing}` — at least one |
+| `data_fingerprint` | R | how to recognize its output: `{acting_user, field_patterns[], marker (e.g. note prefix), timing}`; at least one |
 | `failure_modes[]` | O | `{symptom, impact, detection}` |
 | `owner` | O | who maintains it |
 | `definition_url` | O | link to n8n workflow / CRM automation |
 
-## A10 — `actions/<id>.yaml`
+## A10: `actions/<id>.yaml`
 
 | Field | R/O | Notes |
 |---|---|---|
@@ -216,7 +216,7 @@ resolutions:
 | `intent` | R | when an agent should reach for this action |
 | `executor` | R | `agent / human / either` |
 | `approval` | R | `none / required / conditional` (+ `approval_condition`) |
-| `preconditions[]` | R | `{description, check (O)}` — must be verifiable from ontology terms |
+| `preconditions[]` | R | `{description, check (O)}`; must be verifiable from ontology terms |
 | `inputs[]` | R | `{id, type, required, description}` |
 | `workflow[]` | R | ORDERED steps: `{step, description, on_failure (abort/skip/compensate + detail)}` |
 | `effects[]` | R | what changes: `{target, operation, detail}` |
@@ -226,11 +226,11 @@ resolutions:
 | `implementations[]` | R | `{system (ref), via (mcp/api), tool_or_endpoint, notes}` |
 | `error_handling` | O | prose fallback |
 
-## A11 — `prompts/<id>.md`
+## A11: `prompts/<id>.md`
 
-YAML frontmatter: `kind: prompt`, `id`, `meta`, `used_by[]` (property/action refs), `model`, `inputs[]` (`{id, description, source}`), `output_contract` (format + where it's written), `version`. Body = the verbatim prompt. Never paraphrase a production prompt — extract it exactly; it's provenance.
+YAML frontmatter: `kind: prompt`, `id`, `meta`, `used_by[]` (property/action refs), `model`, `inputs[]` (`{id, description, source}`), `output_contract` (format + where it's written), `version`. Body = the verbatim prompt. Never paraphrase a production prompt: extract it exactly; it's provenance.
 
-## A12 — `kpis/<id>.yaml` (grouping into one file allowed)
+## A12: `kpis/<id>.yaml` (grouping into one file allowed)
 
 | Field | R/O | Notes |
 |---|---|---|
@@ -247,7 +247,7 @@ YAML frontmatter: `kind: prompt`, `id`, `meta`, `used_by[]` (property/action ref
 | `owner` | R | role |
 | `source_of_truth` | O | where reported today |
 
-## A13 — `agent-policy.yaml`
+## A13: `agent-policy.yaml`
 
 ```yaml
 kind: agent-policy
@@ -258,7 +258,7 @@ agents:
     description: ...
     allowed_actions: [action:qualify-lead, action:advance-deal-stage]
     approval_overrides: []            # {action, approval: required, condition}
-    prohibitions:                     # hard NOs, in prose — override everything
+    prohibitions:                     # hard NOs, in prose; override everything
       - Never delete any record.
       - Never contact a person outside declared channels.
     rate_limits: {actions_per_hour: 30}
@@ -267,11 +267,11 @@ defaults:
   draft_artifacts: read-as-hypothesis-only
 ```
 
-## A14 — `drafts/<id>.md` (communication template)
+## A14: `drafts/<id>.md` (communication template)
 
 YAML frontmatter: `kind: draft`, `id`, `meta`, `channel` (`email/sms/linkedin/other`),
-`used_by[]` (process-stage refs), `language`, `variables[]` (`{id, source}` — where each
-placeholder value comes from, in ontology terms), `approval` (`required` by default —
+`used_by[]` (process-stage refs), `language`, `variables[]` (`{id, source}`; where each
+placeholder value comes from, in ontology terms), `approval` (`required` by default;
 agents never send external communication autonomously unless agent-policy explicitly
 grants it). Body = the template with `{{placeholders}}`.
 

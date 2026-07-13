@@ -26,7 +26,7 @@ inputs:
 workflow:
   - step: 1
     description: Re-read deal from Pipedrive (never cache); evaluate all preconditions.
-    on_failure: abort — report exactly which criterion failed and what would fix it
+    on_failure: abort; report exactly which criterion failed and what would fix it
   - step: 2
     description: If approval_condition triggers, request human approval; proceed only on explicit yes.
     on_failure: abort
@@ -35,14 +35,14 @@ workflow:
     on_failure: abort and report
   - step: 4
     description: "Add note: '[agent] moved <from> -> <to>: <reason>'."
-    on_failure: continue — log warning
+    on_failure: continue; log warning
 
 effects:
   - {target: "property:deal.stage", operation: write, detail: set to target_stage}
   - {target: "object:deal", operation: create, detail: attribution note}
 
 side_effects:
-  - "automation:create-demo-activity fires when target is demo — do NOT create a demo prep activity manually"
+  - "automation:create-demo-activity fires when target is demo; do NOT create a demo prep activity manually"
 
 postconditions:
   - re-read deal.stage == target_stage

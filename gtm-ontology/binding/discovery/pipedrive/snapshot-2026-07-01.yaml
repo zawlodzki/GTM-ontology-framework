@@ -89,7 +89,7 @@ pipelines:
       - {id: 13, name: Demo, order: 3}
       - {id: 14, name: Proposal, order: 4}
       - {id: 15, name: Negotiation, order: 5}
-    # won/lost are deal status in Pipedrive, not stages — see bindings notes
+    # won/lost are deal status in Pipedrive, not stages; see bindings notes
 
 users:
   - {id: 42, name: api-bot, email: api-bot@acme-analytics.com, is_bot_or_api: true}

@@ -30,13 +30,13 @@ data_fingerprint:
   acting_user: "api-bot@acme-analytics.com (Pipedrive user id 42)"
   field_patterns:
     - "update timestamps cluster 02:00-02:30 CET"
-    - "deals created with title '<Org> — inbound' and stage Incoming"
+    - "deals created with title '<Org> - inbound' and stage Incoming"
   marker: "note '[auto] scored: <score>' on person after each run"
   timing: "nightly batch; webhook path within ~2 min of person creation"
 
 failure_modes:
   - symptom: enrichment provider timeout
-    impact: icp_fit stays null — person can NOT become MQL; not a rejection
+    impact: icp_fit stays null, person can NOT become MQL; not a rejection
     detection: "orgs with null icp_fit older than 48h"
   - symptom: n8n workflow paused
     impact: engagement_score stale, MQL flow stops silently

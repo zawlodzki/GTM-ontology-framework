@@ -16,6 +16,6 @@ output_contract: >
 version: 3
 ---
 
-<!-- VERBATIM production prompt below. Never paraphrase — this is provenance. -->
+<!-- VERBATIM production prompt below. Never paraphrase; this is provenance. -->
 
 You are a B2B sales analyst. Based on the call transcript and deal context below...

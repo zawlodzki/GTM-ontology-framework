@@ -26,16 +26,16 @@ inputs:
 workflow:
   - step: 1
     description: Load deal, org, person context via bindings; verify preconditions live.
-    on_failure: abort — report failed precondition
+    on_failure: abort; report failed precondition
   - step: 2
     description: Run prompt:lead-qualification with transcript + deal context. Validate output contract ('## Qualification' header, SCORE line).
-    on_failure: abort — malformed output must not be written
+    on_failure: abort; malformed output must not be written
   - step: 3
     description: Write ai_qualification_summary and ai_qualification_score via update_deal.
     on_failure: abort and report
   - step: 4
     description: "Add note: '[agent] qualification generated from transcript <date>'."
-    on_failure: continue — log warning
+    on_failure: continue; log warning
   - step: 5
     description: Evaluate Qualified exit criteria; if met, PROPOSE advance-deal-stage to user (do not execute).
     on_failure: continue
@@ -45,7 +45,7 @@ effects:
   - {target: "property:deal.ai_qualification_score", operation: write}
   - {target: "object:deal", operation: create, detail: attribution note}
 
-side_effects: []   # explicit none — no automation listens to these fields
+side_effects: []   # explicit none; no automation listens to these fields
 
 postconditions:
   - summary re-read starts with '## Qualification'; score in 0-100

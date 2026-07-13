@@ -8,13 +8,13 @@ used_by:
 language: pl
 variables:                        # placeholders the sender/agent must fill
   - {id: first_name, source: person.full_name}
-  - {id: pain_point, source: "deal.ai_qualification_summary — Need section"}
+  - {id: pain_point, source: "deal.ai_qualification_summary, Need section"}
 approval: required                # agents never send drafts autonomously unless policy says otherwise
 ---
 
 <!-- The template body. Placeholders in {{...}}. -->
 
-Temat: Podsumowanie rozmowy — {{company_name}}
+Temat: Podsumowanie rozmowy – {{company_name}}
 
 Cześć {{first_name}},
 

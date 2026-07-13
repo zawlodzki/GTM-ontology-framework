@@ -9,17 +9,17 @@ language: en
 variables:
   - {id: first_name, source: person.full_name}
   - {id: company_name, source: organization.name}
-  - {id: pain_point, source: "deal.ai_qualification_summary — Need section"}
+  - {id: pain_point, source: "deal.ai_qualification_summary, Need section"}
   - {id: demo_link, source: "AE calendar link"}
 approval: required
 ---
 
-Subject: Next step for {{company_name}} — demo
+Subject: Next step for {{company_name}}: demo
 
 Hi {{first_name}},
 
-Thanks for the call today. From what you described — {{pain_point}} — the funnel
-analytics module is the part of Acme you should see first.
+Thanks for the call today. You mentioned {{pain_point}}. The funnel analytics
+module is the part of Acme you should see first.
 
 Pick a slot that works for you: {{demo_link}}
 

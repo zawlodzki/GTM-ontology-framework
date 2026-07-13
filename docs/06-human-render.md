@@ -29,11 +29,11 @@ terminal stages styled by `outcome`. Gives the sales team the shape of the funne
 ### 3. Field dictionary (from A3 + A6)
 
 Per object, a table: label | type | required (from stage) | who fills it (`filled_by`) |
-options (enum labels). Physical field keys and bindings stay out — implementation detail.
+options (enum labels). Physical field keys and bindings stay out; they are implementation detail.
 
 ## Rules
 
 - Renders are **generated, never hand-edited**; regenerate after every ontology version bump.
 - Render language follows the sales team (labels/values may be Polish while ontology ids stay English).
-- Renders carry a footer: ontology id, version, `updated` date — so a stale printout is detectable.
+- Renders carry a footer: ontology id, version, `updated` date, so a stale printout is detectable.
 - The agent-facing view is the ontology itself (manifest + artifacts); renders are for humans only.

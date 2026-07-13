@@ -18,4 +18,4 @@ write_access_notes: >
   Agents write only fields marked writable:true in binding/mappings/pipedrive.yaml.
   Stage writes only via action:advance-deal-stage.
 rate_limits: "token-budget per day (v2 API); batch reads, avoid per-record loops"
-environment_notes: "No sandbox — all writes hit production. api-bot user id 42 is the automation identity."
+environment_notes: "No sandbox, all writes hit production. api-bot user id 42 is the automation identity."

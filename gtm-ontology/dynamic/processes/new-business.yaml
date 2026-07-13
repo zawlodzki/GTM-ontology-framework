@@ -44,7 +44,7 @@ stages:
       - description: AI qualification available with supporting score
         check: "deal.ai_qualification_score >= 70"
     bad_examples:
-      - "Prospect said 'looks interesting' on a cold call — no qualification call held"
+      - "Prospect said 'looks interesting' on a cold call; no qualification call held"
       - "Budget assumed from company size, never stated by the prospect"
       - "ai_qualification_score >= 70 alone, without budget confirmation"
     customer_verifier:

@@ -14,7 +14,7 @@ agents:
          condition: "target stage terminal OR deal.amount > 50000"}
     prohibitions:
       - Never delete any record (deal, person, organization, activity, note).
-      - Never send external communication — no emails, no LinkedIn, no sequences.
+      - Never send external communication: no emails, no LinkedIn, no sequences.
       - Never write fields marked writable:false in bindings (lifecycle_stage, engagement_score, icp_fit, source_channel, email, domain).
       - Never move deals backward or between non-adjacent stages.
       - Never create or modify Pipedrive automations, filters, or fields.

@@ -16,7 +16,7 @@ objects:
         enum_map: {"11": incoming, "12": qualified, "13": demo, "14": proposal, "15": negotiation}
         writable: true
         notes: >
-          won/lost are NOT stage_ids — they map to Pipedrive deal.status
+          won/lost are NOT stage_ids; they map to Pipedrive deal.status
           ('won'/'lost'). Writing terminal states = update status, not stage_id.
       - {property: expected_close_date, field_key: expected_close_date, transform: none, writable: true}
       - property: source_channel
@@ -46,14 +46,14 @@ objects:
     properties:
       - {property: full_name, field_key: name, transform: none, writable: true}
       - {property: email, field_key: email, transform: none, writable: false,
-         notes: natural key — corrections by humans only}
+         notes: natural key; corrections by humans only}
       - {property: job_title, field_key: job_title, transform: none, writable: true}
       - property: lifecycle_stage
         field_key: "9f1ac7e2b8d4f6a1c3e5b7d9f1a3c5e7b9d1f3a5"
         transform: enum_options
         enum_map: {"121": lead, "122": mql, "123": sql, "124": opportunity, "125": customer}
         writable: false
-        notes: "lead/mql managed by automation:lead-scoring; sql+ by humans — agents propose, never write"
+        notes: "lead/mql managed by automation:lead-scoring; sql+ by humans; agents propose, never write"
       - property: engagement_score
         field_key: "7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b"
         transform: none

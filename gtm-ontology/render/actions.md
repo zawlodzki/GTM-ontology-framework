@@ -20,7 +20,7 @@ User asks to progress a deal, or a proposal from action:qualify-lead was accepte
 3. Terminal states: update deal status (won/lost) per bindings note. Others: update stage_id via enum_map.
 4. Add note: '[agent] moved <from> -> <to>: <reason>'.
 
-**Side effects:** automation:create-demo-activity fires when target is demo — do NOT create a demo prep activity manually
+**Side effects:** automation:create-demo-activity fires when target is demo; do NOT create a demo prep activity manually
 
 ## Qualify lead from transcript (`qualify-lead`)
 
@@ -44,4 +44,4 @@ User asks to qualify a lead/deal; or agent finds a deal with a newer transcript 
 
 **Side effects:** none
 
-*Generated from ontology `acme-analytics` v1.1.0 (2026-07-06) — do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.1.0 (2026-07-06), do not hand-edit.*

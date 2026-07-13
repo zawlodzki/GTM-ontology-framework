@@ -12,7 +12,7 @@ agent_instructions: >
   Read this manifest first; load artifacts per load_when. Never act on artifacts
   with meta.status: draft. Check governance/agent-policy.yaml before executing
   any action. Field-level authorship is in semantic objects (filled_by) and
-  automation fingerprints — never overwrite bot-managed fields.
+  automation fingerprints; never overwrite bot-managed fields.
 systems:
   - {id: pipedrive, role: crm, access: [mcp, api]}
   - {id: n8n, role: automation-platform, access: [api]}

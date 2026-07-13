@@ -2,7 +2,7 @@
 
 How GOF property types and stage attributes map to Pipedrive / HubSpot / Attio /
 Salesforce. Used when writing bindings (A6) and when interpreting discovery snapshots.
-Endpoints and names change — verify against vendor docs before relying on them.
+Endpoints and names change; verify against vendor docs before relying on them.
 
 ## Platform CRMs: scope to the CRM module
 
@@ -10,12 +10,12 @@ Pipedrive and Attio are CRMs. Salesforce and HubSpot are platforms with a CRM in
 For those, the ontology covers the **CRM module only**, declared explicitly in the
 system profile's `scope` block (A4):
 
-- **Salesforce** — default in scope: Sales Cloud core objects (`Lead`, `Account`,
+- **Salesforce**. Default in scope: Sales Cloud core objects (`Lead`, `Account`,
   `Contact`, `Opportunity`, `Task`/`Event`, optionally `Campaign` + `CampaignMember`).
   Out of scope unless requested: Service Cloud, Marketing Cloud, CPQ, Experience Cloud,
-  custom app objects. A full describe returns hundreds of objects — discovery reads
+  custom app objects. A full describe returns hundreds of objects; discovery reads
   only `objects_in_scope`, and records how many objects it skipped.
-- **HubSpot** — default in scope: CRM core (`contacts`, `companies`, `deals`) + Sales
+- **HubSpot**. Default in scope: CRM core (`contacts`, `companies`, `deals`) + Sales
   Hub pipelines. Marketing Hub assets (forms, emails, campaigns) and Service Hub
   (tickets) enter only as separate scoped systems when a competency question needs them.
 - Same rule applies to Dynamics 365 and other suite CRMs.
@@ -28,7 +28,7 @@ system profile's `scope` block (A4):
 | `text` | `text` | `string`/`textarea` | `text` | `LongTextArea` |
 | `number` | `double` | `number`/`number` | `number` | `Number` |
 | `currency` | `monetary` | `number`/`number` (+currency) | `currency` | `Currency` |
-| `boolean` | `enum` (Yes/No — no native bool) | `bool`/`booleancheckbox` | `checkbox` | `Checkbox` |
+| `boolean` | `enum` (Yes/No, no native bool) | `bool`/`booleancheckbox` | `checkbox` | `Checkbox` |
 | `date` | `date` | `date`/`date` | `date` | `Date` |
 | `datetime` | `date` + `time` (two fields!) | `datetime`/`date` | `timestamp` | `DateTime` |
 | `enum` | `enum` | `enumeration`/`select` | `select` (single) | `Picklist` |
@@ -39,23 +39,23 @@ system profile's `scope` block (A4):
 | `user` | `user` | owner | `actor-reference` | `Lookup(User)` |
 | `reference` | `org`/`people` | (no native) | `record-reference` | `Lookup` / `MasterDetail` |
 | `address` | `address` | `string` | `location` | `Address` (compound) |
-| `json` | (no native — text) | (no native — string) | (no native — text) | (no native — LongTextArea) |
+| `json` | (no native, text) | (no native, string) | (no native, text) | (no native, LongTextArea) |
 
 Gotchas:
 
-- **Pipedrive** has no single `datetime` and no native `boolean` — bind `datetime` as
+- **Pipedrive** has no single `datetime` and no native `boolean`; bind `datetime` as
   two fields, `boolean` as a Yes/No enum with `enum_map`. Enum/set options via the
   Fields API v2 bulk-options endpoint. Custom-field keys are 40-char hashes.
-- **HubSpot** separates `type` (data type) from `fieldType` (UI control) — record both
+- **HubSpot** separates `type` (data type) from `fieldType` (UI control); record both
   in binding `notes`. Internal property names, not labels, go into `field_key`.
 - **Attio** is closest to 1:1 (native `currency`, `email-address`, `phone-number`,
   `record-reference`); attributes are per-object, statuses live on a status attribute
   or lists.
-- **Salesforce** custom fields carry the `__c` suffix in API names — that suffix is the
+- **Salesforce** custom fields carry the `__c` suffix in API names; that suffix is the
   `field_key`. Picklists can be per-record-type; native **validation rules** map to
   GOF `property.validation`; **record types** with separate sales processes = one GOF
   process per record type. **Lead conversion** (Lead → Account+Contact+Opportunity) is
-  not a stage transition — model it as an action with explicit effects.
+  not a stage transition; model it as an action with explicit effects.
 
 ## Field/metadata endpoints (discovery + bindings)
 
@@ -67,8 +67,8 @@ Gotchas:
 | Native automations | limited API → interview | `GET /automation/v4/flows` | limited API → interview | Flows + validation rules via Tooling API |
 
 Automation reality check: HubSpot and Salesforce expose automation metadata via API
-(flows, validation rules, Apex triggers on Salesforce — list them, then interview for
-intent). Pipedrive and Attio mostly don't — expect Phase 3 interviews, not
+(flows, validation rules, Apex triggers on Salesforce; list them, then interview for
+intent). Pipedrive and Attio mostly don't; expect Phase 3 interviews, not
 introspection, to find what runs. External loops (n8n/Make/Zapier) are interview-only
 everywhere.
 

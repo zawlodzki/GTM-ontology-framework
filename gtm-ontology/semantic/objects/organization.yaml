@@ -1,7 +1,7 @@
 kind: object-type
 id: organization
 name: Organization
-description: A company we sell to — prospect account or customer.
+description: A company we sell to, prospect account or customer.
 meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
 aliases: [company, account]
 
@@ -40,7 +40,7 @@ properties:
       enriched (NOT a rejection). Input to person.lifecycle_stage=mql conditions.
     filled_by: automation
     filled_by_detail: automation:lead-scoring
-    quality_notes: "~8% of orgs fail enrichment and stay null — flag for manual review."
+    quality_notes: "~8% of orgs fail enrichment and stay null; flag for manual review."
 
 links:
   - id: deals

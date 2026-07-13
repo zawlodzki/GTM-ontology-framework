@@ -11,7 +11,7 @@ owner: RevOps (Anna)
 definition_url: https://n8n.acme-analytics.internal/workflow/42
 
 trigger:
-  event: Fireflies webhook — new transcript ready
+  event: Fireflies webhook, new transcript ready
   object: object:deal
   conditions:
     - transcript attendee email matches a person linked to an open deal
@@ -32,8 +32,8 @@ data_fingerprint:
 
 failure_modes:
   - symptom: attendee email mismatch (personal vs work email)
-    impact: fields stay empty — NOT a signal of poor qualification
+    impact: fields stay empty; NOT a signal of poor qualification
     detection: "completed call activity exists but summary empty > 1h"
   - symptom: LLM returns malformed SCORE line
-    impact: summary written, score null — treat as 'needs human read'
+    impact: summary written, score null; treat as 'needs human read'
     detection: "summary present, score null"

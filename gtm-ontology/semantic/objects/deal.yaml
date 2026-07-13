@@ -4,7 +4,7 @@ name: Deal
 description: >
   A concrete revenue opportunity with an identified organization: someone at the
   account has shown buying intent worth SDR/AE time. Not every form-fill becomes
-  a deal — see process:new-business Incoming entry criteria.
+  a deal; see process:new-business Incoming entry criteria.
 meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
 aliases: [opportunity]
 
@@ -12,7 +12,7 @@ properties:
   - id: title
     name: Title
     type: string
-    semantics: "Convention: '<Org name> — <plan>'. Set at creation."
+    semantics: "Convention: '<Org name> - <plan>'. Set at creation."
     filled_by: mixed
     filled_by_detail: "human or automation:lead-scoring at deal creation"
 
@@ -21,7 +21,7 @@ properties:
     type: enum
     semantics: >
       Current stage in the New Business pipeline. Full state machine (criteria,
-      transitions, SLAs) in process:new-business — this enum only lists values.
+      transitions, SLAs) in process:new-business; this enum only lists values.
     filled_by: mixed
     filled_by_detail: "SDR/AE manually; agents via action:advance-deal-stage"
     enum:
@@ -75,7 +75,7 @@ properties:
     type: text
     semantics: >
       LLM digest of the discovery call (BANT structure). Effect of
-      automation:qualify-from-transcript; empty if no transcript matched —
+      automation:qualify-from-transcript; empty if no transcript matched,
       never interpret empty as 'poorly qualified'.
     filled_by: ai
     ai:
@@ -89,12 +89,12 @@ properties:
     type: number
     semantics: >
       0-100, parsed from the SCORE line of ai_qualification_summary. >= 70 supports
-      advancing to Demo. A score, not a verdict — humans/agents weigh it with context.
+      advancing to Demo. A score, not a verdict; humans/agents weigh it with context.
     filled_by: ai
     ai:
       prompt_ref: prompt:lead-qualification
       trigger: "same run as ai_qualification_summary"
-    quality_notes: "Scores before 2026-03 used prompt v2 (stricter scale) — not comparable."
+    quality_notes: "Scores before 2026-03 used prompt v2 (stricter scale); not comparable."
 
 links:
   - id: organization

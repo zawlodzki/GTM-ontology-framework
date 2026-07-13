@@ -13,13 +13,13 @@ description: >
 # GTM Ontology Builder
 
 Build an ontology per the GTM Ontology Framework (GOF): a 4-layer, machine-readable
-model of the business — semantic (what exists), binding (where data lives), dynamic
+model of the business: semantic (what exists), binding (where data lives), dynamic
 (what happens / what agents may do), measurement & governance (KPIs, policy).
 
 Artifact formats: `references/artifact-formats.md` (field-by-field spec).
 Starter templates: `templates/`. Copy a template, fill it, keep the structure.
 
-Core rules — apply throughout:
+Core rules (apply throughout):
 
 1. **Discover → propose → confirm → record.** Never mark anything `status: confirmed`
    without explicit user confirmation. Facts introspected from a system are
@@ -47,16 +47,16 @@ gtm-ontology/
 
 ## Steps
 
-### Phase 0 — Scoping
+### Phase 0: Scoping
 
 Interview the user:
 1. Business: what is sold, to whom (ICP + disqualifiers), pricing/ACV, cycle length, GTM motion, team roles.
 2. Systems: every GTM app, its role, available access (MCP server? API creds? warehouse?).
    For platform CRMs (Salesforce, HubSpot, Dynamics) also agree WHICH modules/objects
-   are in scope and record it in the system profile's `scope` block — the ontology
+   are in scope and record it in the system profile's `scope` block; the ontology
    covers the CRM module (e.g. Salesforce Sales Cloud: Lead, Account, Contact,
    Opportunity, Task/Event), never the whole platform.
-3. Use cases: what should agents ANSWER and DO? These are the ontology's competency questions — they define scope.
+3. Use cases: what should agents ANSWER and DO? These are the ontology's competency questions; they define scope.
 
 Scaffold the `gtm-ontology/` directory tree (layout above), then write
 `context/business-context.md` (template: `templates/business-context.md`),
@@ -64,10 +64,10 @@ Scaffold the `gtm-ontology/` directory tree (layout above), then write
 
 **GATE:** user confirms scope, systems, use cases.
 
-### Phase 1 — Discovery
+### Phase 1: Discovery
 
 Scope guard first: if the system profile has a `scope` block, introspect ONLY
-`objects_in_scope` (a full Salesforce describe returns hundreds of objects — never
+`objects_in_scope` (a full Salesforce describe returns hundreds of objects; never
 enumerate them all) and record the skipped-object count in the snapshot.
 
 Per system, introspect via the declared access method:
@@ -79,46 +79,46 @@ Per system, introspect via the declared access method:
 - Warehouse: information schema.
 
 Record into `binding/discovery/<system>/snapshot-<date>.yaml`: entities + fields
-(with PHYSICAL keys — custom-field hashes/internal names), enum options with IDs,
+(with PHYSICAL keys: custom-field hashes/internal names), enum options with IDs,
 pipelines/stages with IDs, users (flag bots/API users), automations found, fill-rate
 profiling of key fields.
 
-Report anomalies (unused fields, duplicates, empty pipelines). No gate — raw facts.
+Report anomalies (unused fields, duplicates, empty pipelines). No gate; these are raw facts.
 
-### Phase 2 — Semantic modeling
+### Phase 2: Semantic modeling
 
 1. Propose canonical object types; collapse synonyms across systems (contact/subscriber → Person). Present the mapping table: discovered entity → object type → confidence.
 2. Map fields → properties; propose canonical names for cross-system conflicts.
-3. Infer `filled_by` per property from profiling (bot user writes → `automation`) — mark `inferred`.
+3. Infer `filled_by` per property from profiling (bot user writes → `automation`); mark `inferred`.
 4. List every enum property with values; definitions stay `null` (gaps for Phase 3).
 5. Propose links between objects; flag semantic gaps (use case needs X, no data).
 
 Write draft `semantic/objects/*.yaml` (template: `templates/object-type.yaml`) and
-`binding/mappings/<system>.yaml` (template: `templates/binding.yaml` — every
+`binding/mappings/<system>.yaml` (template: `templates/binding.yaml`; every
 `field_key` must exist in the snapshot). If >1 system: `binding/identity.yaml`
-(natural keys, master source, conflict strategy — ask, don't assume).
+(natural keys, master source, conflict strategy; ask, don't assume).
 
 **GATE:** user confirms objects, mappings, collapses, gaps.
 
-### Phase 3 — Business logic elicitation
+### Phase 3: Business logic elicitation
 
-The human layer — interview, one topic at a time, record as `source: declared`:
+The human layer: interview, one topic at a time, record as `source: declared`:
 
 1. **Every enum value** (incl. lifecycle stages): "What must be TRUE for this value?
    Who/what sets it? Reversible?" → `enum[].definition`, `set_by`, `entry_conditions`.
 2. **Every AI-filled field**: "What produces it? Exact prompt? Inputs? Trigger?
    Failure behavior?" → `ai:` block + verbatim prompt in `dynamic/prompts/<id>.md`
    (never paraphrase production prompts).
-3. **Every pipeline/lifecycle** → `dynamic/processes/<id>.yaml`: per stage —
+3. **Every pipeline/lifecycle** → `dynamic/processes/<id>.yaml`: per stage:
    definition, entry criteria, exit criteria (pair prose `description` with
    machine-checkable `check` where possible), **bad_examples** (what does NOT
-   suffice to exit — ask for common rep mistakes), **customer_verifier** (objective
+   suffice to exit; ask for common rep mistakes), **customer_verifier** (objective
    proof on the customer side, not rep opinion), **probability** (forecast weight
    0.0–1.0), required properties, tasks (mandatory/optional), drafts (email/SMS
-   templates — collect verbatim → `dynamic/drafts/<id>.md`), tips, loss_reasons,
+   templates; collect verbatim → `dynamic/drafts/<id>.md`), tips, loss_reasons,
    owner, SLA (`target_duration_days` + `rotting_threshold_days`), automations
    triggered; allowed transitions, skip/backward policy.
-4. **Every automation** — ask explicitly "what runs OUTSIDE the CRM (n8n, Zapier,
+4. **Every automation**: ask explicitly "what runs OUTSIDE the CRM (n8n, Zapier,
    Make, scripts)?" → `dynamic/automations/<id>.yaml` with trigger, effects, and a
    **data fingerprint** (acting user, field patterns, markers, timing) + failure modes.
 5. **KPIs** at company/process/stage level → `measurement/kpis/*.yaml`: formula in
@@ -126,19 +126,19 @@ The human layer — interview, one topic at a time, record as `source: declared`
 
 **GATE:** confirm per artifact; flip `status: draft` → `confirmed`.
 
-### Phase 4 — Agent actions & policy
+### Phase 4: Agent actions & policy
 
 1. From use cases, propose agent actions. Per action (`templates/action.yaml`):
    preconditions (checkable), inputs, ORDERED workflow with `on_failure` per step,
-   effects, **side_effects** (cross-check automations — which will fire? empty list
+   effects, **side_effects** (cross-check automations: which will fire? empty list
    = explicit none), approval (`none/required/conditional`), idempotency,
    implementations (MCP tool / endpoint per system).
-2. Write `governance/agent-policy.yaml`: per agent — allowed actions, approval
+2. Write `governance/agent-policy.yaml`: per agent: allowed actions, approval
    overrides, hard prohibitions, rate limits. Default: unlisted actions forbidden.
 
 **GATE:** user confirms every action contract + policy.
 
-### Phase 5 — Validation & compilation
+### Phase 5: Validation & compilation
 
 Run all checks; fix failures before shipping:
 1. Every artifact parses and matches its format spec.
@@ -158,7 +158,7 @@ set version.
 
 **Wire up agent discovery** (how any future agent finds and navigates the ontology):
 
-1. Write `gtm-ontology/CLAUDE.md` from `templates/ontology-claude.md` — fill the
+1. Write `gtm-ontology/CLAUDE.md` from `templates/ontology-claude.md`; fill the
    company name, the concrete `writable: false` field list, and key action names.
    If the repo uses the AGENTS.md convention, mirror identical content to
    `gtm-ontology/AGENTS.md`.
@@ -185,7 +185,7 @@ is available.
 
 **GATE:** present validation report; user signs off.
 
-### Phase 6 — Extension & maintenance (on later invocations)
+### Phase 6: Extension & maintenance (on later invocations)
 
 - **New system:** run Phases 0–5 scoped to it; map onto EXISTING object types first
   (add aliases); extend `identity.yaml`; new objects only for genuinely new concepts.
@@ -198,7 +198,7 @@ is available.
 Use these verbatim when interviewing (Phase 0/3):
 
 - Enum value: "What must be true about the record for this value? Who or what sets
-  it — a person (which role), an automation (which one), AI? Can it move backwards?"
+  it: a person (which role), an automation (which one), AI? Can it move backwards?"
 - AI field: "What exactly produces this content, with what prompt (verbatim), from
   what inputs? When does it rerun? What does an empty value mean?"
 - Stage: "What must be true before a record ENTERS this stage? What must be true to
