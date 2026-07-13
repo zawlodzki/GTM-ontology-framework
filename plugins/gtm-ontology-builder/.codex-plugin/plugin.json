@@ -1,0 +1,27 @@
+{
+  "name": "gtm-ontology-builder",
+  "version": "1.0.0+codex.20260713152447",
+  "description": "Build an agent-ready business ontology for GTM systems, including CRM objects, pipelines, automations, agent actions, and KPIs.",
+  "author": {
+    "name": "Grzegorz Zaw\u0142odzki",
+    "email": "grzesiek@zawlodzki.pl"
+  },
+  "homepage": "https://github.com/zawlodzki/GTM-ontology-framework",
+  "repository": "https://github.com/zawlodzki/GTM-ontology-framework",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "GTM Ontology Builder",
+    "shortDescription": "Build agent-ready ontologies for CRM and GTM systems.",
+    "longDescription": "Model CRM objects, business semantics, pipelines, automations, agent actions, governance policies, and KPIs as a validated GTM ontology.",
+    "developerName": "Grzegorz Zaw\u0142odzki",
+    "category": "Productivity",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Build a GTM ontology for my CRM stack.",
+      "Map my sales process for AI agents.",
+      "Document my CRM objects, fields, and automations."
+    ]
+  }
+}

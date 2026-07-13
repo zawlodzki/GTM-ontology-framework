@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/kpi.schema.json",
+  "title": "GOF KPI (A12)",
+  "type": "object",
+  "required": ["kind", "id", "name", "meta", "level", "definition", "formula", "terms", "grain", "owner"],
+  "properties": {
+    "kind": {"const": "kpi"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "name": {"type": "string"},
+    "meta": {"$ref": "#/$defs/meta"},
+    "level": {"enum": ["company", "process", "stage"]},
+    "scope": {"type": "string"},
+    "definition": {"type": "string"},
+    "formula": {"type": "string"},
+    "terms": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "grain": {"enum": ["daily", "weekly", "monthly", "quarterly"]},
+    "segments": {"type": "array", "items": {"type": "string"}},
+    "target": {
+      "type": "object",
+      "required": ["operator", "value"],
+      "properties": {
+        "operator": {"enum": [">=", "<=", ">", "<", "=", "range"]},
+        "value": {"type": ["number", "string"]},
+        "unit": {"type": "string"}
+      }
+    },
+    "owner": {"type": "string"},
+    "source_of_truth": {"type": "string"}
+  },
+  "if": {"properties": {"level": {"enum": ["process", "stage"]}}},
+  "then": {"required": ["kind", "id", "name", "meta", "level", "scope", "definition", "formula", "terms", "grain", "owner"]},
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "required": ["source", "status"],
+      "properties": {
+        "source": {"enum": ["discovered", "inferred", "declared"]},
+        "status": {"enum": ["draft", "confirmed"]},
+        "confirmed_by": {"type": "string"},
+        "updated": {"type": "string"}
+      }
+    }
+  }
+}

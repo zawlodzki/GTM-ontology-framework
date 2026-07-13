@@ -68,18 +68,28 @@ repo root, mirror the change into `skill/` in the same commit — otherwise the 
 skill drifts and breaks for outside users. Likewise, changes to `skill/SKILL.md`,
 `skill/references/`, or `skill/templates/` stay inside the skill.
 
-The skill is also redistributed two more ways, both generated from `skill/`:
+The skill is also redistributed three more ways, all generated from `skill/`:
 
 - `gtm-ontology-builder.skill` — a zip whose single top-level folder is
   `gtm-ontology-builder/`, `.DS_Store` stripped.
 - `plugin/` — the Claude Code plugin. Its payload lives at
   `plugin/skills/gtm-ontology-builder/` and must stay a `.DS_Store`-free mirror of
   `skill/`; the manifest is `plugin/.claude-plugin/plugin.json`.
+- `plugins/gtm-ontology-builder/` — the Codex plugin. Its payload lives at
+  `plugins/gtm-ontology-builder/skills/gtm-ontology-builder/` and must also stay a
+  `.DS_Store`-free mirror of `skill/`; the manifest is
+  `plugins/gtm-ontology-builder/.codex-plugin/plugin.json`. The repo marketplace
+  entry is `.agents/plugins/marketplace.json`, with source path
+  `./plugins/gtm-ontology-builder`.
 
-After any edit under `skill/`, update both: repackage the `.skill` zip and re-sync
-`plugin/skills/gtm-ontology-builder/`. Neither is shipped until regenerated. Bump
-`version` in `plugin/.claude-plugin/plugin.json` on a released change, and validate
-with `claude plugin validate ./plugin`.
+After any edit under `skill/`, update all three distributions: repackage the
+`.skill` zip and re-sync both plugin payloads. None is shipped until regenerated.
+Bump `version` in both plugin manifests on a released change. Validate the Claude
+Code plugin with `claude plugin validate ./plugin`; validate the Codex plugin with
+the `plugin-creator` validator, then install it from the repo marketplace with
+`codex plugin add gtm-ontology-builder@personal` and confirm the installed cache
+contains `skills/gtm-ontology-builder/SKILL.md`. Use the `plugin-creator`
+cachebuster flow for local Codex updates; never edit the installed cache directly.
 
 ## Artifact & Schema Conventions
 

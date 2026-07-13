@@ -1,0 +1,105 @@
+kind: discovery-snapshot
+id: pipedrive-2026-07-01
+system: system:pipedrive
+meta:
+  source: discovered
+  status: confirmed
+  retrieved_at: 2026-07-01T08:30:00Z
+  via: mcp
+
+entities:
+  - name: deals
+    kind: collection
+    record_count: 1240
+    fields:
+      - {key: title, name: Title, type: varchar, custom: false}
+      - {key: value, name: Value, type: monetary, custom: false}
+      - {key: stage_id, name: Stage, type: stage, custom: false}
+      - {key: expected_close_date, name: Expected close date, type: date, custom: false}
+      - key: "b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5"
+        name: Source Channel
+        type: enum
+        custom: true
+        enum_options: [{id: 201, label: Inbound form}, {id: 202, label: Outbound}, {id: 203, label: Referral}]
+      - key: "5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c"
+        name: Budget confirmed
+        type: enum
+        custom: true
+        enum_options: [{id: 301, label: "Yes"}, {id: 302, label: "No"}]
+      - key: "1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d"
+        name: AI Qualification Summary
+        type: text
+        custom: true
+      - key: "3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e"
+        name: AI Qualification Score
+        type: double
+        custom: true
+  - name: persons
+    kind: collection
+    record_count: 8420
+    fields:
+      - {key: name, name: Name, type: varchar, custom: false}
+      - {key: email, name: Email, type: varchar, custom: false}
+      - {key: job_title, name: Job title, type: varchar, custom: false}
+      - key: "9f1ac7e2b8d4f6a1c3e5b7d9f1a3c5e7b9d1f3a5"
+        name: Lifecycle Stage
+        type: enum
+        custom: true
+        enum_options: [{id: 121, label: Lead}, {id: 122, label: MQL}, {id: 123, label: SQL}, {id: 124, label: Opportunity}, {id: 125, label: Customer}]
+      - key: "7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b"
+        name: Engagement Score
+        type: double
+        custom: true
+  - name: organizations
+    kind: collection
+    record_count: 3110
+    fields:
+      - {key: name, name: Name, type: varchar, custom: false}
+      - key: "d1f3a5c7e9b1d3f5a7c9e1b3d5f7a9c1e3b5d7f9"
+        name: Domain
+        type: varchar
+        custom: true
+      - key: "f5a7c9e1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3"
+        name: Industry
+        type: varchar
+        custom: true
+      - key: "a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7"
+        name: Employee Count
+        type: double
+        custom: true
+      - key: "e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1"
+        name: ICP Fit
+        type: enum
+        custom: true
+        enum_options: [{id: 401, label: "Yes"}, {id: 402, label: "No"}]
+  - name: activities
+    kind: collection
+    record_count: 21050
+    fields:
+      - {key: type, name: Type, type: enum, custom: false}
+      - {key: subject, name: Subject, type: varchar, custom: false}
+      - {key: done, name: Done, type: boolean, custom: false}
+
+pipelines:
+  - id: 1
+    name: New Business
+    stages:
+      - {id: 11, name: Incoming, order: 1}
+      - {id: 12, name: Qualified, order: 2}
+      - {id: 13, name: Demo, order: 3}
+      - {id: 14, name: Proposal, order: 4}
+      - {id: 15, name: Negotiation, order: 5}
+    # won/lost are deal status in Pipedrive, not stages; see bindings notes
+
+users:
+  - {id: 42, name: api-bot, email: api-bot@acme-analytics.com, is_bot_or_api: true}
+  - {id: 7, name: Kasia (SDR), email: kasia@acme-analytics.com, is_bot_or_api: false}
+  - {id: 8, name: Tomek (AE), email: tomek@acme-analytics.com, is_bot_or_api: false}
+
+automations_found:
+  - {name: "Demo prep activity", trigger_hint: "deal moved to stage Demo", platform: crm-native}
+
+profiling:
+  - {field: "deals.1b3d5f7a9c1e3b5d7f9a1c3e5b7d9f1a3c5e7b9d", fill_rate: 0.58, distinct_values_sample: ["## Qualification..."]}
+  - {field: "persons.9f1ac7e2b8d4f6a1c3e5b7d9f1a3c5e7b9d1f3a5", fill_rate: 0.91, distinct_values_sample: [Lead, MQL, SQL]}
+  - {field: "organizations.e3b5d7f9a1c3e5b7d9f1a3c5e7b9d1f3a5c7e9b1", fill_rate: 0.92, distinct_values_sample: ["Yes", "No"]}

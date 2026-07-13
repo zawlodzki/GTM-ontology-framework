@@ -1,0 +1,54 @@
+kind: object-type
+id: organization
+name: Organization
+description: A company we sell to, prospect account or customer.
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+aliases: [company, account]
+
+properties:
+  - id: name
+    name: Name
+    type: string
+    semantics: >
+      Legal or common name. NOT a dedup key: non-unique and shared across a company's
+      branch offices and subsidiaries (see binding/identity.yaml match rules).
+    filled_by: mixed
+
+  - id: domain
+    name: Domain
+    type: string
+    semantics: >
+      Primary website domain. Join key across systems, but branch offices share it, so
+      it is a dedup candidate only, not a sole merge key (see binding/identity.yaml).
+    filled_by: mixed
+
+  - id: industry
+    name: Industry
+    type: string
+    semantics: Free-text from enrichment; 'e-commerce' subtypes matter for ICP.
+    filled_by: integration
+    filled_by_detail: enrichment step inside automation:lead-scoring
+
+  - id: employee_count
+    name: Employee Count
+    type: number
+    semantics: From enrichment; ICP range is 50-500.
+    filled_by: integration
+    filled_by_detail: enrichment step inside automation:lead-scoring
+
+  - id: icp_fit
+    name: ICP Fit
+    type: boolean
+    semantics: >
+      Computed: e-commerce industry AND 50-500 employees AND EU. Null = not yet
+      enriched (NOT a rejection). Input to person.lifecycle_stage=mql conditions.
+    filled_by: automation
+    filled_by_detail: automation:lead-scoring
+    quality_notes: "~8% of orgs fail enrichment and stay null; flag for manual review."
+
+links:
+  - id: deals
+    label: HAS_DEAL
+    target: object:deal
+    cardinality: one-to-many
+    semantics: All deals ever opened with this account.

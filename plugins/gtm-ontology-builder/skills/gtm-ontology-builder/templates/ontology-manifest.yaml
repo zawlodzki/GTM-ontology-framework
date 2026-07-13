@@ -1,0 +1,23 @@
+# A0 — root index. Tier 0: the ONLY file agents always load. Keep < 2k tokens.
+kind: manifest
+ontology: company-id              # kebab-case instance id, e.g. acme-analytics
+version: 0.1.0
+updated: 2026-01-01
+business_summary: >
+  One paragraph: what the company sells, to whom, GTM motion, systems used.
+agent_instructions: >
+  Read this manifest first. Load full artifacts only when load_when matches your
+  task. Never act on artifacts with meta.status: draft. Check governance/agent-policy.yaml
+  before executing any action.
+systems:
+  - {id: pipedrive, role: crm, access: [mcp, api]}
+artifacts:
+  - path: semantic/objects/deal.yaml
+    kind: object-type
+    summary: "Deal: revenue opportunity; incl. lifecycle_stage enum + AI qualification fields"
+    load_when: "working with deals, pipeline, forecasting, qualification"
+  - path: dynamic/processes/new-business.yaml
+    kind: process
+    summary: "New Business pipeline: 6 stages, entry/exit criteria, SLAs"
+    load_when: "moving deals between stages, pipeline analysis"
+  # ... one entry per artifact
