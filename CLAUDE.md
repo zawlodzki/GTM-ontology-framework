@@ -50,6 +50,14 @@ failing YAML/JSON — don't guess. If a report has no output, ask for it.
 When the user says "yes," "do it," or "push," execute without repeating the plan
 or adding commentary.
 
+### Sub-Agent Swarming for External Research
+
+When a task needs sweeping external documentation — vendor CRM/API docs
+(Salesforce, HubSpot, …), schema standards, or several unrelated sources — launch
+parallel sub-agents, one per source, each with its own context window. A single
+agent reading dozens of external pages decays; parallel agents keep each search
+focused and return only the conclusion you need.
+
 ## Artifact & Schema Conventions
 
 - Artifacts reference each other by typed refs (`object:...`, `process:...`,
