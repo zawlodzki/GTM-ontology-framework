@@ -23,4 +23,24 @@ artifacts:
     path: company/strategy.md
     summary: Company-wide mission, positioning, strategic choices, and differentiators.
     load_when: Working on company strategy, narrative, or shared differentiation.
+  - id: company-commercial-model
+    kind: commercial-model
+    path: company/commercial-model.md
+    summary: Shared packaging, pricing, contracting, and discount principles.
+    load_when: Interpreting prices, commercial terms, contracts, or discount rules.
+  - id: company-operating-model
+    kind: operating-model
+    path: company/operating-model.md
+    summary: Company-wide roles, ownership boundaries, and customer delivery model.
+    load_when: Understanding internal responsibilities, handoffs, or service ownership.
+  - id: company-market-overview
+    kind: market-overview
+    path: company/market/overview.md
+    summary: Category definition, market boundaries, demand drivers, and alternatives.
+    load_when: Understanding the market category or broad alternatives to Acme Analytics.
+  - id: company-competitors
+    kind: competitor-landscape
+    path: company/market/competitors.md
+    summary: Fictional company-level competitor archetypes and comparison dimensions.
+    load_when: Comparing company-wide alternatives or preparing a competitive overview.
 product_groups: []
