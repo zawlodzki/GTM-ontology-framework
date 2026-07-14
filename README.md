@@ -27,6 +27,7 @@ sales process, this is for you.
 | `schemas/` | JSON Schema for each artifact type: validate everything, trust nothing. |
 | `templates/` | Commented starter files. |
 | `tools/render_ontology.py` | One command: ontology → readable process table, Mermaid funnel, field dictionary, action catalog, interactive `explorer.html`. |
+| `tools/lint_ontology.py` | One command: health report. Schema validation, reference resolution, orphans, stale facts (`last_verified`), pii rules, loop/ladder consistency. The care-mode workhorse. |
 
 ## How it works
 
@@ -35,12 +36,13 @@ conditions behind every dropdown value. **Binding** is where the data physically
 systems, field-key mappings, cross-system identity. **Dynamic** is what happens: pipelines
 as state machines, existing automations with fingerprints so agents can tell who wrote
 a value, and action contracts defining what an agent may do, in what order, with what
-approvals. **Measurement & governance** is KPIs defined in ontology terms and hard limits
-for agents.
+approvals — grouped into loops, each with a human steward. **Measurement & governance**
+is KPIs defined in ontology terms, a permission ladder for agents (read-only →
+approve-each-write → autonomous-with-log, promotion earned per loop), and hard limits.
 
 Everything the system can't tell you gets collected in a structured interview. Every
-statement carries its provenance (`discovered` / `inferred` / `declared`) and a status:
-agents never act on drafts.
+statement carries its provenance (`discovered` / `inferred` / `declared` / `learned`)
+and a status: agents never act on drafts.
 
 ## Install
 

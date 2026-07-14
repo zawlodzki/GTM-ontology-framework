@@ -111,6 +111,9 @@ Never report a task complete until you have, as applicable:
 
 - Validated changed YAML/JSON artifacts against their schema in `schemas/`
   (`manifest.schema.json`, `process.schema.json`, `object-type.schema.json`, …).
+- Run the linter after any ontology change:
+  `python tools/lint_ontology.py gtm-ontology` — 0 errors required (schema
+  validation, ref resolution, manifest completeness, pii/temporality, loop/ladder).
 - Regenerated renders after an ontology change:
   `python tools/render_ontology.py gtm-ontology` — and confirmed it runs clean.
 
