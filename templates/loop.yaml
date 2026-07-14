@@ -1,0 +1,37 @@
+# A15 — loop ("obieg"): the unit of delegated work AND of trust. Someone starts it,
+# the agent does the work on live data, someone checks, something closes.
+# Trust grows per loop, not per agent: the ladder in agent-policy gates the loop as a whole.
+kind: loop
+id: lead-qualification            # kebab-case
+name: Lead qualification loop
+description: >
+  One sentence on what the loop does and who checks it — e.g. "agent qualifies
+  deals from call transcripts; the steward reviews runs weekly".
+meta: {source: declared, status: draft, updated: 2026-01-01}
+
+owner: "<name (role)>"            # the steward. No steward = the loop does not ship.
+agent: sdr-agent                  # optional; agent id from agent-policy
+permission_level: 1               # current rung on the ladder; every loop STARTS at 1 (read-only)
+target_level: 3                   # optional; not every loop should reach 3
+promotion_criteria:               # optional; overrides the ladder's default criteria
+  - "9/10 weekly runs accepted without correction, 4 consecutive weeks"
+
+refs:
+  actions: [action:qualify-lead]  # what the loop runs; required
+  prompts: [prompt:lead-qualification]
+  process: process:new-business
+
+metrics:                          # measured weekly; they gate promotion on the ladder
+  - id: acceptable_run_rate
+    description: Share of runs whose output the steward accepts without correction.
+    cadence: weekly
+    target: ">= 90%"
+  - id: steward_time_per_week
+    description: Time the steward spends reviewing and correcting runs.
+    cadence: weekly
+    target: "<= 1h"
+
+journal: "CHANGELOG.md + git log -- dynamic/loops/<id>.yaml"   # commit history is the journal
+escalation: >
+  Where abstains and failed runs go — e.g. "to the steward; recurring corrections
+  land back in the prompt or the rules here, as commits".

@@ -49,6 +49,27 @@ properties:
         definition: null          # null = KNOWN GAP, elicit in Phase 3; never leave blank silently
         set_by: "human: SDR"
 
+  # --- pii property: the value stays in the source system, agents read it live ---
+  - id: email
+    name: Email
+    type: string
+    semantics: Primary work email; natural key across systems (see identity.yaml).
+    filled_by: mixed
+    pii: true                     # forces the two lines below (schema-enforced)
+    allowed_in_context: false     # the VALUE never lands in repo files, prompts, or agent context
+    freshness: live-only          # never materialize into a file; read from the source system
+    retention: "source-system policy: delete 24 months after last activity"
+
+  # --- fact with a shelf life: enrichment data goes stale silently ---
+  - id: industry
+    name: Industry
+    type: string
+    semantics: Free-text from enrichment; drives ICP matching.
+    filled_by: integration
+    freshness: static             # cached copy acceptable between verifications
+    meta: {source: discovered, status: draft,
+           last_verified: 2026-01-01, verify_every: 180d}   # lint warns when overdue
+
   # --- AI-filled property: prompt provenance is mandatory ---
   - id: ai_qualification_summary
     name: AI Qualification Summary
