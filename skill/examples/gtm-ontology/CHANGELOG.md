@@ -1,5 +1,21 @@
 # Changelog: acme-analytics ontology
 
+## 1.3.0 (2026-07-14)
+- Permission ladder in agent-policy (A13, now schema-validated): levels 1-3,
+  promotion criteria, ceiling (prices and contracts stay human); sdr-agent capped
+  at level 2.
+- Containment: `abstain_when` on both actions; `defaults.missing_data: stop-and-ask`.
+- New artifact type: loop (A15). Added lead-qualification loop: owner Piotr,
+  level 2 (target 3), weekly metrics, journal = git history.
+- Fourth provenance source `learned` with `evidence`; first learned fact on
+  person.engagement_score (newsletter sends inflate scores).
+- Fact temporality in meta: last_verified + verify_every on org enrichment
+  fields; valid_from/valid_until supported. Lint flags overdue and expired facts.
+- RODO flags on properties: pii / allowed_in_context / retention + freshness
+  (live-only | static). person.email and person.full_name marked pii; pii fields
+  are read live, never copied into the repo.
+- New tool: tools/lint_ontology.py — health report (schema + content checks).
+
 ## 1.2.0 (2026-07-13)
 - Deduplication rules on identity.yaml (A7 `match`): match keys, distinguishing
   fields, never_match_on, and merge/survivorship policy per object.

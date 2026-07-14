@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/agent-policy.schema.json",
+  "title": "GOF Agent Policy (A13)",
+  "type": "object",
+  "required": ["kind", "id", "meta", "permission_ladder", "agents", "defaults"],
+  "properties": {
+    "kind": {"const": "agent-policy"},
+    "id": {"const": "agent-policy"},
+    "meta": {"$ref": "#/$defs/meta"},
+    "permission_ladder": {
+      "type": "object",
+      "required": ["levels", "promotion", "ceiling"],
+      "properties": {
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["level", "name", "description"],
+            "properties": {
+              "level": {"type": "integer", "minimum": 1},
+              "name": {"type": "string"},
+              "description": {"type": "string"}
+            }
+          }
+        },
+        "promotion": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "criteria"],
+            "properties": {
+              "from": {"type": "integer"},
+              "to": {"type": "integer"},
+              "criteria": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+            }
+          }
+        },
+        "ceiling": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["description", "max_level"],
+            "properties": {
+              "description": {"type": "string"},
+              "max_level": {"type": "integer"},
+              "applies_to": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "agents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "allowed_actions", "prohibitions"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "description": {"type": "string"},
+          "allowed_actions": {"type": "array", "items": {"type": "string", "pattern": "^action:"}},
+          "approval_overrides": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["action", "approval"],
+              "properties": {
+                "action": {"type": "string", "pattern": "^action:"},
+                "approval": {"enum": ["none", "required", "conditional"]},
+                "condition": {"type": "string"}
+              }
+            }
+          },
+          "prohibitions": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "rate_limits": {"type": "object"},
+          "max_permission_level": {"type": "integer", "minimum": 1}
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "required": ["unlisted_actions", "draft_artifacts", "missing_data"],
+      "properties": {
+        "unlisted_actions": {"const": "forbidden"},
+        "draft_artifacts": {"type": "string"},
+        "missing_data": {"const": "stop-and-ask"},
+        "pii_data": {"type": "string"}
+      }
+    }
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "required": ["source", "status"],
+      "properties": {
+        "source": {"enum": ["discovered", "inferred", "declared", "learned"]},
+        "status": {"enum": ["draft", "confirmed"]},
+        "confirmed_by": {"type": "string"},
+        "updated": {"type": "string"},
+        "evidence": {"type": "string"},
+        "last_verified": {"type": "string", "format": "date"},
+        "verify_every": {"type": "string", "pattern": "^[0-9]+[dwmy]$"},
+        "valid_from": {"type": "string", "format": "date"},
+        "valid_until": {"type": "string", "format": "date"}
+      }
+    }
+  }
+}

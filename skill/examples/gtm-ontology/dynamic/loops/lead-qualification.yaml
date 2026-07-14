@@ -1,0 +1,35 @@
+kind: loop
+id: lead-qualification
+name: Lead qualification loop
+description: >
+  sdr-agent qualifies deals from call transcripts and proposes stage moves;
+  Piotr reviews the runs in a weekly pass. Runs at level 2: every write waits
+  for a human click.
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-14}
+
+owner: "Piotr (Head of Sales)"
+agent: sdr-agent
+permission_level: 2
+target_level: 3
+promotion_criteria:
+  - 9/10 weekly runs accepted without correction, 4 consecutive weeks.
+
+refs:
+  actions: [action:qualify-lead]
+  prompts: [prompt:lead-qualification]
+  process: process:new-business
+
+metrics:
+  - id: acceptable_run_rate
+    description: Share of runs whose output the steward accepts without correction.
+    cadence: weekly
+    target: ">= 90%"
+  - id: steward_time_per_week
+    description: Time the steward spends reviewing runs and correcting output.
+    cadence: weekly
+    target: "<= 1h"
+
+journal: "CHANGELOG.md + git log -- dynamic/loops/lead-qualification.yaml (commit history is the loop journal)"
+escalation: >
+  Abstains and failed contract checks go to the steward. Recurring corrections
+  land back in prompt:lead-qualification or in the rules here, as commits.

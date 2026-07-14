@@ -2,6 +2,18 @@
 kind: agent-policy
 id: agent-policy
 meta: {source: declared, status: draft, updated: 2026-01-01}
+permission_ladder:                 # trust progression for loops (A15); defined once, here
+  levels:
+    - {level: 1, name: read-only, description: "reads live data and reports; no writes"}
+    - {level: 2, name: propose-then-approve, description: "prepares every write; a human approves"}
+    - {level: 3, name: autonomous-with-log, description: "acts alone; steward reviews the log"}
+  promotion:                       # default criteria; a loop may override via promotion_criteria
+    - {from: 1, to: 2, criteria: ["minimum 2 weeks of stable read-only operation before any writes"]}
+    - {from: 2, to: 3, criteria: ["9/10 weekly runs need no steward correction, 4 consecutive weeks"]}
+  ceiling:                         # what never goes autonomous, whatever the metrics say
+    - description: Prices, contracts, and decisions about people always go through a human.
+      max_level: 2
+      applies_to: [property:deal.amount]
 agents:
   - id: sdr-agent
     description: Qualifies inbound leads, keeps CRM hygiene.
@@ -15,7 +27,11 @@ agents:
       - Never delete any record.
       - Never send external communication (email/LinkedIn) — separate agent + approval.
       - Never write fields marked writable:false in bindings.
+      - Never copy values of properties marked pii:true into the repo or long-lived context.
     rate_limits: {actions_per_hour: 30}
+    max_permission_level: 2        # optional cap across every loop this agent runs
 defaults:
   unlisted_actions: forbidden
   draft_artifacts: read-as-hypothesis-only
+  missing_data: stop-and-ask       # no data = stop and ask, never invent (required const)
+  pii_data: read-live-only-never-copy   # pii values never land in repo, prompt, or context

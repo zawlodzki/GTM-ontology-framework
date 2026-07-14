@@ -18,6 +18,11 @@ preconditions:                     # verifiable BEFORE executing
   - description: Target stage is an allowed transition
   - description: All required_properties of target stage are non-empty
 
+abstain_when:                      # when the agent STOPS and asks instead of guessing;
+                                   # recommended for every action with write effects
+  - description: A required input is missing or unreadable; ask, never fill the gap with a guess.
+  - description: The move touches price or contract terms; a human decides, always.
+
 inputs:
   - {id: deal_id, type: reference, required: true, description: the deal to move}
   - {id: target_stage, type: string, required: true, description: stage id from process:new-business}
