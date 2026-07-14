@@ -1,0 +1,36 @@
+kind: product-group-manifest
+id: data-activation
+version: 0.1.0
+updated: 2026-07-14
+example: true
+language: en
+name: Data Activation
+summary: >
+  Governed products for data-mature commerce organizations that need to deliver
+  modeled customer data from their warehouse to business and engagement systems.
+inherits:
+  - company-profile
+  - company-strategy
+  - company-commercial-model
+  - company-operating-model
+agent_instructions: >
+  Load only the artifact matching the task. The ICP is self-contained and does not
+  require personas or buying context. Product and GTM artifacts are indexed here
+  when available; do not infer missing artifacts.
+artifacts:
+  - id: data-activation-icp
+    kind: icp
+    path: audience/icp.md
+    summary: Self-contained ideal customer profile, data-readiness criteria, and exclusions.
+    load_when: Qualifying an organization for Data Activation or explaining its ICP.
+  - id: data-activation-personas
+    kind: personas
+    path: audience/personas.md
+    summary: Head of Data and Lifecycle Marketing Lead goals, concerns, and buying roles.
+    load_when: Tailoring messaging or decisions to Data Activation buying roles.
+  - id: data-activation-buying-context
+    kind: buying-context
+    path: audience/buying-context.md
+    summary: Activation problems, triggers, buying jobs, committee dynamics, and evidence.
+    load_when: Understanding why and how a Data Activation purchase happens.
+products: []

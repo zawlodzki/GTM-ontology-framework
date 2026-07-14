@@ -48,3 +48,7 @@ product_groups:
     path: product-groups/commerce-analytics/manifest.yaml
     summary: Analytics products for mid-market e-commerce brands and commercial teams.
     load_when: Working on commerce analytics audiences, GTM, positioning, or products.
+  - id: data-activation
+    path: product-groups/data-activation/manifest.yaml
+    summary: Governed data delivery products for data-mature commerce organizations.
+    load_when: Working on data activation audiences, GTM, positioning, or products.
