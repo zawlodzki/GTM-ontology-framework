@@ -8,7 +8,7 @@ Outputs (default out-dir: <ontology-dir>/render):
     process-<id>.md   human-readable table (columns = stages) + Mermaid funnel diagram
     fields.md         field dictionary per object (no field keys, no YAML)
     actions.md        agent action catalog
-    graph.md          Mermaid graph of artifacts and their references
+    graph.md          Mermaid graph of artifacts (incl. loops) and their references
     explorer.html     self-contained interactive explorer (funnel, objects,
                       actions, automations, KPIs, reference graph)
 
@@ -19,7 +19,7 @@ from collections import defaultdict
 
 import yaml
 
-REF_RE = re.compile(r"\b(object|process|automation|action|kpi|prompt|draft|system|property):([a-z0-9_./=-]+)")
+REF_RE = re.compile(r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop):([a-z0-9_./=-]+)")
 
 
 def load(path):
@@ -308,7 +308,7 @@ function kpis(){
   D.kpis.map(k=>`<tr><td><b>${k.name}</b><div class="muted">${k.definition||""}</div></td><td>${k.level}${k.scope?"<br><span class=muted>"+k.scope+"</span>":""}</td><td><code>${k.formula}</code></td><td>${k.grain}</td><td>${k.target?(k.target.operator+" "+k.target.value+" "+(k.target.unit||"")):""}</td><td>${k.owner}</td></tr>`).join("")+`</table>`;
  main.appendChild(div);
 }
-const COLORS={"object-type":"#0969da",process:"#1a7f37",automation:"#8250df",action:"#bf3989","kpi":"#9a6700",prompt:"#1b7c83",draft:"#57606a",system:"#24292f",binding:"#d0d7de","agent-policy":"#b42318"};
+const COLORS={"object-type":"#0969da",process:"#1a7f37",automation:"#8250df",action:"#bf3989","kpi":"#9a6700",prompt:"#1b7c83",draft:"#57606a",system:"#24292f",binding:"#d0d7de","agent-policy":"#b42318",loop:"#bc4c00"};
 function graph(){
  const div=document.createElement("div");div.id="net";main.appendChild(div);
  const nodes=D.graph.nodes.map(n=>({id:n.id,label:n.id.split(":")[1],title:n.id,color:COLORS[n.kind]||"#57606a",font:{color:"#fff"},shape:"box"}));
