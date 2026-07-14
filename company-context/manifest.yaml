@@ -43,4 +43,8 @@ artifacts:
     path: company/market/competitors.md
     summary: Fictional company-level competitor archetypes and comparison dimensions.
     load_when: Comparing company-wide alternatives or preparing a competitive overview.
-product_groups: []
+product_groups:
+  - id: commerce-analytics
+    path: product-groups/commerce-analytics/manifest.yaml
+    summary: Analytics products for mid-market e-commerce brands and commercial teams.
+    load_when: Working on commerce analytics audiences, GTM, positioning, or products.

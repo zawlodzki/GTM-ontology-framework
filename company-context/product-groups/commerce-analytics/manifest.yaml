@@ -1,0 +1,36 @@
+kind: product-group-manifest
+id: commerce-analytics
+version: 0.1.0
+updated: 2026-07-14
+example: true
+language: en
+name: Commerce Analytics
+summary: >
+  Analytics products for mid-market e-commerce brands that need trusted customer,
+  product, and revenue insights without building a custom analytics stack.
+inherits:
+  - company-profile
+  - company-strategy
+  - company-commercial-model
+  - company-operating-model
+agent_instructions: >
+  Load only the artifact matching the task. The ICP is self-contained and does not
+  require personas or buying context. Product and GTM artifacts are indexed here
+  when available; do not infer missing artifacts.
+artifacts:
+  - id: commerce-analytics-icp
+    kind: icp
+    path: audience/icp.md
+    summary: Self-contained ideal customer profile, qualification criteria, and exclusions.
+    load_when: Qualifying an organization for Commerce Analytics or explaining its ICP.
+  - id: commerce-analytics-personas
+    kind: personas
+    path: audience/personas.md
+    summary: Head of E-commerce and CMO buying roles, goals, concerns, and influence.
+    load_when: Tailoring messaging or decisions to Commerce Analytics buying roles.
+  - id: commerce-analytics-buying-context
+    kind: buying-context
+    path: audience/buying-context.md
+    summary: Problems, triggers, buying jobs, committee dynamics, and evaluation evidence.
+    load_when: Understanding why and how a Commerce Analytics purchase happens.
+products: []
