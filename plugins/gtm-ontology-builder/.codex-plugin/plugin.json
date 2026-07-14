@@ -1,6 +1,6 @@
 {
   "name": "gtm-ontology-builder",
-  "version": "1.2.0+codex.20260714193635",
+  "version": "1.2.1+codex.20260714194713",
   "description": "Build an agent-ready business ontology for GTM systems, including CRM objects, pipelines, automations, agent actions, and KPIs.",
   "author": {
     "name": "Grzegorz Zaw\u0142odzki",
