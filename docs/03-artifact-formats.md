@@ -154,8 +154,8 @@ resolutions:
   - object: object:person
     natural_keys: [email]              # ordered by preference
     sources:                           # systems contributing this object
-      - {system: system:pipedrive, role: master}
-      - {system: system:mailerlite, role: secondary}
+      - {system: "system:pipedrive", role: master}
+      - {system: "system:mailerlite", role: secondary}
     inclusion: union                   # union | intersection
     conflict_strategy: master_wins     # master_wins | most_recent | per_field
     per_field: []                      # if per_field: [{property, winner: system ref}]

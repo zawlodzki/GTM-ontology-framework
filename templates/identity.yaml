@@ -7,11 +7,11 @@ resolutions:
   - object: object:person
     natural_keys: [email]          # ordered by preference
     sources:
-      - {system: system:pipedrive, role: master}
-      - {system: system:mailerlite, role: secondary}
+      - {system: "system:pipedrive", role: master}
+      - {system: "system:mailerlite", role: secondary}
     inclusion: union               # union = everyone; intersection = only present in all
     conflict_strategy: master_wins # master_wins | most_recent | per_field
-    per_field: []                  # if per_field: [{property: phone, winner: system:pipedrive}]
+    per_field: []                  # if per_field: [{property: phone, winner: "system:pipedrive"}]
     match:                         # dedup rules (optional). See docs/03-artifact-formats.md A7.
       keys:                        # combinations asserting "same record"; strongest first
         - {fields: [email], type: deterministic}
@@ -28,7 +28,7 @@ resolutions:
   - object: object:organization
     natural_keys: [domain, vat_id]
     sources:
-      - {system: system:pipedrive, role: master}
+      - {system: "system:pipedrive", role: master}
     inclusion: union
     conflict_strategy: master_wins
     match:

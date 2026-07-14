@@ -5,7 +5,7 @@ resolutions:
   - object: object:person
     natural_keys: [email]
     sources:
-      - {system: system:pipedrive, role: master}
+      - {system: "system:pipedrive", role: master}
     inclusion: union
     conflict_strategy: master_wins
     # When email marketing (e.g. Mailerlite) is added: append as secondary source,
@@ -23,7 +23,7 @@ resolutions:
   - object: object:organization
     natural_keys: [domain]
     sources:
-      - {system: system:pipedrive, role: master}
+      - {system: "system:pipedrive", role: master}
     inclusion: union
     conflict_strategy: master_wins
     match:
