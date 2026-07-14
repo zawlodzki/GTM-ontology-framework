@@ -1,6 +1,32 @@
 kind: agent-policy
 id: agent-policy
-meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-14}
+
+permission_ladder:
+  levels:
+    - level: 1
+      name: read-only
+      description: The agent reads live data and reports. No writes anywhere.
+    - level: 2
+      name: propose-then-approve
+      description: The agent prepares every write; a human approves before anything lands.
+    - level: 3
+      name: autonomous-with-log
+      description: The agent acts on its own within its action contracts; the steward reviews the log and spot-checks runs.
+  promotion:
+    - from: 1
+      to: 2
+      criteria:
+        - Minimum 2 weeks of stable read-only operation, zero unauthorized write attempts.
+    - from: 2
+      to: 3
+      criteria:
+        - Steward confirms 9/10 weekly runs need no correction, 4 consecutive weeks.
+  ceiling:
+    - description: Prices, contracts, and decisions about people always go through a human.
+      max_level: 2
+      applies_to: [property:deal.amount, action:advance-deal-stage]
+
 agents:
   - id: sdr-agent
     description: >
@@ -14,11 +40,16 @@ agents:
          condition: "target stage terminal OR deal.amount > 50000"}
     prohibitions:
       - Never delete any record (deal, person, organization, activity, note).
-      - Never send external communication: no emails, no LinkedIn, no sequences.
+      - "Never send external communication: no emails, no LinkedIn, no sequences."
       - Never write fields marked writable:false in bindings (lifecycle_stage, engagement_score, icp_fit, source_channel, email, domain).
       - Never move deals backward or between non-adjacent stages.
       - Never create or modify Pipedrive automations, filters, or fields.
+      - Never copy values of properties marked pii:true into the repo or long-lived context; read them live.
     rate_limits: {actions_per_hour: 30}
+    max_permission_level: 2
+
 defaults:
   unlisted_actions: forbidden
   draft_artifacts: read-as-hypothesis-only
+  missing_data: stop-and-ask
+  pii_data: read-live-only-never-copy

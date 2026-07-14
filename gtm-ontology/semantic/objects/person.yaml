@@ -2,7 +2,7 @@ kind: object-type
 id: person
 name: Person
 description: An individual we market or sell to, i.e. lead, contact, or user at a customer.
-meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-14}
 aliases: [contact, lead]
 
 properties:
@@ -11,12 +11,20 @@ properties:
     type: string
     semantics: Primary work email. Natural key across all systems (see binding/identity.yaml).
     filled_by: mixed
+    pii: true
+    allowed_in_context: false
+    freshness: live-only
+    retention: "source-system policy: delete 24 months after last activity"
 
   - id: full_name
     name: Full Name
     type: string
     semantics: Display name as entered from form or SDR research.
     filled_by: mixed
+    pii: true
+    allowed_in_context: false
+    freshness: live-only
+    retention: "source-system policy: delete 24 months after last activity"
 
   - id: job_title
     name: Job Title
@@ -33,6 +41,12 @@ properties:
       automation is down; check its fingerprint timing.
     filled_by: automation
     filled_by_detail: automation:lead-scoring
+    freshness: live-only
+    quality_notes: >
+      Scores inflate during newsletter sends; a spike alone is not MQL evidence.
+      Cross-check what drove the jump before trusting it.
+    meta: {source: learned, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-10,
+           evidence: "loop:lead-qualification journal, git 2026-07-08: 4/10 runs over-scored during the July newsletter blast"}
 
   - id: lifecycle_stage
     name: Lifecycle Stage

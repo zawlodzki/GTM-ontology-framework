@@ -1,7 +1,7 @@
 kind: manifest
 ontology: acme-analytics
-version: 1.2.0
-updated: 2026-07-13
+version: 1.3.0
+updated: 2026-07-14
 business_summary: >
   Acme Analytics sells a product-analytics SaaS to mid-market e-commerce companies
   (ACV EUR 12-40k, sales cycle 4-8 weeks). GTM: inbound content + outbound SDR.
@@ -12,7 +12,9 @@ agent_instructions: >
   Read this manifest first; load artifacts per load_when. Never act on artifacts
   with meta.status: draft. Check governance/agent-policy.yaml before executing
   any action. Field-level authorship is in semantic objects (filled_by) and
-  automation fingerprints; never overwrite bot-managed fields.
+  automation fingerprints; never overwrite bot-managed fields. Missing data =
+  stop and ask, never invent. Loops run at their permission_level from the
+  ladder in governance/agent-policy.yaml.
 systems:
   - {id: pipedrive, role: crm, access: [mcp, api]}
   - {id: n8n, role: automation-platform, access: [api]}
@@ -73,6 +75,10 @@ artifacts:
     kind: action
     summary: "Agent action: move deal forward respecting criteria; approval for won/>50k"
     load_when: "asked to progress a deal"
+  - path: dynamic/loops/lead-qualification.yaml
+    kind: loop
+    summary: "Loop: sdr-agent qualifies from transcripts at level 2; Piotr stewards weekly"
+    load_when: "running or reviewing the lead-qualification loop, weekly steward review"
   - path: dynamic/prompts/lead-qualification.md
     kind: prompt
     summary: "Production prompt behind ai_qualification_summary/score (v3)"
@@ -95,5 +101,5 @@ artifacts:
     load_when: "stage analysis, SDR performance"
   - path: governance/agent-policy.yaml
     kind: agent-policy
-    summary: "sdr-agent may qualify/advance/log; no deletes, no external comms"
+    summary: "Permission ladder (3 levels) + sdr-agent allowlist; missing data = stop-and-ask"
     load_when: "ALWAYS before executing any action"

@@ -25,6 +25,13 @@ methods declared in `binding/systems/` (Pipedrive: MCP preferred).
   automation `data_fingerprint`s before trusting or changing them.
 - Moving deals between stages: only via `action:advance-deal-stage`, only forward,
   only when the current stage's exit criteria hold on LIVE Pipedrive data.
+- Missing data = stop and ask. Never fill a gap with a guess; `abstain_when` on
+  the action and `defaults.missing_data` in agent-policy are binding.
+- Properties marked `pii: true` are read live from the source system. Never copy
+  their values into this repo, a prompt, or any long-lived context.
+- Loops run at their `permission_level` from the ladder in
+  `governance/agent-policy.yaml`: 1 = read-only, 2 = a human approves every
+  write, 3 = autonomous with log. The ladder gates the loop as a whole.
 - Files in `render/` are generated views for humans: never edit, never cite as source.
 
 ## Layout
@@ -35,6 +42,6 @@ methods declared in `binding/systems/` (Pipedrive: MCP preferred).
 | `context/` | business context, glossary |
 | `semantic/objects/` | deal, person, organization: semantics, enum definitions |
 | `binding/` | Pipedrive profile, bindings (field-key hashes), identity, discovery snapshots |
-| `dynamic/` | new-business process, 3 automations (+fingerprints), 2 actions, prompt, draft |
+| `dynamic/` | new-business process, 3 automations (+fingerprints), 2 actions, 1 loop, prompt, draft |
 | `measurement/kpis/` | new-arr, win-rate, qualified-to-demo-conversion |
-| `governance/agent-policy.yaml` | sdr-agent permissions; check before acting |
+| `governance/agent-policy.yaml` | permission ladder + sdr-agent permissions; check before acting |
