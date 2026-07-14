@@ -13,33 +13,64 @@ meta:
 This profile is self-contained. Use it to qualify an organization without loading
 personas, buying context, go-to-market, positioning, or product documents.
 
-## Ideal organization
+## Market basis
 
-A mid-market e-commerce brand selling directly to consumers in Europe or the
-United Kingdom. It has enough transaction and behavioral data to need analysis
-beyond storefront reports, but it does not want to maintain a fully custom
-analytics stack.
+**Primary basis:** job-to-be-done.
+
+Commerce teams repeatedly reconcile customer, product, and revenue data to make
+trading, retention, merchandising, and planning decisions. The relevant market is
+made up of organizations performing this workflow, not every company that happens
+to match a commerce-industry, revenue, region, or headcount filter.
+
+**Category context:** governed commerce analytics that replaces or extends
+storefront reports, spreadsheet reporting, and custom warehouse-and-BI workflows.
+
+Observable evidence of participation in this market includes recurring commerce
+reporting, repeated metric reconciliation, decisions that depend on customer or
+product analysis, or active evaluation of a replacement for the current workflow.
+
+## ICP segment
+
+Within that market, the best fit is a first-party e-commerce brand with enough
+transaction and behavioral data to require analysis beyond storefront reports. It
+wants governed recurring analysis without maintaining a fully custom analytics
+stack and can name both the workflow owner and the decision the analysis supports.
 
 ## Qualification criteria
 
-An organization is a strong fit when all required criteria and at least two
-supporting criteria are true.
+An organization is a strong fit when all market-and-need and operational-readiness
+criteria are true. Need-intensity and firmographic criteria prioritize qualified
+organizations; they do not establish need by themselves.
 
-### Required
+### Market and need fit — required
 
-- Annual online revenue is between EUR 5 million and EUR 150 million.
+- A commercial team performs recurring customer, product, or revenue analysis.
+- The current workflow requires repeated reconciliation, depends on undocumented
+  analysis, or cannot answer an owned commercial question reliably.
+- The organization can name the decision the analysis should improve and the team
+  responsible for acting on it.
+
+### Operational readiness — required
+
 - The company operates a first-party online storefront and controls its transaction data.
 - At least one commercial team owns conversion, retention, or merchandising outcomes.
 - The organization can provide lawful access to order, product, and customer-event data.
 - An accountable business owner will validate metric definitions during onboarding.
 
-### Supporting
+### Need-intensity signals
 
-- The company has 50–500 employees or a commerce team of at least five people.
 - More than one team creates recurring performance reports from the same source data.
 - Analysts spend at least two working days per month reconciling commerce metrics.
 - The business operates across multiple markets, storefronts, or product categories.
 - Leadership reviews customer acquisition, repeat purchase, and product performance monthly.
+
+### Firmographic priority
+
+- Annual online revenue is typically between EUR 5 million and EUR 150 million.
+- The organization sells directly to consumers in Europe or the United Kingdom.
+- The company typically has 50–500 employees or a commerce team of at least five people.
+
+These ranges describe commercial priority, not proof that the workflow or need exists.
 
 ## Data readiness
 
@@ -50,7 +81,7 @@ tracking source. A data warehouse is helpful but not required.
 ## Disqualifiers
 
 - Marketplace-only sellers that cannot access customer-level transaction data.
-- Businesses below EUR 2 million in annual online revenue with only basic reporting needs.
+- Businesses whose reporting needs remain basic and are met by storefront reports.
 - Organizations seeking a general financial reporting or statutory accounting system.
 - Teams unwilling or unable to define an accountable metric owner.
 - Use cases that depend on unlawfully collected data or unidentified data provenance.
@@ -58,7 +89,9 @@ tracking source. A data warehouse is helpful but not required.
 
 ## Quick qualification check
 
-Confirm revenue range, first-party storefront ownership, available data sources,
-commercial owner, current reporting pain, and the decision the buyer expects the
-analysis to improve. If any required criterion is unknown, record it as unknown;
-do not infer fit from brand size or reputation.
+First confirm the recurring workflow, its current failure or cost, the decision it
+supports, and its owner. Then confirm storefront ownership, available data, lawful
+access, and metric-validation ownership. Check disqualifiers before using revenue,
+region, or headcount to prioritize the qualified organization. If any required
+criterion is unknown, record it as unknown; do not infer fit from firmographics,
+brand size, industry, or reputation.

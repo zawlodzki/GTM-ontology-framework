@@ -17,13 +17,25 @@ targeted outbound. Both paths lead to a discovery and data-fit assessment before
 a product recommendation. The company does not offer an unguided self-service
 purchase because metric ownership and data readiness must be confirmed.
 
+## Market targeting
+
+Target organizations showing evidence of the commerce-analysis workflow: recurring
+metric reconciliation, spreadsheet reporting, cross-team definition conflicts, or
+an owned decision that current storefront reports cannot support. Buying triggers
+and category-evaluation signals strengthen priority but do not replace evidence of
+the underlying workflow.
+
+Revenue, headcount, geography, industry, and job titles may narrow or prioritize
+accounts only after a workflow hypothesis exists. Never qualify an account or write
+outreach solely because it matches firmographic filters.
+
 ## Inbound motion
 
 **Primary offer:** practical guidance on commerce metrics, retention analysis,
 and replacing spreadsheet reporting.
 
 1. A prospect engages with educational content, a benchmark, or a product demonstration.
-2. Revenue captures the product group, business problem, organization profile, and data sources.
+2. Revenue captures the recurring workflow, business problem, owned decision, and data sources.
 3. Strong-fit accounts receive a 30-minute discovery call.
 4. Qualified buyers complete a structured data-fit assessment.
 5. Sales recommends Growth or Scale and documents the reason for the choice.
@@ -45,6 +57,8 @@ owner before a technical evaluation begins.
 
 - Use `icp:commerce-analytics-icp` for organizational fit.
 - Load `personas:commerce-analytics-personas` only when tailoring the conversation.
+- Confirm the recurring workflow, its current failure or cost, and its owner first.
+- Confirm operational and data readiness before applying firmographic priority.
 - Route one-team, standard-source needs toward Growth.
 - Route multi-team, multi-source, governance-heavy needs toward Scale.
 - Stop qualification when a required ICP criterion is unknown; record the gap.

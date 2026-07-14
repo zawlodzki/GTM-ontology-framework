@@ -13,35 +13,67 @@ meta:
 This profile is self-contained. Use it to qualify an organization without loading
 personas, buying context, go-to-market, positioning, or product documents.
 
-## Ideal organization
+## Market basis
 
-A data-mature commerce organization in Europe or the United Kingdom that already
-models customer data in a cloud warehouse and needs governed delivery of that data
-to business or engagement systems. It has working data infrastructure but wants to
-reduce custom pipelines and shorten the path from an approved model to operational use.
+**Primary basis:** job-to-be-done.
+
+Data and business teams repeatedly deliver approved warehouse data to operational
+or engagement systems while preserving identity, consent, suppression, ownership,
+and recovery behavior. The relevant market is made up of organizations performing
+this workflow, not every company with a warehouse or a particular technology.
+
+**Category context:** governed warehouse data activation that replaces or extends
+custom reverse-data pipelines, manual exports, native destination connectors, and
+broad customer-data platforms.
+
+Observable evidence of participation in this market includes maintained sync
+scripts, recurring exports, destination-specific mappings, business requests for
+warehouse attributes or audiences, or active evaluation of data-activation tools.
+
+## ICP segment
+
+Within that market, the best fit is a data-mature commerce organization that has a
+trusted modeled layer and an owned use case for governed delivery to business or
+engagement systems. It wants to reduce custom pipelines and shorten the path from
+an approved model to operational use without replacing the warehouse.
 
 ## Qualification criteria
 
-An organization is a strong fit when every required criterion and at least two
-supporting criteria are true.
+An organization is a strong fit when all market-and-need and operational-readiness
+criteria are true. Need-intensity and firmographic criteria prioritize qualified
+organizations; they do not establish need by themselves.
 
-### Required
+### Market and need fit — required
+
+- A team performs or is preparing a recurring warehouse-to-destination delivery workflow.
+- The current approach creates a material reliability, governance, maintenance, or speed problem.
+- A business team owns at least one defined activation use case and success measure.
+- A technical owner and a business owner accept responsibility for production operation and adoption.
+
+### Operational readiness — required
 
 - A production cloud data warehouse contains modeled customer or account data.
 - A technical owner controls warehouse access, schemas, and data-quality expectations.
 - Customer identities can be resolved using documented, lawful identifiers.
-- A business team owns at least one defined activation use case and success measure.
 - At least one destination system can receive governed batch data or audiences.
 - The organization can document consent, suppression, and permitted-use rules.
 
-### Supporting
+### Need-intensity signals
 
-- The warehouse processes more than 10 million customer events per month.
 - Three or more downstream tools depend on overlapping customer attributes.
 - Data engineers maintain recurring reverse-ETL scripts or manual exports.
 - Business teams wait more than one week for new fields or audience definitions.
 - The company operates multiple storefronts, brands, regions, or engagement channels.
 - Security or data governance requires centralized control of activation access.
+
+### Firmographic priority
+
+- The organization operates primarily in Europe or the United Kingdom.
+- The warehouse typically processes more than 10 million customer events per month.
+- The company has multiple brands, regions, engagement channels, or destination systems.
+
+These characteristics describe commercial priority and likely workflow complexity;
+they are not proof that an activation need exists.
 
 ## Data readiness
 
@@ -62,6 +94,9 @@ table with an accountable owner. The warehouse remains the system of record.
 
 ## Quick qualification check
 
-Confirm the warehouse, modeled table, identity key, destination, business use case,
-technical owner, consent rules, expected update frequency, and success measure. If
-any required criterion is unknown, record it as unknown and do not infer readiness.
+First confirm the recurring delivery workflow, the current failure or cost, the
+owned business use case, and its technical and business owners. Then confirm the
+warehouse, modeled table, identity key, destination, consent rules, update frequency,
+and success measure. Check disqualifiers before using geography or scale to prioritize
+the qualified organization. If any required criterion is unknown, record it as
+unknown; do not infer need or readiness from technology, company size, or reputation.

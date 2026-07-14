@@ -15,13 +15,14 @@ inherits:
   - company-operating-model
 agent_instructions: >
   Load only the artifact matching the task. The ICP is self-contained and does not
-  require personas or buying context. Product and GTM artifacts are indexed here
-  when available; do not infer missing artifacts.
+  require personas or buying context. Establish workflow need and operational
+  readiness before using firmographics to prioritize fit. Product and GTM artifacts
+  are indexed here when available; do not infer missing artifacts.
 artifacts:
   - id: commerce-analytics-icp
     kind: icp
     path: audience/icp.md
-    summary: Self-contained ideal customer profile, qualification criteria, and exclusions.
+    summary: Self-contained market basis, need and readiness criteria, priorities, and exclusions.
     load_when: Qualifying an organization for Commerce Analytics or explaining its ICP.
   - id: commerce-analytics-personas
     kind: personas

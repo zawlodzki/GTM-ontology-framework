@@ -39,8 +39,16 @@ ICPs into a fictional company-wide profile.
 - Company artifacts contain only facts shared by all product groups.
 - Group artifacts may specialize company facts but must not silently contradict
   them.
-- An ICP file must be self-contained and must state qualification criteria and
-  disqualifiers directly.
+- An ICP file must be self-contained. It begins with its job-to-be-done or category
+  market basis, then states qualification criteria and disqualifiers directly.
+- Qualify in this order: confirm market participation and need, confirm ownership
+  and operational readiness, check disqualifiers, then use firmographics to rank
+  or narrow the already-qualified market.
+- Firmographics, team names, and job titles never establish need by themselves.
+  Treat them as prioritization filters unless an explicit delivery, legal, or
+  product constraint makes one a hard boundary.
+- Record unknown market-need or readiness criteria as unknown. Do not infer them
+  from company size, industry, funding, reputation, technology, team, or role.
 - This is a synthetic example. Treat its artifacts as canonical only within the
   Acme Analytics scenario and never as claims about a real business.
 - No artifact in this directory authorizes an external action or a system write.
