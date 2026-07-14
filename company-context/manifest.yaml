@@ -1,0 +1,26 @@
+kind: company-context-manifest
+id: acme-analytics-company-context
+version: 0.1.0
+updated: 2026-07-14
+example: true
+language: en
+company:
+  id: acme-analytics
+  name: Acme Analytics
+  domain: https://acme-analytics.example
+agent_instructions: >
+  Load this manifest first. Follow load_when and open only the relevant company
+  artifact or product-group manifest. Never merge product-group ICPs. All content
+  is synthetic and canonical only within this fictional example.
+artifacts:
+  - id: company-profile
+    kind: company-profile
+    path: company/profile.md
+    summary: Fictional company identity, business model, portfolio, and boundaries.
+    load_when: Understanding what Acme Analytics is and what the company does.
+  - id: company-strategy
+    kind: company-strategy
+    path: company/strategy.md
+    summary: Company-wide mission, positioning, strategic choices, and differentiators.
+    load_when: Working on company strategy, narrative, or shared differentiation.
+product_groups: []
