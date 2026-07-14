@@ -10,6 +10,7 @@ The conceptual model of the business, independent of any tool. Canonical **objec
 - **Enum definitions**: for every dropdown value, the business conditions under which it applies (e.g. what must be true for `lifecycle_stage = SQL`).
 - **AI-field provenance**: for fields written by AI (e.g. qualification summary from a call transcript), a reference to the prompt that produces them.
 - **Fill authorship** (`filled_by`): `human | automation | ai | integration | system`. This is the single most important fact for an agent interpreting a value.
+- **User access** (`user_access`, optional): `editable | read-only | mixed` — whether a user is meant to fill the field or it is read-only because a machine writes it. A separate axis from `filled_by` (the source) and from binding `writable` (whether an *agent* may write it through a given system).
 
 An object type is canonical, not system-shaped: `Person` collapses Pipedrive "person", Mailerlite "subscriber", HubSpot "contact". Never model one object type per source table (see anti-patterns in `04-extending.md`).
 

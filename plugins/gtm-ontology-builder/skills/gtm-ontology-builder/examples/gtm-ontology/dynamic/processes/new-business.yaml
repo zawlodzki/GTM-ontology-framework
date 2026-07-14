@@ -6,6 +6,7 @@ description: >
   terminal won/lost map to Pipedrive deal status (see bindings notes).
 meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
 type: pipeline
+operational_status: active
 object: object:deal
 state_property: property:deal.stage
 

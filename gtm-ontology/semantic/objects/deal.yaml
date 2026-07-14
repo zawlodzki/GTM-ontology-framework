@@ -24,6 +24,7 @@ properties:
       transitions, SLAs) in process:new-business; this enum only lists values.
     filled_by: mixed
     filled_by_detail: "SDR/AE manually; agents via action:advance-deal-stage"
+    user_access: mixed
     enum:
       - {value: incoming, definition: "see process:new-business/incoming", set_by: "human or automation:lead-scoring"}
       - {value: qualified, definition: "see process:new-business/qualified", set_by: "human: SDR; agent with action:advance-deal-stage"}
@@ -41,6 +42,7 @@ properties:
       Qualified; must equal proposal value from Proposal onward.
     filled_by: human
     filled_by_detail: AE
+    user_access: editable
     required: {from_stage: "process:new-business/qualified"}
 
   - id: expected_close_date
@@ -56,6 +58,7 @@ properties:
     semantics: How this opportunity originated. Never changed after creation.
     filled_by: mixed
     filled_by_detail: "automation:lead-scoring for inbound; SDR for outbound"
+    user_access: read-only
     enum:
       - {value: inbound-form, definition: "Website demo-request or content form submission", set_by: "automation:lead-scoring"}
       - {value: outbound, definition: "Sourced by SDR sequence (email/LinkedIn)", set_by: "human: SDR"}
@@ -78,6 +81,7 @@ properties:
       automation:qualify-from-transcript; empty if no transcript matched,
       never interpret empty as 'poorly qualified'.
     filled_by: ai
+    user_access: read-only
     ai:
       prompt_ref: prompt:lead-qualification
       inputs: [Fireflies transcript, deal.amount, organization.industry, deal.source_channel]
@@ -91,6 +95,7 @@ properties:
       0-100, parsed from the SCORE line of ai_qualification_summary. >= 70 supports
       advancing to Demo. A score, not a verdict; humans/agents weigh it with context.
     filled_by: ai
+    user_access: read-only
     ai:
       prompt_ref: prompt:lead-qualification
       trigger: "same run as ai_qualification_summary"

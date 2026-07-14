@@ -5,6 +5,10 @@ name: New Business Pipeline
 description: From inbound/outbound lead to closed deal.
 meta: {source: declared, status: draft, updated: 2026-01-01}
 type: pipeline                     # pipeline | lifecycle | workflow
+operational_status: active         # optional; active | deprecated | archived — state IN THE CRM,
+                                   # not ontology confirmation (meta.status). active = new records
+                                   # enter it; deprecated = closed to new records, open ones still
+                                   # finish; archived = read-only history, agents route nothing here.
 object: object:deal
 state_property: property:deal.stage    # which property holds current state
 

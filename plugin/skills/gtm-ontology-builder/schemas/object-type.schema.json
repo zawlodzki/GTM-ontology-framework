@@ -49,6 +49,7 @@
         "semantics": {"type": "string"},
         "filled_by": {"enum": ["human", "automation", "ai", "integration", "system", "mixed"]},
         "filled_by_detail": {"type": "string"},
+        "user_access": {"enum": ["editable", "read-only", "mixed"]},
         "required": {},
         "default": {},
         "validation": {"type": "string"},

@@ -64,6 +64,7 @@ terms:
 | `semantics` | R | what the value MEANS; when it changes; how to interpret edge cases |
 | `filled_by` | R | `human / automation / ai / integration / system / mixed` |
 | `filled_by_detail` | O | ref or prose: which role/automation/integration |
+| `user_access` | O | `editable / read-only / mixed` — is a **user** meant to fill it, or is it read-only because a machine writes it? Orthogonal to `filled_by` (the source) and to binding `writable` (agent write per system). Omit if implied by `filled_by`; state it explicitly when `filled_by: mixed` or when a machine-sourced value must never be hand-edited |
 | `required` | O | boolean or `from_stage: <process stage ref>` |
 | `default` | O | default value on record creation |
 | `validation` | O | validation rule, e.g. `regex:^[0-9]{10}$` (tax id) or expression; agents validate before write |
@@ -161,6 +162,7 @@ resolutions:
 | `kind` | R | `process` |
 | `id`, `name`, `description`, `meta` | R | |
 | `type` | R | `pipeline / lifecycle / workflow` |
+| `operational_status` | O | `active / deprecated / archived` — state **in the CRM**, distinct from `meta.status` (ontology confirmation). `active` = new records enter it; `deprecated` = closed to new records, open ones still finish; `archived` = read-only history, agents route nothing here |
 | `object` | R | `object:` ref the process moves |
 | `state_property` | R | `property:` ref holding current state (stage field, lifecycle enum) |
 | `stages[]` | R | see below |

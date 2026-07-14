@@ -20,6 +20,9 @@ properties:
       contract value, excl. VAT; set at qualification, updated at proposal").
     filled_by: human              # human|automation|ai|integration|system|mixed
     filled_by_detail: "Account Executive"
+    user_access: editable         # optional; editable|read-only|mixed — is a USER meant to fill it,
+                                  # or is it read-only because a machine writes it? Orthogonal to
+                                  # filled_by (source) and to binding.writable (agent write per system).
     required: {from_stage: "process:new-business/qualified"}
     default: null                 # default value on record creation (optional)
     validation: "value > 0"       # validation rule, e.g. "regex:^[0-9]{10}$" for tax id (optional)
@@ -52,6 +55,7 @@ properties:
     type: text
     semantics: LLM-generated qualification digest based on the first discovery call.
     filled_by: ai
+    user_access: read-only        # written by automation; users read it, never hand-edit
     ai:
       prompt_ref: prompt:lead-qualification
       inputs: [call transcript (Fireflies), deal.amount, org.industry]

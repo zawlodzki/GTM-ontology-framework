@@ -11,6 +11,7 @@
     "description": {"type": "string"},
     "meta": {"$ref": "#/$defs/meta"},
     "type": {"enum": ["pipeline", "lifecycle", "workflow"]},
+    "operational_status": {"enum": ["active", "deprecated", "archived"]},
     "object": {"type": "string", "pattern": "^object:"},
     "state_property": {"type": "string", "pattern": "^property:"},
     "stages": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/stage"}},
