@@ -30,6 +30,32 @@ Systems change under you. Scheduled (weekly/monthly) or before any major agent d
 3. Classify: **breaking** (bound field removed, stage deleted → validation fails, agents on this area paused), **semantic** (new enum option with no definition → Phase 3 mini-interview), **cosmetic** (label rename → update binding).
 4. Record in `CHANGELOG.md`, bump version.
 
+## Care mode
+
+Post-deployment upkeep, 1–2 days a month in practice. Drift detection (above) watches the *systems*; care mode watches the *content* of the ontology and the loops running on it.
+
+**Mechanical pass** — one call:
+
+```
+python tools/lint_ontology.py <ontology-dir>
+```
+
+Schema validation, reference resolution, manifest completeness, orphaned artifacts, unused prompts, enum gaps, confirmed→draft references, overdue facts (`last_verified + verify_every`), expired facts (`valid_until`), pii consistency, loop/ladder consistency. Errors block; warnings are the steward's review list.
+
+**Semantic pass** — what only an LLM (or a human) can judge; run it over the lint report:
+
+- glossary terms vs enum-value definitions: do they still say the same thing?
+- property `semantics` vs `business-context.md`: has the business moved?
+- prompt text vs the current field and stage definitions it writes into.
+- `overdue` warnings: re-verify each fact with its owner, update `last_verified`, or retire the fact.
+
+**Loop review** (weekly with the steward, per loop):
+
+1. Walk the last ~10 runs: what worked, what the steward corrected, what the agent abstained on.
+2. Update the loop's `metrics` (share of runs accepted without correction, steward time).
+3. Corrections become commits: prompt updates, new rules, sharper enum definitions — recorded as `source: learned` with `evidence` pointing at the run. The commit history IS the loop journal.
+4. Decide: promote, hold, or demote the loop on the A13 ladder per its `promotion_criteria`. Ceiling rules (prices, contracts) are not negotiable.
+
 ## Access-method changes
 
 API → MCP or vice versa touches only `systems/<id>.yaml` (access block) and `actions/*.implementations`. Semantic/dynamic layers untouched; this separation is the point of the binding layer.

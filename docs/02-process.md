@@ -71,17 +71,18 @@ Elicit, per artifact:
 **Outputs:** filled semantic enum/AI blocks, `dynamic/processes/`, `dynamic/automations/`, `dynamic/prompts/`, `measurement/kpis/`.
 **Gate:** per-artifact confirmation; statuses flip to `confirmed`.
 
-## Phase 4: Agent action layer
+## Phase 4: Agent actions, loops & policy
 
-**Goal:** define what agents may do, as contracts.
+**Goal:** define what agents may do, as contracts, and wrap the recurring jobs in loops.
 
 Steps:
 1. From the Phase 0 use cases, list candidate actions (create/update records, qualify leads, advance stages, log activities, send sequences…).
-2. For each action define: preconditions (in ontology terms, e.g. "all exit criteria of current stage met"), inputs, ordered workflow, effects, side effects (automations it will trigger; cross-check `automations/`!), approval requirement, idempotency, error handling, and per-system implementation (MCP tool name / endpoint).
-3. Write `governance/agent-policy.yaml`: agent roles → allowed actions, approval gates, hard prohibitions (e.g. never delete, never email without approval), rate limits.
+2. For each action define: preconditions (in ontology terms, e.g. "all exit criteria of current stage met"), inputs, ordered workflow, effects, side effects (automations it will trigger; cross-check `automations/`!), approval requirement, **abstain conditions** (`abstain_when`: when the agent must stop and ask instead of guessing — missing inputs, low confidence, price/contract territory; recommended for every action with write effects), idempotency, error handling, and per-system implementation (MCP tool name / endpoint).
+3. Write `governance/agent-policy.yaml`: the **permission ladder** (level definitions, promotion criteria, ceiling — what never goes autonomous), agent roles → allowed actions, approval gates, hard prohibitions (e.g. never delete, never email without approval), rate limits, and the containment defaults (`missing_data: stop-and-ask`).
+4. Wrap each recurring delegated job in a **loop** (`dynamic/loops/<id>.yaml`): steward (`owner`), starting `permission_level: 1` (read-only), refs to its actions/prompts/process, weekly metrics (share of runs accepted without correction, steward time), journal pointer. A loop without a steward does not ship.
 
-**Outputs:** `dynamic/actions/<id>.yaml`, `governance/agent-policy.yaml`.
-**Gate:** user confirms every action contract and the policy. Actions referencing draft artifacts are invalid.
+**Outputs:** `dynamic/actions/<id>.yaml`, `dynamic/loops/<id>.yaml`, `governance/agent-policy.yaml`.
+**Gate:** user confirms every action contract, the policy, and each loop's steward and level. Actions referencing draft artifacts are invalid.
 
 ## Phase 5: Validation & compilation
 
@@ -99,6 +100,11 @@ Checks (automatable; fail = fix before shipping):
 9. No confirmed artifact references a draft artifact.
 10. Manifest lists every artifact; summaries ≤ 140 chars; manifest under token budget.
 11. Every `draft:` reference resolves to an A14 file; every stage `probability` is in [0,1] and non-decreasing along the happy path (terminal: won=1.0, lost=0.0).
+12. Every loop has an owner; its `permission_level` and `target_level` exist in the agent-policy ladder and respect the agent's `max_permission_level`.
+13. Every property with `pii: true` has `allowed_in_context: false` and `freshness: live-only`.
+14. No artifact is past its `valid_until`; facts past `last_verified + verify_every` are re-verified or retired.
+
+Most of the list runs in one call: `python tools/lint_ontology.py <ontology-dir>` covers schema validation, reference resolution, manifest completeness, enum gaps, draft refs, pii, temporality, and loop/ladder consistency. What stays manual: snapshot-bound checks (3), business-judgment checks (5–7), and probability monotonicity (11).
 
 Then compile the agent entry points:
 
@@ -119,6 +125,7 @@ Then compile the agent entry points:
 ## Phase 6: Maintenance & extension
 
 - **Drift detection** (scheduled): re-run Phase 1, diff snapshots. New/renamed/deleted fields, new stages, new automations → open items; bindings referencing removed fields → validation failures.
+- **Care mode** (weekly to monthly; 1–2 days a month in practice): run `tools/lint_ontology.py` for the mechanical health report, then the semantic passes only an LLM can do — glossary vs enum definitions, property `semantics` vs business context, prompt text vs current field definitions. Review each loop's journal (git history), update its metrics, promote or demote it on the ladder per the agent-policy criteria. Corrections land in the ontology as `source: learned` facts with `evidence`, committed. Details in `04-extending.md`.
 - **New system** (email marketing, ERP…): run Phases 0–5 scoped to that system; extend `identity.yaml` with cross-system natural keys; add links from new objects to existing ones. Details in `04-extending.md`.
 - **Prompt/automation changes**: update artifact + fingerprint, bump version, changelog.
 
@@ -177,5 +184,13 @@ Use verbatim or adapt. Record answers directly into artifacts (`source: declared
 ## Q6: Per agent action
 - Should an agent do this autonomously, with approval, or never?
 - What must be verified before executing? Correct order of operations?
+- When should the agent stop and ask instead of proceeding? (missing data, low confidence, prices/contracts → `abstain_when`)
 - What does "done" look like? How do we detect partial failure?
 - What must an agent NEVER do in this area?
+
+## Q7: Per loop
+- Who stewards this loop? (no steward, no production)
+- What does an acceptable run look like? What share of runs is acceptable without correction today?
+- What may never be automated inside this loop? (→ ladder ceiling)
+- What would promotion to the next ladder level require, and who decides?
+- Where do corrections from the weekly review go: prompt, rules, enum definitions? (journal → `learned` facts)

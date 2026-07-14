@@ -39,13 +39,14 @@ Two halves:
 - **Actions**: contracts for agent-executable operations: preconditions, inputs, ordered workflow steps, effects, side effects (incl. automations they will trigger!), approval requirements, idempotency, error handling, and per-system implementation (which MCP tool / API endpoint).
 - **Prompts**: versioned prompt files behind AI-filled fields and AI-executed actions.
 - **Drafts**: communication templates (email/SMS) referenced from process stages; agents use them as approved content, never free-compose external messages.
+- **Loops**: the recurring jobs delegated to agents. Each loop has a human steward (`owner` — no steward, no production), a current rung on the permission ladder, refs to the actions and prompts it runs, weekly metrics (share of runs accepted without correction, steward time), and a journal pointer — git commit history is the journal. The loop, not the agent, is the unit of trust: the ladder gates the loop as a whole.
 - **Playbooks** (optional): multi-action sequences for larger jobs.
 
 ### Layer 4: Measurement & Governance (*how success is measured, what agents may do*)
 
 - **KPIs** at three levels (company, process, stage), each with formula bound to ontology terms, grain, target, owner, and source of truth.
 - **Data quality rules** (largely derivable from stage `required_properties` and entry criteria).
-- **Agent policy**: allowed actions per agent role, approval gates, hard prohibitions, rate limits.
+- **Agent policy**: the permission ladder (level definitions, promotion criteria, ceiling — prices and contracts never go autonomous), allowed actions per agent role, approval gates, hard prohibitions, rate limits, and containment defaults (missing data = stop-and-ask, never invent).
 
 ## 2. Artifact catalog
 
@@ -64,15 +65,16 @@ Two halves:
 | A10 | `actions/<id>.yaml` | 3 | YAML | action | `action.schema.json` |
 | A11 | `prompts/<id>.md` | 3 | Markdown + YAML frontmatter | prompt | none |
 | A12 | `kpis/<id>.yaml` | 4 | YAML | KPI (grouping allowed) | `kpi.schema.json` |
-| A13 | `agent-policy.yaml` | 4 | YAML | ontology | none (see formats doc) |
+| A13 | `agent-policy.yaml` | 4 | YAML | ontology | `agent-policy.schema.json` |
 | A14 | `drafts/<id>.md` | 3 | Markdown + YAML frontmatter | communication template | none (see formats doc) |
+| A15 | `loops/<id>.yaml` | 3 | YAML | loop | `loop.schema.json` |
 
 Grouping rule: artifacts marked "one per X" may be grouped into a single file (a YAML list) while the ontology is small (< ~10 entries of that kind); split into per-entity files when they grow, so agents can load them individually.
 
 ## 3. Conventions
 
 - **IDs**: kebab-case, unique within artifact kind (`new-business`, `advance-deal-stage`).
-- **Cross-references**: `kind:id`, e.g. `object:deal`, `property:deal.lifecycle_stage`, `automation:lead-scoring`, `kpi:win-rate`, `action:advance-deal-stage`, `prompt:lead-qualification`, `process:new-business`, `system:pipedrive`. Validators must resolve every reference.
+- **Cross-references**: `kind:id`, e.g. `object:deal`, `property:deal.lifecycle_stage`, `automation:lead-scoring`, `kpi:win-rate`, `action:advance-deal-stage`, `prompt:lead-qualification`, `process:new-business`, `system:pipedrive`, `loop:lead-qualification`. Validators must resolve every reference.
 - **Files** are referenced by ontology-root-relative path.
 - **Names**: object types PascalCase in `name`, kebab-case in `id`. Link labels UPPER_SNAKE_CASE (`BELONGS_TO`, `ATTENDED`).
 - **Every YAML artifact** starts with `kind:` and `id:`.
@@ -81,16 +83,24 @@ Grouping rule: artifacts marked "one per X" may be grouped into a single file (a
 
 ```yaml
 meta:
-  source: discovered | inferred | declared
+  source: discovered | inferred | declared | learned
     # discovered = introspected from the system
     # inferred   = proposed by AI, needs human confirmation
     # declared   = stated by a human (business logic not present in any system)
+    # learned    = distilled from observed loop runs; cite the run in evidence
   status: draft | confirmed
   confirmed_by: <person>        # required when status: confirmed and source != discovered
   updated: YYYY-MM-DD
+  evidence: <run / journal entry>   # required in practice for source: learned
+  last_verified: YYYY-MM-DD     # when a human last checked this is still true
+  verify_every: 90d             # re-verification cadence: <n>d|w|m|y
+  valid_from: YYYY-MM-DD        # for facts with a validity window
+  valid_until: YYYY-MM-DD       # price lists, KPI targets, SLAs...
 ```
 
 Rule: **agents must not act on `status: draft` artifacts** (they may read them as hypotheses). Actions and agent-policy must reference only confirmed artifacts.
+
+Temporality rules: a fact past `last_verified + verify_every` is **overdue** — the lint warns and the steward re-verifies it. A fact past `valid_until` is **expired** — the lint treats it as an error, because the artifact asserts its own invalidity. Facts distilled from loop runs enter the ontology as `source: learned` with `evidence` pointing at the run or journal entry, so corrections from weekly reviews survive as auditable facts instead of dying in a chat.
 
 ## 4. Progressive disclosure
 

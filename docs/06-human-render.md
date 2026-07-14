@@ -6,7 +6,8 @@ humans get renders. One place to edit, no drifting copies.
 Tooling: `python tools/render_ontology.py <ontology-dir>` generates everything below
 into `<ontology-dir>/render/`: per-process table + Mermaid funnel (`process-<id>.md`),
 field dictionary (`fields.md`), action catalog (`actions.md`), artifact reference graph
-(`graph.md`), and a self-contained interactive `explorer.html` (funnel with per-stage
+(`graph.md`; loops render as nodes with edges to their actions, prompts, and process),
+and a self-contained interactive `explorer.html` (funnel with per-stage
 business logic, objects, actions, automations with fingerprints, KPIs, graph view).
 
 ## Renders

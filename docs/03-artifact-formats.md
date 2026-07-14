@@ -71,7 +71,11 @@ terms:
 | `enum[]` | R if type=enum | see below |
 | `ai` | R if filled_by=ai | `{prompt_ref (prompt:id), inputs[], trigger, regenerate_policy}` |
 | `quality_notes` | O | known issues (stale, misused) |
-| `meta` | O | per-property provenance override |
+| `pii` | O | `true` = personal data. Forces `allowed_in_context: false` and `freshness: live-only` (schema-enforced): the value stays in the source system, read live, never copied into the repo, a prompt, or long-lived context |
+| `allowed_in_context` | O | may the VALUE appear in repo files / prompts / agent context? `false` for pii. Independent of read access via bindings |
+| `retention` | O | retention rule enforced in the source system, in prose (e.g. "delete 24 months after last activity") |
+| `freshness` | O | `live-only / static`. `live-only` = never materialize the value into a file (pipeline stage, scores, pii) — the "CRM export in the repo" anti-pattern becomes machine-checkable; `static` = a cached copy is fine between verifications (enrichment fields) — pair with `last_verified` / `verify_every` in the property `meta` |
+| `meta` | O | per-property provenance override; also carries `last_verified` / `verify_every` / `valid_from` / `valid_until` for facts with a shelf life |
 
 **Enum value object:** `{value, label, definition (R, business conditions for this value), set_by (R, who/what sets it), entry_conditions[] (O, checkable conditions), reversible (O bool)}`.
 
@@ -267,6 +271,7 @@ apart — e.g. two branch offices of one company: same `name`, same `domain`, di
 | `executor` | R | `agent / human / either` |
 | `approval` | R | `none / required / conditional` (+ `approval_condition`) |
 | `preconditions[]` | R | `{description, check (O)}`; must be verifiable from ontology terms |
+| `abstain_when[]` | O | `{description, check (O)}`; when the agent STOPS and asks the loop steward instead of proceeding: missing inputs, low confidence, price/contract territory. Never fill the gap with a guess. Recommended for every action with write effects; actions without it fall back to `defaults.missing_data` in agent-policy |
 | `inputs[]` | R | `{id, type, required, description}` |
 | `workflow[]` | R | ORDERED steps: `{step, description, on_failure (abort/skip/compensate + detail)}` |
 | `effects[]` | R | what changes: `{target, operation, detail}` |
@@ -303,6 +308,17 @@ YAML frontmatter: `kind: prompt`, `id`, `meta`, `used_by[]` (property/action ref
 kind: agent-policy
 id: agent-policy
 meta: {...}
+permission_ladder:                    # the trust progression for loops (A15)
+  levels:
+    - {level: 1, name: read-only, description: "reads live data and reports; no writes"}
+    - {level: 2, name: propose-then-approve, description: "prepares every write; a human approves"}
+    - {level: 3, name: autonomous-with-log, description: "acts alone; steward reviews the log"}
+  promotion:                          # default criteria; a loop may override
+    - {from: 1, to: 2, criteria: ["min. 2 weeks of stable read-only, zero unauthorized writes"]}
+    - {from: 2, to: 3, criteria: ["9/10 weekly runs need no correction, 4 consecutive weeks"]}
+  ceiling:                            # what never goes autonomous
+    - {description: "Prices, contracts, and decisions about people always go through a human.",
+       max_level: 2, applies_to: [property:deal.amount]}
 agents:
   - id: sdr-agent
     description: ...
@@ -312,10 +328,15 @@ agents:
       - Never delete any record.
       - Never contact a person outside declared channels.
     rate_limits: {actions_per_hour: 30}
+    max_permission_level: 2           # cap across every loop this agent runs
 defaults:
   unlisted_actions: forbidden         # actions not granted are forbidden
   draft_artifacts: read-as-hypothesis-only
+  missing_data: stop-and-ask          # no data = stop, never invent (schema-enforced const)
+  pii_data: read-live-only-never-copy # default handling of pii-flagged properties
 ```
+
+The ladder is defined once, here. Each loop carries its **current** `permission_level` (A15); the lint checks the level exists on the ladder and respects the agent's cap. `missing_data: stop-and-ask` is a schema-enforced constant — the one non-negotiable containment rule.
 
 ## A14: `drafts/<id>.md` (communication template)
 
@@ -326,3 +347,23 @@ agents never send external communication autonomously unless agent-policy explic
 grants it). Body = the template with `{{placeholders}}`.
 
 Referenced from stages via `drafts: {email: draft:<id>, sms: draft:<id>}`.
+
+## A15: `loops/<id>.yaml` (loop)
+
+The loop ("obieg") is the unit of delegated work and of trust: someone starts it, the agent does the work on live data, someone checks, something closes. Trust grows per loop, not per agent. The ladder (A13) gates the loop as a whole: level 1 — the loop runs no write actions at all; level 2 — every write waits for human approval, regardless of the action's own `approval`; level 3 — action contracts apply as written, the steward reviews the journal.
+
+| Field | R/O | Notes |
+|---|---|---|
+| `kind` | R | `loop` |
+| `id`, `name`, `description`, `meta` | R | |
+| `owner` | R | the steward. A loop without a steward does not go to production |
+| `agent` | O | agent id from agent-policy running this loop; lint cross-checks it |
+| `permission_level` | R | current rung on the A13 ladder |
+| `target_level` | O | where the loop is headed; not every loop should reach 3 |
+| `promotion_criteria[]` | O | loop-specific overrides of the ladder's default promotion criteria |
+| `refs` | R | `{actions[] (R), prompts[] (O), process (O)}` — typed refs to what the loop runs |
+| `metrics[]` | R | `{id, description, cadence, target (O)}`. The two staples: share of runs accepted without correction, steward time per week — measured weekly, they gate promotion |
+| `journal` | R | pointer to the loop journal; git commit history is the journal for free (e.g. `CHANGELOG.md + git log -- dynamic/loops/<id>.yaml`) |
+| `escalation` | O | where abstains and failed runs go |
+
+A loop has no `approval` field of its own: approval semantics live in the actions it references, the ladder gates the loop. Corrections from the weekly review return to the ontology as `source: learned` facts with `evidence` pointing at the run or journal entry.
