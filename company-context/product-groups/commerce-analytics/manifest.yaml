@@ -33,4 +33,24 @@ artifacts:
     path: audience/buying-context.md
     summary: Problems, triggers, buying jobs, committee dynamics, and evaluation evidence.
     load_when: Understanding why and how a Commerce Analytics purchase happens.
-products: []
+  - id: commerce-analytics-motions
+    kind: gtm-motions
+    path: go-to-market/motions.md
+    summary: Inbound and targeted outbound motions, qualification, routing, and handoffs.
+    load_when: Planning demand generation, sales routing, or the Commerce Analytics journey.
+  - id: commerce-analytics-positioning
+    kind: positioning
+    path: go-to-market/positioning.md
+    summary: Category, value proposition, alternatives, differentiation, and message guardrails.
+    load_when: Creating Commerce Analytics messaging or handling competitive comparisons.
+products:
+  - id: growth-plan
+    kind: product-context
+    path: products/growth-plan.md
+    summary: Entry analytics plan for one commerce team that needs governed recurring insight.
+    load_when: Evaluating, positioning, pricing, or implementing the Growth plan.
+  - id: scale-plan
+    kind: product-context
+    path: products/scale-plan.md
+    summary: Multi-team analytics plan with broader governance, sources, and service coverage.
+    load_when: Evaluating, positioning, pricing, or implementing the Scale plan.
