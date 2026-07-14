@@ -33,4 +33,24 @@ artifacts:
     path: audience/buying-context.md
     summary: Activation problems, triggers, buying jobs, committee dynamics, and evidence.
     load_when: Understanding why and how a Data Activation purchase happens.
-products: []
+  - id: data-activation-motions
+    kind: gtm-motions
+    path: go-to-market/motions.md
+    summary: Product-led technical evaluation and sales-assisted production adoption.
+    load_when: Planning acquisition, qualification, routing, or Data Activation handoffs.
+  - id: data-activation-positioning
+    kind: positioning
+    path: go-to-market/positioning.md
+    summary: Category, value proposition, alternatives, differentiation, and message guardrails.
+    load_when: Creating Data Activation messaging or handling competitive comparisons.
+products:
+  - id: warehouse-sync
+    kind: product-context
+    path: products/warehouse-sync.md
+    summary: Governed delivery of modeled warehouse attributes to operational systems.
+    load_when: Evaluating, positioning, pricing, or implementing Warehouse Sync.
+  - id: audience-activation
+    kind: product-context
+    path: products/audience-activation.md
+    summary: Controlled audience creation and delivery for lifecycle marketing teams.
+    load_when: Evaluating, positioning, pricing, or implementing Audience Activation.
