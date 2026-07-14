@@ -2,10 +2,16 @@
 kind: icp
 id: commerce-analytics-icp
 scope: product-group:commerce-analytics
+strategy_ref: product-group-strategy:commerce-analytics-strategy
+segment_ref: segment:commerce-analytics-core-segment
+use_case_ref: use-case:commerce-analytics-core-use-case
 meta:
   source: synthetic
   status: example
   updated: 2026-07-14
+  owner: Revenue
+  last_verified: 2026-07-14
+  verify_every: 90d
 ---
 
 # Commerce Analytics ICP
@@ -29,12 +35,16 @@ Observable evidence of participation in this market includes recurring commerce
 reporting, repeated metric reconciliation, decisions that depend on customer or
 product analysis, or active evaluation of a replacement for the current workflow.
 
-## ICP segment
+## Canonical segment summary
 
 Within that market, the best fit is a first-party e-commerce brand with enough
 transaction and behavioral data to require analysis beyond storefront reports. It
 wants governed recurring analysis without maintaining a fully custom analytics
 stack and can name both the workflow owner and the decision the analysis supports.
+
+The canonical definition is `segment:commerce-analytics-core-segment`; the primary
+workflow is `use-case:commerce-analytics-core-use-case`. This summary is repeated
+here so the ICP remains usable as a self-contained qualification artifact.
 
 ## Qualification criteria
 
@@ -95,3 +105,7 @@ access, and metric-validation ownership. Check disqualifiers before using revenu
 region, or headcount to prioritize the qualified organization. If any required
 criterion is unknown, record it as unknown; do not infer fit from firmographics,
 brand size, industry, or reputation.
+
+Record each required criterion as `true`, `false`, or `unknown`. A single `false`
+required criterion means the organization is not currently qualified. Any `unknown`
+required criterion means the result is incomplete, not provisionally qualified.

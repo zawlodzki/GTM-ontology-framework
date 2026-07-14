@@ -1,6 +1,6 @@
 kind: product-group-manifest
 id: commerce-analytics
-version: 0.1.0
+version: 0.3.0
 updated: 2026-07-14
 example: true
 language: en
@@ -14,26 +14,43 @@ inherits:
   - company-commercial-model
   - company-operating-model
 agent_instructions: >
-  Load only the artifact matching the task. The ICP is self-contained and does not
-  require personas or buying context. Establish workflow need and operational
-  readiness before using firmographics to prioritize fit. Product and GTM artifacts
-  are indexed here when available; do not infer missing artifacts.
+  Load only the artifact matching the task. Use strategy for group-level choices,
+  segment for the canonical customer situation, and the use-case artifact for the
+  recurring workflow. The ICP remains self-contained for qualification. Establish
+  workflow need and operational readiness before using firmographics to prioritize
+  fit. Product artifacts separate features, capabilities, package limits, services,
+  benefits, and outcome hypotheses. Follow typed refs and do not infer missing context.
 artifacts:
+  - id: commerce-analytics-strategy
+    kind: product-group-strategy
+    path: strategy.md
+    summary: Expansion posture, primary segment and use case, offer architecture, constraints, and gates.
+    load_when: Making portfolio, prioritization, expansion, or group-level GTM decisions.
+  - id: commerce-analytics-core-segment
+    kind: segment
+    path: market/segment.md
+    summary: First-party commerce brands with an owned recurring analysis workflow that current reporting cannot support reliably.
+    load_when: Understanding the target market, customer situation, alternatives, maturity, or segment boundaries.
+  - id: commerce-analytics-core-use-case
+    kind: use-case
+    path: audience/use-cases.md
+    summary: Governed recurring commerce performance analysis from source data through an owned commercial decision.
+    load_when: Understanding the workflow, current method, friction, desired output, or use-case success evidence.
   - id: commerce-analytics-icp
     kind: icp
     path: audience/icp.md
-    summary: Self-contained market basis, need and readiness criteria, priorities, and exclusions.
+    summary: Self-contained qualification rules linked to the canonical segment and use case.
     load_when: Qualifying an organization for Commerce Analytics or explaining its ICP.
   - id: commerce-analytics-personas
     kind: personas
     path: audience/personas.md
-    summary: Head of E-commerce and CMO buying roles, goals, concerns, and influence.
-    load_when: Tailoring messaging or decisions to Commerce Analytics buying roles.
+    summary: Champion, economic buyer, validators, blockers, adoption ownership, evidence, and journey roles.
+    load_when: Tailoring value, evidence, messaging, or decisions to Commerce Analytics buying roles.
   - id: commerce-analytics-buying-context
     kind: buying-context
     path: audience/buying-context.md
-    summary: Problems, triggers, buying jobs, committee dynamics, and evaluation evidence.
-    load_when: Understanding why and how a Commerce Analytics purchase happens.
+    summary: Problems, triggers, alternatives, committee gates, awareness journey, evidence, and blockers.
+    load_when: Understanding why, when, and how a Commerce Analytics purchase and adoption happen.
   - id: commerce-analytics-motions
     kind: gtm-motions
     path: go-to-market/motions.md
@@ -48,10 +65,10 @@ products:
   - id: growth-plan
     kind: product-context
     path: products/growth-plan.md
-    summary: Entry analytics plan for one commerce team that needs governed recurring insight.
+    summary: Entry offer with explicit features, capability chains, limits, services, benefits, and claim boundaries.
     load_when: Evaluating, positioning, pricing, or implementing the Growth plan.
   - id: scale-plan
     kind: product-context
     path: products/scale-plan.md
-    summary: Multi-team analytics plan with broader governance, sources, and service coverage.
+    summary: Multi-team offer with broader product truth, governance, source coverage, services, and boundaries.
     load_when: Evaluating, positioning, pricing, or implementing the Scale plan.
