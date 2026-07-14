@@ -1,7 +1,7 @@
 {
   "name": "gtm-ontology-builder",
-  "description": "Build an agent-ready business ontology for GTM systems (Pipedrive, HubSpot, Attio, Salesforce, email marketing, ERP). Maps CRM objects, custom fields, pipelines, automations, agent actions, and KPIs into a 4-layer machine-readable model. Bundles the renderer, JSON schemas, and a complete worked example.",
-  "version": "1.1.0",
+  "description": "Build an agent-ready business ontology for GTM systems (Pipedrive, HubSpot, Attio, Salesforce, email marketing, ERP). Maps CRM objects, custom fields, pipelines, automations, agent actions, loops, and KPIs into a 4-layer machine-readable model. Bundles the renderer, linter, JSON schemas, and a complete worked example.",
+  "version": "1.2.0",
   "author": {
     "name": "Grzegorz Zawłodzki",
     "email": "grzesiek@zawlodzki.pl"

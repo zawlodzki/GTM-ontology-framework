@@ -16,6 +16,7 @@ flowchart TD
   kpi_new_arr["kpi<br/><b>new-arr</b>"]
   kpi_qualified_to_demo_conversion["kpi<br/><b>qualified-to-demo-conversion</b>"]
   kpi_win_rate["kpi<br/><b>win-rate</b>"]
+  loop_lead_qualification["loop<br/><b>lead-qualification</b>"]
   object_type_deal["object-type<br/><b>deal</b>"]
   object_type_organization["object-type<br/><b>organization</b>"]
   object_type_person["object-type<br/><b>person</b>"]
@@ -33,6 +34,7 @@ flowchart TD
   action_qualify_lead --> system_pipedrive
   agent_policy_agent_policy --> action_advance_deal_stage
   agent_policy_agent_policy --> action_qualify_lead
+  agent_policy_agent_policy --> object_type_deal
   automation_create_demo_activity --> object_type_deal
   automation_lead_scoring --> object_type_deal
   automation_lead_scoring --> object_type_organization
@@ -57,6 +59,9 @@ flowchart TD
   kpi_qualified_to_demo_conversion --> process_new_business
   kpi_win_rate --> object_type_deal
   kpi_win_rate --> process_new_business
+  loop_lead_qualification --> action_qualify_lead
+  loop_lead_qualification --> process_new_business
+  loop_lead_qualification --> prompt_lead_qualification
   object_type_deal --> action_advance_deal_stage
   object_type_deal --> action_qualify_lead
   object_type_deal --> automation_lead_scoring
@@ -68,6 +73,7 @@ flowchart TD
   object_type_organization --> automation_lead_scoring
   object_type_organization --> object_type_deal
   object_type_person --> automation_lead_scoring
+  object_type_person --> loop_lead_qualification
   object_type_person --> object_type_organization
   process_new_business --> automation_create_demo_activity
   process_new_business --> draft_qualification_followup_email
@@ -79,4 +85,4 @@ flowchart TD
   system_pipedrive --> action_advance_deal_stage
 ```
 
-*Generated from ontology `acme-analytics` v1.2.0 (2026-07-13), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.3.0 (2026-07-14), do not hand-edit.*

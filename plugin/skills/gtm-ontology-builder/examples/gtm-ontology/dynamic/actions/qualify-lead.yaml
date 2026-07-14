@@ -4,7 +4,7 @@ name: Qualify lead from transcript
 description: >
   Generate (or regenerate) the AI qualification for a deal from the latest call
   transcript, write summary + score, and report whether Demo criteria are met.
-meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-14}
 object: object:deal
 intent: >
   User asks to qualify a lead/deal; or agent finds a deal with a newer transcript
@@ -18,6 +18,11 @@ preconditions:
   - description: A call transcript matched to a linked person is available
   - description: automation:qualify-from-transcript did not already process this transcript
     check: "no '[auto] qualification updated' note newer than transcript"
+
+abstain_when:
+  - description: Transcript is missing, empty, or not matchable to a linked person; ask for the right transcript instead of qualifying from memory.
+  - description: prompt:lead-qualification output fails the contract twice in a row; stop and report, do not hand-write a qualification.
+  - description: Transcript covers under ~5 minutes of real conversation; too little signal, ask the deal owner how to proceed.
 
 inputs:
   - {id: deal_id, type: reference, required: true, description: the deal to qualify}

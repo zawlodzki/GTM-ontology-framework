@@ -5,7 +5,7 @@ description: >
   A concrete revenue opportunity with an identified organization: someone at the
   account has shown buying intent worth SDR/AE time. Not every form-fill becomes
   a deal; see process:new-business Incoming entry criteria.
-meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-14}
 aliases: [opportunity]
 
 properties:
@@ -25,6 +25,7 @@ properties:
     filled_by: mixed
     filled_by_detail: "SDR/AE manually; agents via action:advance-deal-stage"
     user_access: mixed
+    freshness: live-only
     enum:
       - {value: incoming, definition: "see process:new-business/incoming", set_by: "human or automation:lead-scoring"}
       - {value: qualified, definition: "see process:new-business/qualified", set_by: "human: SDR; agent with action:advance-deal-stage"}

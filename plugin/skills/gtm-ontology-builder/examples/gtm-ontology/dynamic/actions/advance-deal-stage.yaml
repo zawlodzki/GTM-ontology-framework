@@ -2,7 +2,7 @@ kind: action
 id: advance-deal-stage
 name: Advance deal to next stage
 description: Move a deal forward in the New Business pipeline, enforcing all process criteria.
-meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-01}
+meta: {source: declared, status: confirmed, confirmed_by: "Piotr (Head of Sales)", updated: 2026-07-14}
 object: object:deal
 intent: >
   User asks to progress a deal, or a proposal from action:qualify-lead was accepted.
@@ -17,6 +17,11 @@ preconditions:
   - description: All exit criteria of the current stage evaluate true on live data
   - description: All required_properties of the target stage are non-empty
   - description: All entry criteria of the target stage evaluate true
+
+abstain_when:
+  - description: Any required property of the target stage is empty; never invent a value to force the move.
+  - description: deal.amount is empty or zero from Proposal onward; pricing goes through a human, never guess an amount.
+  - description: Exit criteria cannot be evaluated cleanly on live data; report what is missing and stop.
 
 inputs:
   - {id: deal_id, type: reference, required: true, description: deal to move}

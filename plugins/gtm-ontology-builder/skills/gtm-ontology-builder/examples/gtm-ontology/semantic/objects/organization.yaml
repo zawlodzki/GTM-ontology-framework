@@ -2,7 +2,7 @@ kind: object-type
 id: organization
 name: Organization
 description: A company we sell to, prospect account or customer.
-meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-01}
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-14}
 aliases: [company, account]
 
 properties:
@@ -28,6 +28,9 @@ properties:
     semantics: Free-text from enrichment; 'e-commerce' subtypes matter for ICP.
     filled_by: integration
     filled_by_detail: enrichment step inside automation:lead-scoring
+    freshness: static
+    meta: {source: discovered, status: confirmed, confirmed_by: "Anna (RevOps)",
+           last_verified: 2026-07-01, verify_every: 180d}
 
   - id: employee_count
     name: Employee Count
@@ -35,6 +38,9 @@ properties:
     semantics: From enrichment; ICP range is 50-500.
     filled_by: integration
     filled_by_detail: enrichment step inside automation:lead-scoring
+    freshness: static
+    meta: {source: discovered, status: confirmed, confirmed_by: "Anna (RevOps)",
+           last_verified: 2026-07-01, verify_every: 180d}
 
   - id: icp_fit
     name: ICP Fit

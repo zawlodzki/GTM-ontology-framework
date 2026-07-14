@@ -33,10 +33,15 @@
       "type": "object",
       "required": ["source", "status"],
       "properties": {
-        "source": {"enum": ["discovered", "inferred", "declared"]},
+        "source": {"enum": ["discovered", "inferred", "declared", "learned"]},
         "status": {"enum": ["draft", "confirmed"]},
         "confirmed_by": {"type": "string"},
-        "updated": {"type": "string"}
+        "updated": {"type": "string"},
+        "evidence": {"type": "string"},
+        "last_verified": {"type": "string", "format": "date"},
+        "verify_every": {"type": "string", "pattern": "^[0-9]+[dwmy]$"},
+        "valid_from": {"type": "string", "format": "date"},
+        "valid_until": {"type": "string", "format": "date"}
       }
     },
     "property": {
@@ -50,6 +55,10 @@
         "filled_by": {"enum": ["human", "automation", "ai", "integration", "system", "mixed"]},
         "filled_by_detail": {"type": "string"},
         "user_access": {"enum": ["editable", "read-only", "mixed"]},
+        "pii": {"type": "boolean"},
+        "allowed_in_context": {"type": "boolean"},
+        "retention": {"type": "string"},
+        "freshness": {"enum": ["live-only", "static"]},
         "required": {},
         "default": {},
         "validation": {"type": "string"},
@@ -67,8 +76,22 @@
         "quality_notes": {"type": "string"},
         "meta": {"$ref": "#/$defs/meta"}
       },
-      "if": {"properties": {"type": {"const": "enum"}}},
-      "then": {"required": ["id", "name", "type", "semantics", "filled_by", "enum"]}
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "enum"}}},
+          "then": {"required": ["id", "name", "type", "semantics", "filled_by", "enum"]}
+        },
+        {
+          "if": {"properties": {"pii": {"const": true}}, "required": ["pii"]},
+          "then": {
+            "required": ["allowed_in_context", "freshness"],
+            "properties": {
+              "allowed_in_context": {"const": false},
+              "freshness": {"const": "live-only"}
+            }
+          }
+        }
+      ]
     },
     "enumValue": {
       "type": "object",

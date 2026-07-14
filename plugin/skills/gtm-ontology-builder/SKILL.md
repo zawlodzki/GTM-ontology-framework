@@ -41,7 +41,7 @@ gtm-ontology/
 ├── context/{business-context.md, glossary.yaml}
 ├── semantic/objects/*.yaml
 ├── binding/{systems/*.yaml, discovery/<system>/*.yaml, mappings/*.yaml, identity.yaml}
-├── dynamic/{processes/*.yaml, automations/*.yaml, actions/*.yaml, prompts/*.md, drafts/*.md}
+├── dynamic/{processes/*.yaml, automations/*.yaml, actions/*.yaml, loops/*.yaml, prompts/*.md, drafts/*.md}
 ├── measurement/kpis/*.yaml
 ├── governance/agent-policy.yaml
 └── CHANGELOG.md
@@ -128,17 +128,29 @@ The human layer: interview, one topic at a time, record as `source: declared`:
 
 **GATE:** confirm per artifact; flip `status: draft` → `confirmed`.
 
-### Phase 4: Agent actions & policy
+### Phase 4: Agent actions, loops & policy
 
 1. From use cases, propose agent actions. Per action (`templates/action.yaml`):
    preconditions (checkable), inputs, ORDERED workflow with `on_failure` per step,
    effects, **side_effects** (cross-check automations: which will fire? empty list
-   = explicit none), approval (`none/required/conditional`), idempotency,
+   = explicit none), approval (`none/required/conditional`), **abstain_when**
+   (when the agent stops and asks instead of guessing: missing inputs, low
+   confidence, prices/contracts; recommended for every write action), idempotency,
    implementations (MCP tool / endpoint per system).
-2. Write `governance/agent-policy.yaml`: per agent: allowed actions, approval
-   overrides, hard prohibitions, rate limits. Default: unlisted actions forbidden.
+2. Write `governance/agent-policy.yaml` (`templates/agent-policy.yaml`): the
+   **permission ladder** (levels 1–3, promotion criteria — "2 weeks stable
+   read-only", "9/10 runs without correction" — and the ceiling: prices, contracts,
+   decisions about people never go autonomous), per agent: allowed actions,
+   approval overrides, hard prohibitions, rate limits, optional
+   `max_permission_level`; defaults incl. `missing_data: stop-and-ask`.
+3. Wrap each recurring delegated job in a **loop** (`templates/loop.yaml` →
+   `dynamic/loops/<id>.yaml`): steward (`owner` — no steward, no production),
+   starting `permission_level: 1`, refs to its actions/prompts/process, weekly
+   metrics (share of runs accepted without correction, steward time), journal
+   pointer (git commit history is the journal).
 
-**GATE:** user confirms every action contract + policy.
+**GATE:** user confirms every action contract, the policy, and each loop's
+steward + level.
 
 ### Phase 5: Validation & compilation
 
@@ -152,6 +164,18 @@ Run all checks; fix failures before shipping:
 7. KPI formula terms resolve.
 8. Every `filled_by: ai` property has an existing `prompt_ref`.
 9. No confirmed artifact references a draft.
+10. Every loop has an owner; its levels exist in the agent-policy ladder and
+    respect the agent's `max_permission_level`.
+11. Every `pii: true` property has `allowed_in_context: false` + `freshness: live-only`.
+12. Nothing is past `valid_until`; facts past `last_verified + verify_every` are re-verified.
+
+Most of the list runs in one call — this skill bundles the linter:
+
+```
+python <path-to-this-skill>/tools/lint_ontology.py gtm-ontology/
+```
+
+Errors block shipping; warnings are the review list. Checks 3, 5–7 stay manual.
 
 Compile `manifest.yaml` (template: `templates/ontology-manifest.yaml`): business
 summary ≤1 paragraph, agent instructions, every artifact with ≤140-char summary +
@@ -184,7 +208,7 @@ with CRM data, sales processes, pipelines, or agent actions, read
 **Rendering (for the user).** This skill bundles the renderer at
 `tools/render_ontology.py`. To generate human-facing views of the ontology:
 
-- Prerequisite (once): `pip install pyyaml`.
+- Prerequisite (once): `pip install pyyaml` (add `jsonschema` for the linter's schema checks).
 - Run: `python <path-to-this-skill>/tools/render_ontology.py gtm-ontology/`
   (pass the ontology folder as the argument).
 - Output: written to `gtm-ontology/render/` — a process table, a Mermaid funnel, a
@@ -201,6 +225,12 @@ See `examples/gtm-ontology/render/` for what the output looks like.
   (add aliases); extend `identity.yaml`; new objects only for genuinely new concepts.
 - **Drift check:** re-run Phase 1, diff snapshots, classify changes (breaking /
   semantic / cosmetic), update bindings, mini-interview for new enum values, bump version.
+- **Care mode** (recurring upkeep, 1–2 days a month): run the bundled linter for
+  the mechanical health report, then the semantic passes only an LLM can do —
+  glossary vs enum definitions, property `semantics` vs business context, prompt
+  text vs current field definitions. Review each loop's journal (git history),
+  update its metrics, promote or demote it on the ladder per the agent-policy
+  criteria. Corrections land as `source: learned` facts with `evidence`, committed.
 - **Updates:** prompt or automation changed → update artifact + fingerprint + changelog.
 
 ## Elicitation question bank
@@ -219,4 +249,9 @@ Use these verbatim when interviewing (Phase 0/3):
 - KPI: "Exact formula in terms of your data? Grain? Target? Owner? Where do you
   look at it today? What decision does it drive?"
 - Action: "Should an agent do this autonomously, with approval, or never? What must
-  be verified first, in what order? What must an agent NEVER do here?"
+  be verified first, in what order? When should it stop and ask instead of
+  proceeding? What must an agent NEVER do here?"
+- Loop: "Who stewards this loop? What does an acceptable run look like, and what
+  share of runs is acceptable without correction today? What may never be
+  automated here? What would promotion to the next ladder level require, and who
+  decides? Where do corrections from the weekly review go?"

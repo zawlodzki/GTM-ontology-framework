@@ -20,4 +20,8 @@ artifacts:
     kind: process
     summary: "New Business pipeline: 6 stages, entry/exit criteria, SLAs"
     load_when: "moving deals between stages, pipeline analysis"
+  - path: dynamic/loops/lead-qualification.yaml
+    kind: loop
+    summary: "Loop: agent qualifies deals at ladder level 2; steward reviews weekly"
+    load_when: "running or reviewing the lead-qualification loop, weekly steward review"
   # ... one entry per artifact

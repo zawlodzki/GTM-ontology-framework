@@ -64,10 +64,15 @@
       "type": "object",
       "required": ["source", "status"],
       "properties": {
-        "source": {"enum": ["discovered", "inferred", "declared"]},
+        "source": {"enum": ["discovered", "inferred", "declared", "learned"]},
         "status": {"enum": ["draft", "confirmed"]},
         "confirmed_by": {"type": "string"},
-        "updated": {"type": "string"}
+        "updated": {"type": "string"},
+        "evidence": {"type": "string"},
+        "last_verified": {"type": "string", "format": "date"},
+        "verify_every": {"type": "string", "pattern": "^[0-9]+[dwmy]$"},
+        "valid_from": {"type": "string", "format": "date"},
+        "valid_until": {"type": "string", "format": "date"}
       }
     }
   }
