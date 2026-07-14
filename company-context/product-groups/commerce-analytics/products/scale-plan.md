@@ -11,6 +11,8 @@ meta:
   source: synthetic
   status: example
   updated: 2026-07-14
+  last_verified: 2026-07-14
+  verify_every: 90d
 ---
 
 # Scale plan

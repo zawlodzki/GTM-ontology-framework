@@ -29,6 +29,13 @@ fictional scenario.
 - Product-group ICP files are self-contained. Reading an ICP does not require
   loading personas, motions, positioning, or product documents.
 
+Artifacts whose facts go stale (prices, market claims) carry `last_verified` and
+`verify_every` in their frontmatter `meta` — the guard against silent degradation
+of static context. In a real deployment the `meta` envelope follows the GOF
+conventions (`docs/01-concepts.md` §3): corrections distilled from loop reviews
+enter as `source: learned` with `evidence` pointing at the run. This synthetic
+example keeps `source: synthetic` throughout on purpose.
+
 For agent navigation rules, read `CLAUDE.md`. The context is not linked to the
 ontology yet; that integration is intentionally outside this example's current
 scope.

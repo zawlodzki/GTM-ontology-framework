@@ -44,3 +44,11 @@ ICPs into a fictional company-wide profile.
 - This is a synthetic example. Treat its artifacts as canonical only within the
   Acme Analytics scenario and never as claims about a real business.
 - No artifact in this directory authorizes an external action or a system write.
+- Missing context = say so and ask. When these files do not answer a question,
+  report the gap; never invent a fact to fill it.
+- No personal data lives here. Personas are role archetypes, not people. Names,
+  emails, and other pii stay in the source systems (properties marked `pii: true`
+  in the ontology) and are read live through the ontology's bindings.
+- Facts age. Artifacts carry `last_verified` and `verify_every` in `meta`; a fact
+  past `last_verified + verify_every` is overdue — re-verify it with its owner
+  before relying on it. Prices and market claims expire fastest.

@@ -1,6 +1,6 @@
 kind: company-context-manifest
 id: acme-analytics-company-context
-version: 0.1.0
+version: 0.2.0
 updated: 2026-07-14
 example: true
 language: en
