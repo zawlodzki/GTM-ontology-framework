@@ -1,7 +1,7 @@
 kind: product-group-manifest
 id: commerce-analytics
-version: 0.3.0
-updated: 2026-07-14
+version: 0.4.0
+updated: 2026-07-15
 example: true
 language: en
 name: Commerce Analytics
@@ -51,16 +51,26 @@ artifacts:
     path: audience/buying-context.md
     summary: Problems, triggers, alternatives, committee gates, awareness journey, evidence, and blockers.
     load_when: Understanding why, when, and how a Commerce Analytics purchase and adoption happen.
-  - id: commerce-analytics-motions
-    kind: gtm-motions
-    path: go-to-market/motions.md
-    summary: Inbound and targeted outbound motions, qualification, routing, and handoffs.
-    load_when: Planning demand generation, sales routing, or the Commerce Analytics journey.
   - id: commerce-analytics-positioning
     kind: positioning
     path: go-to-market/positioning.md
-    summary: Category, value proposition, alternatives, differentiation, and message guardrails.
-    load_when: Creating Commerce Analytics messaging or handling competitive comparisons.
+    summary: Segment-scoped anchors, category rationale, alternatives, differentiation chains, proof, and guardrails.
+    load_when: Defining market perception, comparison frames, differentiation, or message boundaries.
+  - id: commerce-analytics-value-propositions
+    kind: value-propositions
+    path: go-to-market/value-propositions.md
+    summary: Role- and offer-specific chains from current alternative through product truth to direct value and proof.
+    load_when: Building a value argument, business case, offer comparison, or persona-specific benefit.
+  - id: commerce-analytics-messaging
+    kind: messaging
+    path: go-to-market/messaging.md
+    summary: Core hierarchy and message selection by role, awareness stage, offer, asset, and channel.
+    load_when: Creating a campaign, page, sales narrative, outreach, or other customer-facing message.
+  - id: commerce-analytics-motions
+    kind: gtm-motions
+    path: go-to-market/motions.md
+    summary: Primary channels, stage-specific assets, qualification, routing, handoffs, adoption, and expansion gates.
+    load_when: Planning demand generation, sales routing, channel execution, handoffs, or motion review.
 products:
   - id: growth-plan
     kind: product-context
