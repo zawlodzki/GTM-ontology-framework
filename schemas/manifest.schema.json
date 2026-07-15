@@ -11,6 +11,10 @@
     "updated": {"type": "string", "format": "date"},
     "business_summary": {"type": "string", "maxLength": 1500},
     "agent_instructions": {"type": "string"},
+    "context_root": {
+      "type": "string",
+      "description": "Relative path from the ontology root to a company-context tree (its manifest.yaml has kind: company-context-manifest). Lint and render resolve references across both trees."
+    },
     "systems": {
       "type": "array",
       "items": {

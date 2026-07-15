@@ -8,12 +8,21 @@ Schemas default to the `schemas/` directory next to this tool's parent
 (works both at the repo root and inside the packaged skill). Requires pyyaml;
 `jsonschema` is optional -- without it the schema check is skipped with a warning.
 
+If the ontology manifest declares `context_root`, the linked company-context
+tree is loaded too: its artifacts are schema-checked, cross-tree references
+(product-group:, gtm-motion:, icp:, ...) are resolved, its manifests are
+checked for completeness, and freshness checks apply to its artifacts.
+
 Checks (ERROR fails the run, WARN does not):
     parse             artifact file that does not parse as YAML
     schema            artifact does not validate against schemas/<kind>.schema.json
     ref               a kind:id reference that does not resolve
     manifest-missing  artifact on disk not listed in the manifest
     manifest-dangling manifest entry whose path does not exist
+    context-root      manifest context_root does not resolve to a context tree
+    context-dangling  context manifest entry whose path/id does not exist
+    context-unlisted  context artifact not listed in any context manifest
+    motion-dup        duplicate motion id across gtm-motions artifacts
     orphan            artifact that nothing references (entry-point kinds excluded)
     prompt-unused     prompt no artifact references
     enum-gap          enum value with definition: null
@@ -40,11 +49,28 @@ try:
 except ImportError:
     jsonschema = None
 
-REF_RE = re.compile(r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop):([a-z0-9_./=-]+)")
-KIND_MAP = {"object": "object-type"}
+# Keep REF_RE identical to the one in render_ontology.py. Longer kinds must
+# precede shorter prefixes of themselves (product-group-strategy before
+# product-group, gtm-motions before gtm-motion).
+REF_RE = re.compile(
+    r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop"
+    r"|product-group-strategy|product-group|gtm-motions|gtm-motion|segment|use-case"
+    r"|icp|personas|buying-context|positioning|value-propositions|messaging"
+    r"|product-context):([a-z0-9_./=-]+)")
+KIND_MAP = {"object": "object-type", "product-group": "product-group-manifest"}
 # Kinds nothing is expected to reference: entry points, indexes, and infrastructure.
-ORPHAN_EXEMPT = {"manifest", "business-context", "glossary", "agent-policy", "identity",
+ORPHAN_EXEMPT = {"manifest", "glossary", "agent-policy", "identity",
                  "discovery-snapshot", "loop", "binding", "prompt"}
+# Company-context artifact kinds; all validate against context-artifact.schema.json.
+CONTEXT_DOC_KINDS = {"company-profile", "company-strategy", "commercial-model",
+                     "operating-model", "market-overview", "competitor-landscape",
+                     "product-group-strategy", "segment", "use-case", "icp",
+                     "personas", "buying-context", "gtm-motions", "positioning",
+                     "value-propositions", "messaging", "product-context"}
+CONTEXT_MANIFEST_KINDS = {"company-context-manifest", "product-group-manifest"}
+# Documentation files inside a context tree; not artifacts, never linted.
+GUIDE_KINDS = {"company-context-readme", "company-context-agent-guide",
+               "company-context-artifact-guide"}
 PERIOD_DAYS = {"d": 1, "w": 7, "m": 30, "y": 365}
 
 
@@ -85,6 +111,8 @@ class Linter:
         self.schema_dir = schema_dir
         self.findings = []          # (severity, check, relpath, message)
         self.docs, self.raws = {}, {}
+        self.tree = {}              # file -> "ontology" | "context"
+        self.context_dir = None
         self.today = datetime.date.today()
 
     def add(self, severity, check, path, message):
@@ -92,9 +120,9 @@ class Linter:
         self.findings.append((severity, check, rel, message))
 
     # ------------------------------------------------------------- loading ---
-    def collect(self):
+    def collect_tree(self, root, origin):
         for ext in ("yaml", "yml", "md"):
-            for f in glob.glob(os.path.join(self.root, "**", f"*.{ext}"), recursive=True):
+            for f in glob.glob(os.path.join(root, "**", f"*.{ext}"), recursive=True):
                 if os.sep + "render" + os.sep in f:
                     continue
                 try:
@@ -102,9 +130,27 @@ class Linter:
                 except Exception as e:
                     self.add("ERROR", "parse", f, str(e))
                     continue
-                if isinstance(d, dict) and "kind" in d:
+                if isinstance(d, dict) and "kind" in d and d["kind"] not in GUIDE_KINDS:
                     self.docs[f] = d
                     self.raws[f] = raw
+                    self.tree[f] = origin
+
+    def collect(self):
+        self.collect_tree(self.root, "ontology")
+
+    def collect_context(self):
+        """Load the company-context tree the manifest points at via context_root."""
+        manifest = next((d for d in self.docs.values() if d.get("kind") == "manifest"), None)
+        ctx = (manifest or {}).get("context_root")
+        if not ctx:
+            return
+        ctx_dir = os.path.normpath(os.path.join(self.root, ctx))
+        if not os.path.isdir(ctx_dir) or not os.path.exists(os.path.join(ctx_dir, "manifest.yaml")):
+            self.add("ERROR", "context-root", ".",
+                     f"context_root '{ctx}' does not resolve to a directory with a manifest.yaml")
+            return
+        self.context_dir = ctx_dir
+        self.collect_tree(ctx_dir, "context")
 
     # ---------------------------------------------------------- reference ----
     def build_refs(self):
@@ -113,6 +159,21 @@ class Linter:
         self.props = {d["id"]: {p.get("id") for p in d.get("properties", [])}
                       for d in self.docs.values() if d.get("kind") == "object-type"}
         self.by_ref = {f"{d['kind']}:{d['id']}": d for d in self.docs.values() if "id" in d}
+        # Motion ids declared in gtm-motions frontmatter are canonical gtm-motion: targets.
+        self.motion_owner = {}
+        for f, d in sorted(self.docs.items()):
+            if d.get("kind") != "gtm-motions":
+                continue
+            for m in d.get("motions") or []:
+                if not isinstance(m, dict) or not m.get("id"):
+                    continue
+                ref = f"gtm-motion:{m['id']}"
+                if ref in self.ids:
+                    self.add("ERROR", "motion-dup", f, f"duplicate motion id '{m['id']}'")
+                    continue
+                self.ids.add(ref)
+                self.by_ref[ref] = d
+                self.motion_owner[ref] = f"gtm-motions:{d['id']}" if "id" in d else None
         self.edges = []
         for f, d in self.docs.items():
             src = f"{d['kind']}:{d['id']}" if "id" in d else None
@@ -134,6 +195,9 @@ class Linter:
                     self.add("ERROR", "ref", f, f"{kind}:{base} does not resolve")
                 elif src != tgt:
                     self.edges.append((f, tgt))
+                    owner = self.motion_owner.get(tgt)
+                    if owner and owner != src:
+                        self.edges.append((f, owner))
 
     # ------------------------------------------------------------- checks ----
     def check_schema(self):
@@ -142,7 +206,8 @@ class Linter:
             return
         cache = {}
         for f, d in sorted(self.docs.items()):
-            sf = os.path.join(self.schema_dir, f"{d['kind']}.schema.json")
+            name = "context-artifact" if d["kind"] in CONTEXT_DOC_KINDS else d["kind"]
+            sf = os.path.join(self.schema_dir, f"{name}.schema.json")
             if not os.path.exists(sf):
                 continue
             if sf not in cache:
@@ -164,16 +229,72 @@ class Linter:
             if p and not os.path.exists(os.path.join(self.root, p)):
                 self.add("ERROR", "manifest-dangling", mfile, f"listed artifact does not exist: {p}")
         for f, d in sorted(self.docs.items()):
+            if self.tree.get(f) == "context":
+                continue
             rel = os.path.relpath(f, self.root)
             if d["kind"] == "manifest":
                 continue
             if rel not in listed:
                 self.add("ERROR", "manifest-missing", f, "artifact not listed in manifest.yaml")
 
+    def check_context_manifest(self):
+        """Completeness of the context tree's own manifests (root + per group)."""
+        if not self.context_dir:
+            return
+        entry = next(((f, d) for f, d in sorted(self.docs.items())
+                      if d.get("kind") == "company-context-manifest"), None)
+        if entry is None:
+            self.add("ERROR", "context-root", self.context_dir,
+                     "context tree has no company-context-manifest")
+            return
+        mfile, m = entry
+        listed = set()
+        company_ids = {a.get("id") for a in m.get("artifacts", []) if isinstance(a, dict)}
+        for a in m.get("artifacts", []):
+            p = os.path.normpath(os.path.join(self.context_dir, a.get("path", "")))
+            if not os.path.exists(p):
+                self.add("ERROR", "context-dangling", mfile,
+                         f"listed artifact does not exist: {a.get('path')}")
+            else:
+                listed.add(p)
+        for g in m.get("product_groups", []):
+            gp = os.path.normpath(os.path.join(self.context_dir, g.get("path", "")))
+            if not os.path.exists(gp):
+                self.add("ERROR", "context-dangling", mfile,
+                         f"listed product group does not exist: {g.get('path')}")
+                continue
+            gd = next((d for f, d in self.docs.items() if os.path.normpath(f) == gp), None)
+            if not gd or gd.get("kind") != "product-group-manifest":
+                self.add("ERROR", "context-dangling", mfile,
+                         f"product group path is not a product-group-manifest: {g.get('path')}")
+                continue
+            listed.add(gp)
+            gdir = os.path.dirname(gp)
+            for i in gd.get("inherits") or []:
+                if i not in company_ids:
+                    self.add("ERROR", "context-dangling", gp,
+                             f"inherits '{i}' does not match a company artifact id")
+            for a in (gd.get("artifacts") or []) + (gd.get("products") or []):
+                p = os.path.normpath(os.path.join(gdir, a.get("path", "")))
+                if not os.path.exists(p):
+                    self.add("ERROR", "context-dangling", gp,
+                             f"listed artifact does not exist: {a.get('path')}")
+                else:
+                    listed.add(p)
+        for f, d in sorted(self.docs.items()):
+            if self.tree.get(f) != "context" or d.get("kind") in CONTEXT_MANIFEST_KINDS:
+                continue
+            if os.path.normpath(f) not in listed:
+                self.add("ERROR", "context-unlisted", f,
+                         "context artifact not listed in any context manifest")
+
     def check_orphans(self):
         inbound = {tgt for _, tgt in self.edges}
         for f, d in sorted(self.docs.items()):
             if "id" not in d:
+                continue
+            # Context artifacts are navigated via manifests + load_when, not the ref graph.
+            if self.tree.get(f) == "context":
                 continue
             ref = f"{d['kind']}:{d['id']}"
             if d["kind"] == "prompt" and ref not in inbound:
@@ -294,9 +415,11 @@ class Linter:
         if not self.docs:
             print(f"no ontology artifacts found under {self.root}", file=sys.stderr)
             return 2
+        self.collect_context()
         self.build_refs()
         self.check_schema()
         self.check_manifest()
+        self.check_context_manifest()
         self.check_orphans()
         self.check_draft_refs()
         self.check_temporal()

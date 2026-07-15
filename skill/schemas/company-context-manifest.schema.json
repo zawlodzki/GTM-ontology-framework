@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/company-context-manifest.schema.json",
+  "title": "GOF Company-Context Manifest",
+  "type": "object",
+  "required": ["kind", "id", "version", "updated", "company", "artifacts", "product_groups"],
+  "properties": {
+    "kind": {"const": "company-context-manifest"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "updated": {"type": "string", "format": "date"},
+    "example": {"type": "boolean"},
+    "language": {"type": "string"},
+    "authoring_guide": {"type": "string"},
+    "agent_instructions": {"type": "string"},
+    "company": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "name": {"type": "string"},
+        "domain": {"type": "string"}
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "path", "summary"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "kind": {"type": "string"},
+          "path": {"type": "string"},
+          "summary": {"type": "string", "maxLength": 140},
+          "load_when": {"type": "string"}
+        }
+      }
+    },
+    "product_groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "summary"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "path": {"type": "string"},
+          "summary": {"type": "string", "maxLength": 140},
+          "load_when": {"type": "string"}
+        }
+      }
+    }
+  }
+}
