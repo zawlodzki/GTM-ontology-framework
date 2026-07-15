@@ -19,7 +19,9 @@ model of the business: semantic (what exists), binding (where data lives), dynam
 Artifact formats: `references/artifact-formats.md` (field-by-field spec).
 Starter templates: `templates/`. Copy a template, fill it, keep the structure.
 Worked example: `examples/gtm-ontology/` — a complete validated ontology (fictional
-B2B SaaS on Pipedrive), exactly what these phases produce.
+B2B SaaS on Pipedrive), exactly what these phases produce — linked via
+`context_root` to `examples/company-context/`, a worked company-context tree
+(product groups, segments, ICPs, personas, motions, positioning).
 
 Core rules (apply throughout):
 
@@ -37,8 +39,8 @@ Phase 0), using this instance layout:
 ```
 gtm-ontology/
 ├── CLAUDE.md                  agent navigation file (written in Phase 5)
-├── manifest.yaml
-├── context/{business-context.md, glossary.yaml}
+├── manifest.yaml              may declare context_root -> ../company-context
+├── context/glossary.yaml      optional
 ├── semantic/objects/*.yaml
 ├── binding/{systems/*.yaml, discovery/<system>/*.yaml, mappings/*.yaml, identity.yaml}
 ├── dynamic/{processes/*.yaml, automations/*.yaml, actions/*.yaml, loops/*.yaml, prompts/*.md, drafts/*.md}
@@ -51,8 +53,16 @@ gtm-ontology/
 
 ### Phase 0: Scoping
 
-Interview the user:
-1. Business: what is sold, to whom (ICP + disqualifiers), pricing/ACV, cycle length, GTM motion, team roles.
+1. Company context first. Look for a company-context tree: a directory whose
+   `manifest.yaml` has `kind: company-context-manifest` (conventionally
+   `company-context/` at the workspace root; ask if unsure). Present → read its
+   manifest and the relevant product-group manifests per `load_when`; do NOT
+   re-interview facts it already states (what is sold, to whom, ICP, motions,
+   pricing); you will record its path as `context_root` in Phase 5. Absent →
+   interview: what is sold, to whom (ICP + disqualifiers), pricing/ACV, cycle
+   length, GTM motion, team roles — and distill it into the manifest
+   `business_summary`. (A separate context-builder skill for producing the full
+   tree is planned; its interim authoring spec is the tree's ARTIFACT-GUIDE.md.)
 2. Systems: every GTM app, its role, available access (MCP server? API creds? warehouse?).
    For platform CRMs (Salesforce, HubSpot, Dynamics) also agree WHICH modules/objects
    are in scope and record it in the system profile's `scope` block; the ontology
@@ -61,8 +71,8 @@ Interview the user:
 3. Use cases: what should agents ANSWER and DO? These are the ontology's competency questions; they define scope.
 
 Scaffold the `gtm-ontology/` directory tree (layout above), then write
-`context/business-context.md` (template: `templates/business-context.md`),
-`binding/systems/<id>.yaml` per in-scope system, initial `context/glossary.yaml`.
+`binding/systems/<id>.yaml` per in-scope system and, when useful, an initial
+`context/glossary.yaml`.
 
 **GATE:** user confirms scope, systems, use cases.
 
@@ -119,7 +129,10 @@ The human layer: interview, one topic at a time, record as `source: declared`:
    0.0–1.0), required properties, tasks (mandatory/optional), drafts (email/SMS
    templates; collect verbatim → `dynamic/drafts/<id>.md`), tips, loss_reasons,
    owner, SLA (`target_duration_days` + `rotting_threshold_days`), automations
-   triggered; allowed transitions, skip/backward policy.
+   triggered; allowed transitions, skip/backward policy. When a company-context
+   tree is linked, also ask which product group the pipeline sells and which
+   motions feed it → `product_groups` / `gtm_motions` refs (motion ids from the
+   motions artifact's `motions:` list).
 4. **Every automation**: ask explicitly "what runs OUTSIDE the CRM (n8n, Zapier,
    Make, scripts)?" → `dynamic/automations/<id>.yaml` with trigger, effects, and a
    **data fingerprint** (acting user, field patterns, markers, timing) + failure modes.
@@ -168,6 +181,9 @@ Run all checks; fix failures before shipping:
     respect the agent's `max_permission_level`.
 11. Every `pii: true` property has `allowed_in_context: false` + `freshness: live-only`.
 12. Nothing is past `valid_until`; facts past `last_verified + verify_every` are re-verified.
+13. When `context_root` is set: the linked tree exists and every `product-group:` /
+    `gtm-motion:` / other context ref resolves (the bundled linter follows
+    `context_root` and validates both trees in one run).
 
 Most of the list runs in one call — this skill bundles the linter:
 
@@ -178,9 +194,10 @@ python <path-to-this-skill>/tools/lint_ontology.py gtm-ontology/
 Errors block shipping; warnings are the review list. Checks 3, 5–7 stay manual.
 
 Compile `manifest.yaml` (template: `templates/ontology-manifest.yaml`): business
-summary ≤1 paragraph, agent instructions, every artifact with ≤140-char summary +
-`load_when` hint. Keep the manifest under ~2k tokens. Add `CHANGELOG.md` entry,
-set version.
+summary ≤1 paragraph, agent instructions, `context_root` when a company-context
+tree exists (relative path, e.g. `../company-context`), every artifact with
+≤140-char summary + `load_when` hint. Keep the manifest under ~2k tokens. Add
+`CHANGELOG.md` entry, set version.
 
 **Wire up agent discovery** (how any future agent finds and navigates the ontology):
 
@@ -241,6 +258,8 @@ Use these verbatim when interviewing (Phase 0/3):
   it: a person (which role), an automation (which one), AI? Can it move backwards?"
 - AI field: "What exactly produces this content, with what prompt (verbatim), from
   what inputs? When does it rerun? What does an empty value mean?"
+- Pipeline: "Which product group does this pipeline sell? Which GTM motions feed
+  it?" (when a company-context tree is linked → `product_groups` / `gtm_motions`)
 - Stage: "What must be true before a record ENTERS this stage? What must be true to
   LEAVE it forward? Which fields must be filled? Who owns it? How long before it's
   stuck? What fires automatically here? Which transitions are forbidden?"

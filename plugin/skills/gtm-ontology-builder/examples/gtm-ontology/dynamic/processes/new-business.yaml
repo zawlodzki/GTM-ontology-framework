@@ -9,6 +9,8 @@ type: pipeline
 operational_status: active
 object: object:deal
 state_property: property:deal.stage
+product_groups: [product-group:commerce-analytics]
+gtm_motions: [gtm-motion:commerce-analytics-inbound, gtm-motion:commerce-analytics-outbound]
 
 stages:
   - id: incoming

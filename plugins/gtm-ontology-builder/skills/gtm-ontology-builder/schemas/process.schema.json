@@ -14,6 +14,8 @@
     "operational_status": {"enum": ["active", "deprecated", "archived"]},
     "object": {"type": "string", "pattern": "^object:"},
     "state_property": {"type": "string", "pattern": "^property:"},
+    "product_groups": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^product-group:"}},
+    "gtm_motions": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^gtm-motion:"}},
     "stages": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/stage"}},
     "transitions": {
       "type": "object",

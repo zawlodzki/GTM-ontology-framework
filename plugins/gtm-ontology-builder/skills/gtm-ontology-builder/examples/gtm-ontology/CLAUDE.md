@@ -12,7 +12,11 @@ methods declared in `binding/systems/` (Pipedrive: MCP preferred).
    expect; if renders or caches disagree with YAML, YAML wins.
 2. Load full artifacts ONLY when their `load_when` matches your task. Do not
    bulk-load the folder; artifacts are sized for selective reading.
-3. Before executing ANY action: read `governance/agent-policy.yaml`, then the
+3. When the task concerns who we sell to or how (ICP, personas, buying context,
+   segments, GTM motions, positioning, products): follow `context_root` in
+   `manifest.yaml` to the company-context tree and navigate by its manifest's
+   `load_when` hints. That tree's own CLAUDE.md rules apply there.
+4. Before executing ANY action: read `governance/agent-policy.yaml`, then the
    `dynamic/actions/<id>.yaml` contract, and follow its `workflow` order exactly.
 
 ## Hard rules
@@ -39,7 +43,8 @@ methods declared in `binding/systems/` (Pipedrive: MCP preferred).
 | Path | Contents |
 |---|---|
 | `manifest.yaml` | index; always read first |
-| `context/` | business context, glossary |
+| `../company-context/` | company, audience, and GTM context (via manifest `context_root`) |
+| `context/` | glossary (optional) |
 | `semantic/objects/` | deal, person, organization: semantics, enum definitions |
 | `binding/` | Pipedrive profile, bindings (field-key hashes), identity, discovery snapshots |
 | `dynamic/` | new-business process, 3 automations (+fingerprints), 2 actions, 1 loop, prompt, draft |

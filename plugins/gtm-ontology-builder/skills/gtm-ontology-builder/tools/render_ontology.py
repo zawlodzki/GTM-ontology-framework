@@ -12,6 +12,10 @@ Outputs (default out-dir: <ontology-dir>/render):
     explorer.html     self-contained interactive explorer (funnel, objects,
                       actions, automations, KPIs, reference graph)
 
+If the manifest declares `context_root`, the linked company-context tree is
+included in the reference graph (product-group and gtm-motion nodes); context
+markdown bodies are not rendered. Renders always go to <ontology-dir>/render.
+
 Renders are GENERATED; never hand-edit, regenerate after each version bump.
 """
 import sys, os, re, json, glob, datetime
@@ -19,7 +23,17 @@ from collections import defaultdict
 
 import yaml
 
-REF_RE = re.compile(r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop):([a-z0-9_./=-]+)")
+# Keep REF_RE identical to the one in lint_ontology.py. Longer kinds must
+# precede shorter prefixes of themselves (product-group-strategy before
+# product-group, gtm-motions before gtm-motion).
+REF_RE = re.compile(
+    r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop"
+    r"|product-group-strategy|product-group|gtm-motions|gtm-motion|segment|use-case"
+    r"|icp|personas|buying-context|positioning|value-propositions|messaging"
+    r"|product-context):([a-z0-9_./=-]+)")
+# Documentation files inside a context tree; not artifacts, never rendered.
+GUIDE_KINDS = {"company-context-readme", "company-context-agent-guide",
+               "company-context-artifact-guide"}
 
 
 def load(path):
@@ -55,7 +69,7 @@ def collect(root):
             except Exception as e:
                 print(f"warn: cannot parse {f}: {e}", file=sys.stderr)
                 continue
-            if isinstance(d, dict) and "kind" in d:
+            if isinstance(d, dict) and "kind" in d and d["kind"] not in GUIDE_KINDS:
                 docs[f] = coerce(d)
                 raws[f] = raw
     return docs, raws
@@ -100,10 +114,22 @@ def mermaid_funnel(proc):
     return "\n".join(lines)
 
 
+def process_context_line(proc):
+    bits = []
+    if proc.get("product_groups"):
+        bits.append("Product groups: " + ", ".join(r.split(":", 1)[1] for r in proc["product_groups"]))
+    if proc.get("gtm_motions"):
+        bits.append("GTM motions: " + ", ".join(r.split(":", 1)[1] for r in proc["gtm_motions"]))
+    return " · ".join(bits)
+
+
 def render_process(proc, meta_line):
     stages = sorted(proc["stages"], key=lambda s: s["order"])
-    out = [f"# {proc['name']}", "", proc.get("description", "").strip(), "",
-           mermaid_funnel(proc), ""]
+    ctx = process_context_line(proc)
+    out = [f"# {proc['name']}", "", proc.get("description", "").strip(), ""]
+    if ctx:
+        out += [f"*{ctx}*", ""]
+    out += [mermaid_funnel(proc), ""]
     header = "| | " + " | ".join(s["name"] for s in stages) + " |"
     sep = "|---" * (len(stages) + 1) + "|"
     out += [header, sep]
@@ -157,13 +183,20 @@ def render_actions(actions, meta_line):
 def build_edges(docs, raws):
     ids = {f"{d['kind']}:{d['id']}" for d in docs.values() if "id" in d}
     prop_owner = {d["id"]: f"object-type:{d['id']}" for d in docs.values() if d["kind"] == "object-type"}
+    # Motion ids declared in gtm-motions frontmatter become gtm-motion pseudo-nodes.
+    for d in docs.values():
+        if d["kind"] == "gtm-motions":
+            for m in d.get("motions") or []:
+                if isinstance(m, dict) and m.get("id"):
+                    ids.add(f"gtm-motion:{m['id']}")
     edges, nodes = set(), {}
-    KIND_MAP = {"object": "object-type"}
+    KIND_MAP = {"object": "object-type", "product-group": "product-group-manifest"}
+    DISPLAY = {"product-group-manifest": "product-group"}
     for f, d in docs.items():
         if "id" not in d:
             continue
         src = f"{d['kind']}:{d['id']}"
-        nodes[src] = d["kind"]
+        nodes[src] = DISPLAY.get(d["kind"], d["kind"])
         for kind, rest in REF_RE.findall(raws[f]):
             base = rest.split("/")[0].split(".")[0].split("=")[0]
             if kind == "property":
@@ -172,7 +205,8 @@ def build_edges(docs, raws):
                 tgt = f"{KIND_MAP.get(kind, kind)}:{base}"
             if tgt and tgt != src and tgt in ids:
                 edges.add((src, tgt))
-                nodes.setdefault(tgt, tgt.split(":")[0])
+                tk = tgt.split(":")[0]
+                nodes.setdefault(tgt, DISPLAY.get(tk, tk))
     return nodes, sorted(edges)
 
 
@@ -235,7 +269,9 @@ function show(tab){setOn(tab);main.innerHTML="";({Funnel:funnel,Objects:objects,
 function funnel(){
  D.processes.forEach(p=>{
   const h=document.createElement("div");
-  h.innerHTML=`<h2>${p.name}</h2><div class="muted">${p.description||""}</div>`;
+  const ctx=[(p.product_groups||[]).length?"Product groups: "+p.product_groups.map(x=>x.split(":").pop()).join(", "):"",
+             (p.gtm_motions||[]).length?"GTM motions: "+p.gtm_motions.map(x=>x.split(":").pop()).join(", "):""].filter(Boolean).join(" · ");
+  h.innerHTML=`<h2>${p.name}</h2><div class="muted">${p.description||""}</div>`+(ctx?`<div class="muted">${ctx}</div>`:"");
   const row=document.createElement("div");row.className="cards";
   const panel=document.createElement("div");panel.className="panel";panel.textContent="Click a stage to see its business logic.";
   p.stages.forEach(s=>{
@@ -308,7 +344,7 @@ function kpis(){
   D.kpis.map(k=>`<tr><td><b>${k.name}</b><div class="muted">${k.definition||""}</div></td><td>${k.level}${k.scope?"<br><span class=muted>"+k.scope+"</span>":""}</td><td><code>${k.formula}</code></td><td>${k.grain}</td><td>${k.target?(k.target.operator+" "+k.target.value+" "+(k.target.unit||"")):""}</td><td>${k.owner}</td></tr>`).join("")+`</table>`;
  main.appendChild(div);
 }
-const COLORS={"object-type":"#0969da",process:"#1a7f37",automation:"#8250df",action:"#bf3989","kpi":"#9a6700",prompt:"#1b7c83",draft:"#57606a",system:"#24292f",binding:"#d0d7de","agent-policy":"#b42318",loop:"#bc4c00"};
+const COLORS={"object-type":"#0969da",process:"#1a7f37",automation:"#8250df",action:"#bf3989","kpi":"#9a6700",prompt:"#1b7c83",draft:"#57606a",system:"#24292f",binding:"#d0d7de","agent-policy":"#b42318",loop:"#bc4c00","product-group":"#6639ba","gtm-motion":"#0a3069","gtm-motions":"#218bff",icp:"#116329",personas:"#9e6a03"};
 function graph(){
  const div=document.createElement("div");div.id="net";main.appendChild(div);
  const nodes=D.graph.nodes.map(n=>({id:n.id,label:n.id.split(":")[1],title:n.id,color:COLORS[n.kind]||"#57606a",font:{color:"#fff"},shape:"box"}));
@@ -354,6 +390,14 @@ def main():
 
     docs, raws = collect(root)
     manifest = next((d for d in docs.values() if d["kind"] == "manifest"), {})
+    if manifest.get("context_root"):
+        ctx_dir = os.path.normpath(os.path.join(root, manifest["context_root"]))
+        if os.path.isdir(ctx_dir):
+            cdocs, craws = collect(ctx_dir)
+            docs.update(cdocs)
+            raws.update(craws)
+        else:
+            print(f"warn: context_root not found: {ctx_dir}", file=sys.stderr)
     meta_line = (f"*Generated from ontology `{manifest.get('ontology','?')}` "
                  f"v{manifest.get('version','?')} ({manifest.get('updated','')}), do not hand-edit.*")
 

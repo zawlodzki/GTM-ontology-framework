@@ -41,7 +41,8 @@ methods declared in `binding/systems/`.
 | Path | Contents |
 |---|---|
 | `manifest.yaml` | index; always read first |
-| `context/` | business context, glossary |
+| `../company-context/` | company, audience, and GTM context (via manifest `context_root`, when linked) |
+| `context/` | glossary (optional) |
 | `semantic/objects/` | object types, property semantics, enum definitions |
 | `binding/` | systems, bindings (physical field keys), identity, discovery snapshots |
 | `dynamic/` | processes (stage criteria), automations (+fingerprints), actions, loops, prompts, drafts |

@@ -11,6 +11,8 @@ operational_status: active         # optional; active | deprecated | archived â€
                                    # finish; archived = read-only history, agents route nothing here.
 object: object:deal
 state_property: property:deal.stage    # which property holds current state
+# product_groups: [product-group:my-group]                 # what this pipeline sells (needs manifest context_root)
+# gtm_motions: [gtm-motion:my-group-inbound]               # which motions feed it (ids from the motions artifact)
 
 stages:
   - id: qualified

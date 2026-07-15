@@ -1,0 +1,56 @@
+kind: company-context-manifest
+id: acme-analytics-company-context
+version: 0.4.0
+updated: 2026-07-15
+example: true
+language: en
+authoring_guide: ARTIFACT-GUIDE.md
+company:
+  id: acme-analytics
+  name: Acme Analytics
+  domain: https://acme-analytics.example
+agent_instructions: >
+  Load this manifest first. Follow load_when and open only the relevant company
+  artifact or product-group manifest. Never merge product-group ICPs. All content
+  is synthetic and canonical only within this fictional example. Load the
+  authoring guide only when creating, changing, or structurally reviewing context.
+artifacts:
+  - id: company-profile
+    kind: company-profile
+    path: company/profile.md
+    summary: Fictional company identity, business model, portfolio, and boundaries.
+    load_when: Understanding what Acme Analytics is and what the company does.
+  - id: company-strategy
+    kind: company-strategy
+    path: company/strategy.md
+    summary: Mission, target-market choices, portfolio posture, constraints, and shared boundaries.
+    load_when: Working on company strategy, portfolio choices, narrative, or shared differentiation.
+  - id: company-commercial-model
+    kind: commercial-model
+    path: company/commercial-model.md
+    summary: Shared packaging, pricing, contracting, and discount principles.
+    load_when: Interpreting prices, commercial terms, contracts, or discount rules.
+  - id: company-operating-model
+    kind: operating-model
+    path: company/operating-model.md
+    summary: Company-wide roles, ownership boundaries, and customer delivery model.
+    load_when: Understanding internal responsibilities, handoffs, or service ownership.
+  - id: company-market-overview
+    kind: market-overview
+    path: company/market/overview.md
+    summary: Category definition, market boundaries, demand drivers, and alternatives.
+    load_when: Understanding the market category or broad alternatives to Acme Analytics.
+  - id: company-competitors
+    kind: competitor-landscape
+    path: company/market/competitors.md
+    summary: Fictional company-level competitor archetypes and comparison dimensions.
+    load_when: Comparing company-wide alternatives or preparing a competitive overview.
+product_groups:
+  - id: commerce-analytics
+    path: product-groups/commerce-analytics/manifest.yaml
+    summary: Analytics products for mid-market e-commerce brands and commercial teams.
+    load_when: Working on commerce analytics audiences, GTM, positioning, or products.
+  - id: data-activation
+    path: product-groups/data-activation/manifest.yaml
+    summary: Governed data delivery products for data-mature commerce organizations.
+    load_when: Working on data activation audiences, GTM, positioning, or products.

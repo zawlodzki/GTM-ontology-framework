@@ -20,14 +20,13 @@ Shared rules:
 | `updated` | R | date | |
 | `business_summary` | R | string | ≤ 1 paragraph. The only prose an agent always has. |
 | `agent_instructions` | O | string | how to navigate tiers |
+| `context_root` | O | string | relative path to a company-context tree (see "Context artifacts" below); lint/render resolve refs across both trees |
 | `systems[]` | R | list | `{id, role, access}`; role: crm/email-marketing/erp/…; access: mcp/api/warehouse |
 | `artifacts[]` | R | list | `{path, kind, summary (≤140 chars), load_when}` |
 
 `load_when` is an agent hint: *"working with deals, stages, forecasting"*.
 
-## A1: `business-context.md`
-
-Markdown with YAML frontmatter (`kind: business-context`, `id`, `meta`). Required sections: `## Company & Offer`, `## ICP`, `## GTM Motion`, `## Team & Roles`, `## Agent Use Cases`. Keep ≤ 100 lines; it feeds interviews, not agent runtime (agents get `business_summary` from the manifest).
+(A1 `business-context.md` is retired — the company-context tree plus the manifest `business_summary` replaced it.)
 
 ## A2: `glossary.yaml`
 
@@ -217,6 +216,8 @@ apart — e.g. two branch offices of one company: same `name`, same `domain`, di
 | `operational_status` | O | `active / deprecated / archived` — state **in the CRM**, distinct from `meta.status` (ontology confirmation). `active` = new records enter it; `deprecated` = closed to new records, open ones still finish; `archived` = read-only history, agents route nothing here |
 | `object` | R | `object:` ref the process moves |
 | `state_property` | R | `property:` ref holding current state (stage field, lifecycle enum) |
+| `product_groups[]` | O | `product-group:` refs — which product group(s) this pipeline sells; requires manifest `context_root` |
+| `gtm_motions[]` | O | `gtm-motion:` refs — which motion(s) feed this pipeline; motion ids come from the motions artifact's `motions:` list |
 | `stages[]` | R | see below |
 | `transitions` | R | `{allowed: [[from,to],...], skip_policy: forbidden/allowed/approval, backward_policy: ...}` |
 | `kpis[]` | O | process-level `kpi:` refs |
@@ -367,3 +368,13 @@ The loop ("obieg") is the unit of delegated work and of trust: someone starts it
 | `escalation` | O | where abstains and failed runs go |
 
 A loop has no `approval` field of its own: approval semantics live in the actions it references, the ladder gates the loop. Corrections from the weekly review return to the ontology as `source: learned` facts with `evidence` pointing at the run or journal entry.
+
+## Context artifacts (company-context tree)
+
+The company-context tree linked via manifest `context_root` has its own artifact set, built before the ontology (see `01-concepts.md` Layer 0). Three schema contracts in `schemas/`:
+
+- **`company-context-manifest.schema.json`** — the tree's root `manifest.yaml` (`kind: company-context-manifest`): `id`, `version`, `updated`, `company {id, name, domain}`, `artifacts[] {id, kind, path, summary ≤140, load_when}`, `product_groups[] {id, path, summary, load_when}`, optional `authoring_guide`.
+- **`product-group-manifest.schema.json`** — one `manifest.yaml` per group (`kind: product-group-manifest`): `id` (= the group id that `product-group:` refs resolve to), `name`, `summary`, `inherits[]` (company artifact ids), `artifacts[]`, `products[]` (same entry shape).
+- **`context-artifact.schema.json`** — shared frontmatter for every content artifact (`company-profile`, `company-strategy`, `commercial-model`, `operating-model`, `market-overview`, `competitor-landscape`, `product-group-strategy`, `segment`, `use-case`, `icp`, `personas`, `buying-context`, `gtm-motions`, `positioning`, `value-propositions`, `messaging`, `product-context`): `kind`, `id`, `meta {source, status, ...}`, optional `scope` and typed-ref fields. A `gtm-motions` artifact must declare its `motions[] {id, name, summary}` list — those ids are the canonical `gtm-motion:` ref targets.
+
+The deep per-kind content spec (what a segment, ICP, or positioning artifact must say) lives in the tree's own `ARTIFACT-GUIDE.md`, which the planned context-builder skill will own. Guide files (`kind: company-context-readme / -agent-guide / -artifact-guide`) are documentation, not artifacts: lint and render skip them.
