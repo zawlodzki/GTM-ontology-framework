@@ -49,8 +49,9 @@ Markdown artifacts use YAML frontmatter with:
 - `meta.last_verified` and `meta.verify_every` for facts that age;
 - `meta.evidence` when a claim depends on research, customer evidence, or a review.
 
-Use typed references such as `segment:commerce-analytics-core`, never file paths.
-Manifests map artifact IDs to paths and supply `summary` and `load_when`.
+Use typed references such as `segment:commerce-analytics-core-segment`, never
+file paths. Manifests map artifact IDs to paths and supply `summary` and
+`load_when`.
 
 ## Company strategy
 
@@ -254,6 +255,12 @@ selections from the same strategy. A copy edit does not authorize a positioning
 change, and messaging feedback must not silently change product truth.
 
 ## GTM motion
+
+Declare every motion in the frontmatter `motions:` list — `id`, `name`, and a
+short `summary` per motion. Motion ids are canonical identifiers: the GTM
+ontology's processes reference them as `gtm-motion:<id>`, and products in this
+tree reference them through `gtm_motion_refs`. Renaming a motion id is a breaking
+change across both trees.
 
 Connect strategy to repeatable execution:
 

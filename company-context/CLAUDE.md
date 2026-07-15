@@ -40,6 +40,17 @@ Follow typed references through manifests, never by guessing a path. A reference
 selects a canonical upstream decision; repeated prose is only a local summary and
 must not silently diverge from the referenced artifact.
 
+## Ontology linkage
+
+The GTM ontology (sibling `gtm-ontology/` tree) points here through
+`context_root` in its `manifest.yaml`; this tree never links back. Ontology
+processes reference `product-group:<group-id>` and `gtm-motion:<motion-id>`,
+where motion ids come from the `motions:` list in each group's
+`go-to-market/motions.md` frontmatter. Group and motion ids are therefore
+cross-tree identifiers: renaming one is a breaking change — search both trees
+(and any renders) before touching it, then re-run the GOF linter, which
+follows `context_root` and validates both trees in one run.
+
 ## Interpretation rules
 
 - Company artifacts contain only facts shared by all product groups.

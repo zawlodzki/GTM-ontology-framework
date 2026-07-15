@@ -12,7 +12,9 @@ audience_refs:
   - personas:commerce-analytics-personas
 buying_context_ref: buying-context:commerce-analytics-buying-context
 positioning_ref: positioning:commerce-analytics-positioning
-gtm_motion_ref: gtm-motions:commerce-analytics-motions
+gtm_motion_refs:
+  - gtm-motion:commerce-analytics-inbound
+  - gtm-motion:commerce-analytics-outbound
 meta:
   source: synthetic
   status: example

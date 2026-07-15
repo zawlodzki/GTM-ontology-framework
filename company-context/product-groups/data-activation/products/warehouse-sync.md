@@ -11,7 +11,9 @@ audience_refs:
   - personas:data-activation-personas
 buying_context_ref: buying-context:data-activation-buying-context
 positioning_ref: positioning:data-activation-positioning
-gtm_motion_ref: gtm-motions:data-activation-motions
+gtm_motion_refs:
+  - gtm-motion:data-activation-product-led
+  - gtm-motion:data-activation-sales-assisted
 meta:
   source: synthetic
   status: example

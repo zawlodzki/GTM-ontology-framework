@@ -14,6 +14,13 @@ messaging_ref: messaging:commerce-analytics-messaging
 product_refs:
   - product-context:growth-plan
   - product-context:scale-plan
+motions:
+  - id: commerce-analytics-inbound
+    name: Inbound education and capture
+    summary: Educational content leads to discovery and a data-fit assessment; default motion for Growth.
+  - id: commerce-analytics-outbound
+    name: Targeted outbound
+    summary: Trigger-based SDR outreach validating one workflow hypothesis; used selectively for Scale accounts.
 meta:
   source: synthetic
   status: example

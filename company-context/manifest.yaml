@@ -1,7 +1,7 @@
 kind: company-context-manifest
 id: acme-analytics-company-context
-version: 0.3.0
-updated: 2026-07-14
+version: 0.4.0
+updated: 2026-07-15
 example: true
 language: en
 authoring_guide: ARTIFACT-GUIDE.md

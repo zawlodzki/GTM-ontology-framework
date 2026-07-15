@@ -14,6 +14,13 @@ messaging_ref: messaging:data-activation-messaging
 product_refs:
   - product-context:warehouse-sync
   - product-context:audience-activation
+motions:
+  - id: data-activation-product-led
+    name: Product-led technical discovery
+    summary: Docs and a synthetic-data sandbox lead evaluators to a production-readiness review; common for Warehouse Sync.
+  - id: data-activation-sales-assisted
+    name: Sales-assisted adoption
+    summary: Qualification, readiness review, and a bounded pilot for production adoption; primary route for Audience Activation.
 meta:
   source: synthetic
   status: example

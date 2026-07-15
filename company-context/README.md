@@ -99,7 +99,7 @@ Keep one group-level artifact while the group has one coherent customer situatio
 Split personas, segments, positioning, or messaging into separate files only when
 selective loading would prevent agents from mixing materially different contexts.
 
-Use typed references such as `segment:commerce-analytics-core` and
+Use typed references such as `segment:commerce-analytics-core-segment` and
 `positioning:commerce-analytics-positioning` instead of file paths inside artifacts.
 The manifests remain the path index.
 
@@ -110,6 +110,15 @@ conventions (`docs/01-concepts.md` §3): corrections distilled from loop reviews
 enter as `source: learned` with `evidence` pointing at the run. This synthetic
 example keeps `source: synthetic` throughout on purpose.
 
-For agent navigation rules, read `CLAUDE.md`. The context is not linked to the
-ontology yet; that integration is intentionally outside this example's current
-scope.
+For agent navigation rules, read `CLAUDE.md`.
+
+## Link to the GTM ontology
+
+The GTM ontology points here through `context_root` in its `manifest.yaml`; this
+tree stays ontology-agnostic and never links back. Ontology artifacts reference
+context by typed refs — a process declares the product group it sells and the
+motions that feed it (`product_groups: [product-group:commerce-analytics]`,
+`gtm_motions: [gtm-motion:commerce-analytics-inbound]`). Motion ids come from the
+`motions:` list in each group's `go-to-market/motions.md` frontmatter. The GOF
+linter follows `context_root` and validates both trees in one run: schemas,
+cross-tree references, manifest completeness, and freshness.
