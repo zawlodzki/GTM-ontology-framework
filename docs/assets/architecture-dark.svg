@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" viewBox="0 0 680 724" role="img" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>GTM ontology framework: how the context ontology connects the CRM stack and an AI agent</title>
+<desc>Two YAML trees — company-context and gtm-ontology with four layers — sit between the live GTM stack (Pipedrive, n8n, Circleback) and two consumers: humans via generated renders, and an AI agent whose reads and writes are gated by governance.</desc>
+<defs>
+<marker id="head-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#B4B2A9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+<marker id="head-coral" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#F0997B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+
+<line x1="40" y1="24" x2="64" y2="24" stroke="#F0997B" stroke-width="1.5"/>
+<text x="70" y="28" font-size="12" fill="#B4B2A9">agent path</text>
+<line x1="160" y1="24" x2="184" y2="24" stroke="#B4B2A9" stroke-width="1.5"/>
+<text x="190" y="28" font-size="12" fill="#B4B2A9">data &amp; context flow</text>
+
+<rect x="225" y="50" width="255" height="176" rx="8" fill="none" stroke="#5DCAA5" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="237" y="72" font-size="14" font-weight="500" fill="#D3D1C7">company-context/</text>
+<text x="237" y="90" font-size="12" fill="#B4B2A9">who we sell to, what we sell</text>
+<rect x="241" y="104" width="223" height="32" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="120" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">company &amp; strategy</text>
+<rect x="241" y="142" width="223" height="32" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="158" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">products &amp; segments</text>
+<rect x="241" y="180" width="223" height="32" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="196" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">ICP, personas, motions</text>
+
+<line x1="352" y1="226" x2="352" y2="262" stroke="#B4B2A9" stroke-width="1.5" marker-end="url(#head-gray)"/>
+<text x="362" y="246" font-size="12" fill="#B4B2A9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">context_root</text>
+
+<rect x="225" y="266" width="255" height="328" rx="8" fill="none" stroke="#AFA9EC" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="237" y="288" font-size="14" font-weight="500" fill="#D3D1C7">gtm-ontology/</text>
+<text x="237" y="306" font-size="12" fill="#B4B2A9">operational ontology (YAML)</text>
+<rect x="241" y="318" width="223" height="46" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="335" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">manifest.yaml</text>
+<text x="352" y="351" font-size="12" fill="#AFA9EC" text-anchor="middle" dominant-baseline="central">tells agents what to load when</text>
+<rect x="241" y="372" width="223" height="46" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="389" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">semantic</text>
+<text x="352" y="405" font-size="12" fill="#AFA9EC" text-anchor="middle" dominant-baseline="central">what exists and what it means</text>
+<rect x="241" y="426" width="223" height="46" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="443" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">binding</text>
+<text x="352" y="459" font-size="12" fill="#AFA9EC" text-anchor="middle" dominant-baseline="central">where data physically lives</text>
+<rect x="241" y="480" width="223" height="46" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="497" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">dynamic</text>
+<text x="352" y="513" font-size="12" fill="#AFA9EC" text-anchor="middle" dominant-baseline="central">what happens and who may act</text>
+<rect x="241" y="534" width="223" height="46" rx="4" fill="#3C3489" stroke="#AFA9EC" stroke-width="1"/>
+<text x="352" y="551" font-size="14" font-weight="500" fill="#CECBF6" text-anchor="middle" dominant-baseline="central">measurement &amp; governance</text>
+<text x="352" y="567" font-size="12" fill="#AFA9EC" text-anchor="middle" dominant-baseline="central">measures results, gates agents</text>
+
+<rect x="30" y="374" width="140" height="220" rx="8" fill="none" stroke="#FAC775" stroke-width="1" stroke-dasharray="4 4"/>
+<text x="42" y="394" font-size="14" font-weight="500" fill="#D3D1C7">GTM stack</text>
+<text x="42" y="412" font-size="12" fill="#B4B2A9">live systems</text>
+<rect x="42" y="426" width="116" height="46" rx="4" fill="#444441" stroke="#B4B2A9" stroke-width="1"/>
+<text x="100" y="443" font-size="14" font-weight="500" fill="#D3D1C7" text-anchor="middle" dominant-baseline="central">Pipedrive</text>
+<text x="100" y="459" font-size="12" fill="#B4B2A9" text-anchor="middle" dominant-baseline="central">CRM · MCP/API</text>
+<rect x="42" y="480" width="116" height="46" rx="4" fill="#444441" stroke="#B4B2A9" stroke-width="1"/>
+<text x="100" y="497" font-size="14" font-weight="500" fill="#D3D1C7" text-anchor="middle" dominant-baseline="central">n8n</text>
+<text x="100" y="513" font-size="12" fill="#B4B2A9" text-anchor="middle" dominant-baseline="central">automations</text>
+<rect x="42" y="534" width="116" height="46" rx="4" fill="#444441" stroke="#B4B2A9" stroke-width="1"/>
+<text x="100" y="551" font-size="14" font-weight="500" fill="#D3D1C7" text-anchor="middle" dominant-baseline="central">Circleback</text>
+<text x="100" y="567" font-size="12" fill="#B4B2A9" text-anchor="middle" dominant-baseline="central">transcripts</text>
+
+<line x1="158" y1="443" x2="237" y2="443" stroke="#B4B2A9" stroke-width="1.5" marker-end="url(#head-gray)"/>
+
+<rect x="510" y="318" width="130" height="46" rx="4" fill="#712B13" stroke="#F0997B" stroke-width="1"/>
+<text x="575" y="335" font-size="14" font-weight="500" fill="#F5C4B3" text-anchor="middle" dominant-baseline="central">AI agent</text>
+<text x="575" y="351" font-size="12" fill="#F0997B" text-anchor="middle" dominant-baseline="central">e.g. SDR agent</text>
+
+<path d="M510 341 H468" fill="none" stroke="#F0997B" stroke-width="1.5" marker-end="url(#head-coral)"/>
+<path d="M464 557 H540 V368" fill="none" stroke="#F0997B" stroke-width="1.5" marker-end="url(#head-coral)"/>
+<path d="M600 368 V702 H22 V455 H38" fill="none" stroke="#F0997B" stroke-width="1.5" marker-end="url(#head-coral)"/>
+<text x="340" y="692" font-size="12" fill="#B4B2A9" text-anchor="middle">acts on the CRM via MCP/API</text>
+
+<line x1="352" y1="594" x2="352" y2="622" stroke="#B4B2A9" stroke-width="1.5" marker-end="url(#head-gray)"/>
+<text x="362" y="614" font-size="12" fill="#B4B2A9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">render_ontology.py</text>
+<rect x="252" y="626" width="200" height="46" rx="4" fill="#444441" stroke="#B4B2A9" stroke-width="1"/>
+<text x="352" y="643" font-size="14" font-weight="500" fill="#D3D1C7" text-anchor="middle" dominant-baseline="central">render/ — for humans</text>
+<text x="352" y="659" font-size="12" fill="#B4B2A9" text-anchor="middle" dominant-baseline="central">tables, funnel, explorer</text>
+</svg>

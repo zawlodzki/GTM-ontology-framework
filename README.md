@@ -33,6 +33,11 @@ sales process, this is for you.
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/architecture-dark.svg">
+  <img src="docs/assets/architecture.svg" width="680" alt="Architecture: the company-context and gtm-ontology YAML trees sit between the live GTM stack (CRM, automations, transcripts) and two consumers — humans via generated renders, and an AI agent whose reads and writes are gated by governance before it acts on the CRM.">
+</picture>
+
 Four layers. **Semantic** is what exists in the business: objects, fields with meaning,
 conditions behind every dropdown value. **Binding** is where the data physically lives:
 systems, field-key mappings, cross-system identity. **Dynamic** is what happens: pipelines
