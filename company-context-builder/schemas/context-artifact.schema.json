@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/context-artifact.schema.json",
+  "title": "GOF Company-Context Artifact (shared frontmatter)",
+  "description": "Shared frontmatter contract for every markdown artifact in a company-context tree. The deep per-kind content spec lives in the tree's ARTIFACT-GUIDE.md.",
+  "type": "object",
+  "required": ["kind", "id", "meta"],
+  "properties": {
+    "kind": {
+      "enum": ["company-profile", "company-strategy", "commercial-model",
+               "operating-model", "market-overview", "competitor-landscape",
+               "product-group-strategy", "segment", "use-case", "icp",
+               "personas", "buying-context", "gtm-motions", "positioning",
+               "value-propositions", "messaging", "product-context"]
+    },
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "scope": {"type": "string"},
+    "meta": {
+      "type": "object",
+      "required": ["source", "status"],
+      "properties": {
+        "source": {"type": "string"},
+        "status": {"type": "string"},
+        "updated": {"type": "string", "format": "date"},
+        "owner": {"type": "string"},
+        "evidence": {"type": "string"},
+        "last_verified": {"type": "string", "format": "date"},
+        "verify_every": {"type": "string", "pattern": "^[0-9]+[dwmy]$"}
+      }
+    },
+    "motions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "name": {"type": "string"},
+          "summary": {"type": "string", "maxLength": 140}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "gtm-motions"}}, "required": ["kind"]},
+      "then": {"required": ["motions"]}
+    }
+  ]
+}

@@ -74,7 +74,9 @@ example's `context_root: ../company-context` resolves in the bundle too). When
 you change any of those at the repo root, mirror the change into `skill/` in the
 same commit — otherwise the shared skill drifts and breaks for outside users.
 Likewise, changes to `skill/SKILL.md`, `skill/references/`, or `skill/templates/`
-stay inside the skill.
+stay inside the skill. `company-context-builder/` is the standalone source for the
+second plugin skill and bundles its own artifact guide, schemas, starter context,
+scripts, tests, and authoring templates.
 
 The skill is also redistributed three more ways, all generated from `skill/`:
 
@@ -90,14 +92,25 @@ The skill is also redistributed three more ways, all generated from `skill/`:
   entry is `.agents/plugins/marketplace.json`, with source path
   `./plugins/gtm-ontology-builder`.
 
-After any edit under `skill/`, update all three distributions: repackage the
-`.skill` zip and re-sync both plugin payloads. None is shipped until regenerated.
+The company-context skill is redistributed from `company-context-builder/` as:
+
+- `company-context-builder.skill` — a zip whose single top-level folder is
+  `company-context-builder/`, with `.DS_Store` and generated Python caches stripped;
+- `plugin/skills/company-context-builder/` — the Claude Code plugin payload;
+- `plugins/gtm-ontology-builder/skills/company-context-builder/` — the Codex plugin
+  payload.
+
+Both payload directories must be exact, cache-free mirrors of the source skill.
+
+After any edit under either skill source, update its `.skill` archive and both
+plugin payloads. None is shipped until all affected distributions are regenerated.
 Bump `version` in both plugin manifests on a released change. Validate the Claude
 Code plugin with `claude plugin validate ./plugin`; validate the Codex plugin with
 the `plugin-creator` validator, then install it from the repo marketplace with
 `codex plugin add gtm-ontology-builder@personal` and confirm the installed cache
-contains `skills/gtm-ontology-builder/SKILL.md`. Use the `plugin-creator`
-cachebuster flow for local Codex updates; never edit the installed cache directly.
+contains both `skills/gtm-ontology-builder/SKILL.md` and
+`skills/company-context-builder/SKILL.md`. Use the `plugin-creator` cachebuster
+flow for local Codex updates; never edit the installed cache directly.
 
 ## Artifact & Schema Conventions
 

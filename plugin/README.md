@@ -1,13 +1,14 @@
-# gtm-ontology-builder (Claude Code plugin)
+# Company Context & GTM Ontology Builder (Claude Code plugin)
 
-The `gtm-ontology-builder` skill packaged as a Claude Code plugin. It builds an
-agent-ready business ontology of a GTM stack (Pipedrive, HubSpot, Attio, Salesforce,
-email marketing, ERP): objects and custom fields with business semantics, pipelines
-with entry/exit criteria, AI-filled fields and their prompts, automations with data
-fingerprints, agent actions, and KPIs — a 4-layer, machine-readable model.
+This plugin packages two complementary skills. `company-context-builder` inventories
+business materials, researches the company and competitors, analyzes Closed Won CRM
+evidence, reconciles conflicts, and builds a validated static `company-context/`.
+`gtm-ontology-builder` then maps live GTM systems into an agent-ready ontology of
+objects, fields, pipelines, automations, actions, governance, and KPIs.
 
-The skill is self-contained: it bundles the renderer (`tools/render_ontology.py`),
-the JSON schemas, and a complete validated example ontology.
+Both skills are self-contained. They bundle their format references, schemas,
+templates, validation tools, and worked or starter context required to run outside
+this repository.
 
 ## Install
 
@@ -32,9 +33,11 @@ claude --plugin-dir ./plugin
 
 ## Use
 
-The skill is model-invoked — describe the task and Claude picks it up:
+The skills are model-invoked — describe the task and Claude picks the relevant one:
 
-> Build an ontology of my CRM.
+> Build company context from my materials and won CRM deals.
+
+> Build an ontology of my CRM using the existing company context.
 
 or invoke it directly by its namespaced name:
 
@@ -42,9 +45,15 @@ or invoke it directly by its namespaced name:
 /gtm-ontology-builder:gtm-ontology-builder
 ```
 
-It runs a phased interview (scope → discovery → semantic modeling → business logic →
-agent actions & policy → validation), asking for confirmation at each gate, and writes
-the result to a `gtm-ontology/` folder at your workspace root.
+or:
+
+```
+/gtm-ontology-builder:company-context-builder
+```
+
+Each skill uses phased discovery and confirmation gates. The first writes
+`company-context/`; the second links it as canonical static context while building
+`gtm-ontology/`.
 
 ## Rendering
 
@@ -64,11 +73,7 @@ dictionary, an action catalog, and an interactive `explorer.html`. See
 ```
 plugin/
 ├── .claude-plugin/plugin.json          manifest
-└── skills/gtm-ontology-builder/
-    ├── SKILL.md                        phase-by-phase instructions
-    ├── references/                     artifact format spec, CRM type mapping
-    ├── templates/                      starter artifact templates
-    ├── schemas/                        JSON Schemas (validation)
-    ├── tools/render_ontology.py        the renderer
-    └── examples/gtm-ontology/          complete worked example (Pipedrive B2B SaaS)
+└── skills/
+    ├── company-context-builder/         context workflow, templates, schemas, and tools
+    └── gtm-ontology-builder/            ontology workflow, examples, schemas, and tools
 ```

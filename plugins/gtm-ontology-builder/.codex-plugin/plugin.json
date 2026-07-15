@@ -1,7 +1,7 @@
 {
   "name": "gtm-ontology-builder",
-  "version": "1.3.0+codex.20260715095500",
-  "description": "Build an agent-ready business ontology for GTM systems, including CRM objects, pipelines, automations, agent actions, and KPIs.",
+  "version": "1.4.0+codex.20260715094512",
+  "description": "Build evidence-backed company context and agent-ready GTM ontologies from business materials, market research, CRM evidence, and live-system discovery.",
   "author": {
     "name": "Grzegorz Zaw\u0142odzki",
     "email": "grzesiek@zawlodzki.pl"
@@ -10,18 +10,19 @@
   "repository": "https://github.com/zawlodzki/GTM-ontology-framework",
   "skills": "./skills/",
   "interface": {
-    "displayName": "GTM Ontology Builder",
-    "shortDescription": "Build agent-ready ontologies for CRM and GTM systems.",
-    "longDescription": "Model CRM objects, business semantics, pipelines, automations, agent actions, governance policies, and KPIs as a validated GTM ontology.",
+    "displayName": "Company Context & GTM Ontology Builder",
+    "shortDescription": "Build company context and agent-ready GTM ontologies.",
+    "longDescription": "Inventory products, groups, ICPs, personas, positioning, market and Closed Won evidence into validated company context, then model CRM objects, pipelines, automations, agent actions, governance policies, and KPIs as a linked GTM ontology.",
     "developerName": "Grzegorz Zaw\u0142odzki",
     "category": "Productivity",
     "capabilities": [
       "Write"
     ],
     "defaultPrompt": [
+      "Build company context from my materials, market research, and won CRM opportunities.",
+      "Inventory and normalize my products, product groups, ICPs, personas, positioning, and GTM motions.",
       "Build a GTM ontology for my CRM stack.",
-      "Map my sales process for AI agents.",
-      "Document my CRM objects, fields, and automations."
+      "Map my sales process, CRM fields, automations, and agent actions."
     ]
   }
 }

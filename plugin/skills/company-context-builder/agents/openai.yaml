@@ -1,0 +1,4 @@
+interface:
+  display_name: "Company Context Builder"
+  short_description: "Build evidence-backed company context from scratch"
+  default_prompt: "Use $company-context-builder to inventory my existing materials, research my market, analyze won CRM deals, and build company-context/."

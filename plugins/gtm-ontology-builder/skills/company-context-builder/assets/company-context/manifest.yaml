@@ -1,0 +1,48 @@
+kind: company-context-manifest
+id: {{COMPANY_ID}}-company-context
+version: 0.1.0
+updated: {{UPDATED}}
+example: false
+language: {{LANGUAGE_YAML}}
+authoring_guide: ARTIFACT-GUIDE.md
+company:
+  id: {{COMPANY_ID}}
+  name: {{COMPANY_NAME_YAML}}
+  domain: {{COMPANY_DOMAIN_YAML}}
+agent_instructions: >
+  Load this manifest first. Follow load_when and open only the relevant company
+  artifact or product-group manifest. Never merge product-group ICPs. Do not infer
+  missing facts. Load the authoring guide only when creating, changing, or
+  structurally reviewing context.
+artifacts:
+  - id: company-profile
+    kind: company-profile
+    path: company/profile.md
+    summary: Company identity, business model, portfolio, and boundaries.
+    load_when: Understanding company identity, business model, portfolio, or boundaries.
+  - id: company-strategy
+    kind: company-strategy
+    path: company/strategy.md
+    summary: Mission, target-market choices, portfolio posture, constraints, and shared boundaries.
+    load_when: Working on company strategy, portfolio choices, narrative, or shared differentiation.
+  - id: company-commercial-model
+    kind: commercial-model
+    path: company/commercial-model.md
+    summary: Shared packaging, pricing, contracting, and discount principles.
+    load_when: Interpreting prices, commercial terms, contracts, or discount rules.
+  - id: company-operating-model
+    kind: operating-model
+    path: company/operating-model.md
+    summary: Company-wide roles, ownership boundaries, and customer delivery model.
+    load_when: Understanding internal responsibilities, handoffs, or service ownership.
+  - id: company-market-overview
+    kind: market-overview
+    path: company/market/overview.md
+    summary: Category definition, market boundaries, demand drivers, and alternatives.
+    load_when: Understanding the market category or broad company-level alternatives.
+  - id: company-competitors
+    kind: competitor-landscape
+    path: company/market/competitors.md
+    summary: Company-level competitor archetypes and comparison dimensions.
+    load_when: Comparing company-wide alternatives or preparing a competitive overview.
+{{PRODUCT_GROUPS_BLOCK}}

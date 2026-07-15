@@ -1,0 +1,68 @@
+kind: product-group-manifest
+id: {{PRODUCT_GROUP_ID}}
+version: 0.1.0
+updated: {{UPDATED}}
+example: false
+language: {{LANGUAGE_YAML}}
+name: {{PRODUCT_GROUP_NAME_YAML}}
+summary: >
+  Draft context for one coherent customer situation, buying process, product truth,
+  and route to market. Replace this summary after confirming the group strategy.
+inherits:
+  - company-profile
+  - company-strategy
+  - company-commercial-model
+  - company-operating-model
+agent_instructions: >
+  Load only the artifact matching the task. Establish workflow need, ownership,
+  and readiness before using firmographics to prioritize fit. Keep product truth
+  separate from positioning and messaging. Follow typed refs and do not infer
+  missing context.
+artifacts:
+  - id: {{PRODUCT_GROUP_ID}}-strategy
+    kind: product-group-strategy
+    path: strategy.md
+    summary: Strategic role, primary market, offer architecture, constraints, and gates.
+    load_when: Making prioritization, expansion, or group-level GTM decisions.
+  - id: {{PRODUCT_GROUP_ID}}-core-segment
+    kind: segment
+    path: market/segment.md
+    summary: Canonical customer situation, alternatives, maturity, signals, and boundaries.
+    load_when: Understanding the target market, customer situation, or segment boundaries.
+  - id: {{PRODUCT_GROUP_ID}}-core-use-case
+    kind: use-case
+    path: audience/use-cases.md
+    summary: Primary recurring workflow, current method, friction, output, and success evidence.
+    load_when: Understanding the workflow, desired progress, or use-case success evidence.
+  - id: {{PRODUCT_GROUP_ID}}-icp
+    kind: icp
+    path: audience/icp.md
+    summary: Self-contained qualification rules linked to the canonical segment and use case.
+    load_when: Qualifying an organization or explaining the product-group ICP.
+  - id: {{PRODUCT_GROUP_ID}}-personas
+    kind: personas
+    path: audience/personas.md
+    summary: Buying and adoption roles, responsibilities, evidence, objections, and influence.
+    load_when: Tailoring value, evidence, messages, or decisions to buying roles.
+  - id: {{PRODUCT_GROUP_ID}}-buying-context
+    kind: buying-context
+    path: audience/buying-context.md
+    summary: Problems, triggers, alternatives, committee, journey, evidence, and blockers.
+    load_when: Understanding why, when, and how purchase and adoption happen.
+  - id: {{PRODUCT_GROUP_ID}}-positioning
+    kind: positioning
+    path: go-to-market/positioning.md
+    summary: Anchors, category rationale, alternatives, differentiation, proof, and guardrails.
+    load_when: Defining market perception, comparison frames, or differentiation.
+  - id: {{PRODUCT_GROUP_ID}}-value-propositions
+    kind: value-propositions
+    path: go-to-market/value-propositions.md
+    summary: Traceable role- and use-case-specific value arguments and proof.
+    load_when: Building a value argument, offer comparison, or business case.
+  - id: {{PRODUCT_GROUP_ID}}-messaging
+    kind: messaging
+    path: go-to-market/messaging.md
+    summary: Message selection by role, awareness stage, asset, and channel.
+    load_when: Creating a campaign, page, sales narrative, outreach, or other message.
+{{MOTIONS_MANIFEST_BLOCK}}
+products: []
