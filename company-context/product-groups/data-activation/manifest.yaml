@@ -1,6 +1,6 @@
 kind: product-group-manifest
 id: data-activation
-version: 0.3.0
+version: 0.4.0
 updated: 2026-07-15
 example: true
 language: en
@@ -20,7 +20,9 @@ agent_instructions: >
   remains self-contained for qualification. Establish workflow need, joint ownership,
   and operational readiness before using firmographics or technology signals. Product
   artifacts separate features, capabilities, package limits, services, benefits, and
-  outcome hypotheses. Follow typed refs and do not infer missing context.
+  outcome hypotheses. Positioning defines the comparison frame, value propositions
+  connect roles to product truth, and messaging selects approved arguments. Follow
+  typed refs and do not infer missing context.
 artifacts:
   - id: data-activation-strategy
     kind: product-group-strategy
@@ -55,13 +57,23 @@ artifacts:
   - id: data-activation-motions
     kind: gtm-motions
     path: go-to-market/motions.md
-    summary: Product-led technical evaluation and sales-assisted production adoption.
-    load_when: Planning acquisition, qualification, routing, or Data Activation handoffs.
+    summary: Experiment channels, journey assets, qualification, routing, production gates, handoffs, and measures.
+    load_when: Planning acquisition, technical discovery, pilot routing, handoffs, adoption, or motion review.
   - id: data-activation-positioning
     kind: positioning
     path: go-to-market/positioning.md
-    summary: Category, value proposition, alternatives, differentiation, and message guardrails.
-    load_when: Creating Data Activation messaging or handling competitive comparisons.
+    summary: Segment-scoped anchors, category rationale, alternatives, differentiation chains, proof, and guardrails.
+    load_when: Defining market perception, comparison frames, differentiation, or message boundaries.
+  - id: data-activation-value-propositions
+    kind: value-propositions
+    path: go-to-market/value-propositions.md
+    summary: Role- and offer-specific chains from current alternative through product truth to direct value and proof.
+    load_when: Building a value argument, pilot case, offer comparison, or persona-specific benefit.
+  - id: data-activation-messaging
+    kind: messaging
+    path: go-to-market/messaging.md
+    summary: Core hierarchy and message selection by role, awareness stage, offer, asset, and channel.
+    load_when: Creating a page, guide, sales narrative, outreach, pilot asset, or other customer-facing message.
 products:
   - id: warehouse-sync
     kind: product-context
