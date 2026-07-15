@@ -1,28 +1,31 @@
 kind: manifest
 ontology: acme-analytics
-version: 1.3.0
-updated: 2026-07-14
+version: 1.4.0
+updated: 2026-07-15
 business_summary: >
-  Acme Analytics sells a product-analytics SaaS to mid-market e-commerce companies
-  (ACV EUR 12-40k, sales cycle 4-8 weeks). GTM: inbound content + outbound SDR.
-  Stack: Pipedrive (CRM, via MCP), Fireflies (call transcripts), n8n (automations).
-  Sales runs through the New Business pipeline; person lifecycle tracked
-  lead -> MQL -> SQL -> opportunity -> customer.
+  Acme Analytics sells commerce analytics and data activation to mid-market
+  e-commerce companies (ACV EUR 12-40k, sales cycle 4-8 weeks). Two product
+  groups: Commerce Analytics (Growth/Scale plans) and Data Activation
+  (Warehouse Sync, Audience Activation). Sales runs through the New Business
+  pipeline, currently selling Commerce Analytics via inbound + targeted
+  outbound; person lifecycle tracked lead -> MQL -> SQL -> opportunity ->
+  customer. Stack: Pipedrive (CRM, via MCP), Fireflies (call transcripts),
+  n8n (automations).
 agent_instructions: >
-  Read this manifest first; load artifacts per load_when. Never act on artifacts
-  with meta.status: draft. Check governance/agent-policy.yaml before executing
-  any action. Field-level authorship is in semantic objects (filled_by) and
-  automation fingerprints; never overwrite bot-managed fields. Missing data =
-  stop and ask, never invent. Loops run at their permission_level from the
-  ladder in governance/agent-policy.yaml.
+  Read this manifest first; load artifacts per load_when. Company, audience,
+  and GTM context lives in the company-context tree at context_root; load its
+  manifest when a task concerns ICP, personas, motions, positioning, or
+  products. Never act on artifacts with meta.status: draft. Check
+  governance/agent-policy.yaml before executing any action. Field-level
+  authorship is in semantic objects (filled_by) and automation fingerprints;
+  never overwrite bot-managed fields. Missing data = stop and ask, never
+  invent. Loops run at their permission_level from the ladder in
+  governance/agent-policy.yaml.
+context_root: ../company-context
 systems:
   - {id: pipedrive, role: crm, access: [mcp, api]}
   - {id: n8n, role: automation-platform, access: [api]}
 artifacts:
-  - path: context/business-context.md
-    kind: business-context
-    summary: "Company, ICP, GTM motion, team roles, agent use cases"
-    load_when: "understanding the business, scoping new work"
   - path: semantic/objects/deal.yaml
     kind: object-type
     summary: "Deal: revenue opportunity; stage, source, budget, AI qualification fields"

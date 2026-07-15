@@ -1,0 +1,87 @@
+kind: product-group-manifest
+id: data-activation
+version: 0.4.0
+updated: 2026-07-15
+example: true
+language: en
+name: Data Activation
+summary: >
+  Governed products for data-mature commerce organizations that need to deliver
+  modeled customer data from their warehouse to business and engagement systems.
+inherits:
+  - company-profile
+  - company-strategy
+  - company-commercial-model
+  - company-operating-model
+agent_instructions: >
+  Load only the artifact matching the task. Use strategy for group-level choices,
+  segment for the canonical customer situation, and the use-case artifact for the
+  governed warehouse-to-destination workflow and its two offer variants. The ICP
+  remains self-contained for qualification. Establish workflow need, joint ownership,
+  and operational readiness before using firmographics or technology signals. Product
+  artifacts separate features, capabilities, package limits, services, benefits, and
+  outcome hypotheses. Positioning defines the comparison frame, value propositions
+  connect roles to product truth, and messaging selects approved arguments. Follow
+  typed refs and do not infer missing context.
+artifacts:
+  - id: data-activation-strategy
+    kind: product-group-strategy
+    path: strategy.md
+    summary: Experimentation posture, joint ownership model, offer variants, constraints, and production gates.
+    load_when: Making portfolio, prioritization, pilot, expansion, or group-level GTM decisions.
+  - id: data-activation-core-segment
+    kind: segment
+    path: market/segment.md
+    summary: Data-mature commerce organizations with an owned recurring warehouse-to-destination workflow and governance problem.
+    load_when: Understanding the target market, customer situation, alternatives, maturity, or segment boundaries.
+  - id: data-activation-core-use-case
+    kind: use-case
+    path: audience/use-cases.md
+    summary: Governed delivery of approved warehouse data to operational systems, with sync and audience variants.
+    load_when: Understanding the workflow, variants, current method, friction, desired output, or success evidence.
+  - id: data-activation-icp
+    kind: icp
+    path: audience/icp.md
+    summary: Self-contained qualification rules linked to the canonical segment and use case.
+    load_when: Qualifying an organization for Data Activation or explaining its ICP.
+  - id: data-activation-personas
+    kind: personas
+    path: audience/personas.md
+    summary: Joint technical and business ownership, validators, blockers, evidence, objections, and journey roles.
+    load_when: Tailoring value, evidence, messaging, or decisions to Data Activation buying roles.
+  - id: data-activation-buying-context
+    kind: buying-context
+    path: audience/buying-context.md
+    summary: Problems, triggers, alternatives, committee gates, evaluation journey, pilot evidence, and blockers.
+    load_when: Understanding why, when, and how Data Activation evaluation, purchase, and adoption happen.
+  - id: data-activation-motions
+    kind: gtm-motions
+    path: go-to-market/motions.md
+    summary: Experiment channels, journey assets, qualification, routing, production gates, handoffs, and measures.
+    load_when: Planning acquisition, technical discovery, pilot routing, handoffs, adoption, or motion review.
+  - id: data-activation-positioning
+    kind: positioning
+    path: go-to-market/positioning.md
+    summary: Segment-scoped anchors, category rationale, alternatives, differentiation chains, proof, and guardrails.
+    load_when: Defining market perception, comparison frames, differentiation, or message boundaries.
+  - id: data-activation-value-propositions
+    kind: value-propositions
+    path: go-to-market/value-propositions.md
+    summary: Role- and offer-specific chains from current alternative through product truth to direct value and proof.
+    load_when: Building a value argument, pilot case, offer comparison, or persona-specific benefit.
+  - id: data-activation-messaging
+    kind: messaging
+    path: go-to-market/messaging.md
+    summary: Core hierarchy and message selection by role, awareness stage, offer, asset, and channel.
+    load_when: Creating a page, guide, sales narrative, outreach, pilot asset, or other customer-facing message.
+products:
+  - id: warehouse-sync
+    kind: product-context
+    path: products/warehouse-sync.md
+    summary: Technical sync offer with explicit features, capability chains, limits, services, benefits, and boundaries.
+    load_when: Evaluating, positioning, pricing, or implementing Warehouse Sync.
+  - id: audience-activation
+    kind: product-context
+    path: products/audience-activation.md
+    summary: Governed audience offer with explicit product truth, approval workflow, limits, services, and boundaries.
+    load_when: Evaluating, positioning, pricing, or implementing Audience Activation.

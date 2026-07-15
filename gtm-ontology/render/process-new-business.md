@@ -2,6 +2,8 @@
 
 From accepted lead to signed contract. Runs on Pipedrive pipeline 'New Business'; terminal won/lost map to Pipedrive deal status (see bindings notes).
 
+*Product groups: commerce-analytics · GTM motions: commerce-analytics-inbound, commerce-analytics-outbound*
+
 ```mermaid
 flowchart LR
   incoming["Incoming<br/>p=10%"]
@@ -42,4 +44,4 @@ flowchart LR
 | **Loss reasons** |  | No budget; No decision power; Bad timing |  | Too expensive; Chose competitor |  |  |  |
 | **Tips** |  | Ask about the decision process before showing pricing. |  |  |  |  |  |
 
-*Generated from ontology `acme-analytics` v1.3.0 (2026-07-14), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.4.0 (2026-07-15), do not hand-edit.*

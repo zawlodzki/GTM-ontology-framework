@@ -1,5 +1,17 @@
 # Changelog: acme-analytics ontology
 
+## 1.4.0 (2026-07-15)
+- Linked the company-context tree: `context_root: ../company-context` in the
+  manifest. Company, audience, and GTM context now lives there (product groups,
+  segments, ICPs, personas, buying context, positioning, value propositions,
+  messaging, motions); lint and render resolve references across both trees.
+- Retired A1 `context/business-context.md` — replaced by the company-context
+  tree plus the manifest `business_summary` (still the runtime summary agents
+  always get). `business_summary` rewritten to name both product groups.
+- New Business process now declares what it sells and how:
+  `product_groups: [product-group:commerce-analytics]`,
+  `gtm_motions: [gtm-motion:commerce-analytics-inbound, gtm-motion:commerce-analytics-outbound]`.
+
 ## 1.3.0 (2026-07-14)
 - Permission ladder in agent-policy (A13, now schema-validated): levels 1-3,
   promotion criteria, ceiling (prices and contracts stay human); sdr-agent capped
