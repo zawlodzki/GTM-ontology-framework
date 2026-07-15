@@ -1,6 +1,6 @@
 kind: product-group-manifest
 id: data-activation
-version: 0.2.0
+version: 0.3.0
 updated: 2026-07-15
 example: true
 language: en
@@ -18,8 +18,9 @@ agent_instructions: >
   segment for the canonical customer situation, and the use-case artifact for the
   governed warehouse-to-destination workflow and its two offer variants. The ICP
   remains self-contained for qualification. Establish workflow need, joint ownership,
-  and operational readiness before using firmographics or technology signals. Follow
-  typed refs and do not infer missing context.
+  and operational readiness before using firmographics or technology signals. Product
+  artifacts separate features, capabilities, package limits, services, benefits, and
+  outcome hypotheses. Follow typed refs and do not infer missing context.
 artifacts:
   - id: data-activation-strategy
     kind: product-group-strategy
@@ -44,13 +45,13 @@ artifacts:
   - id: data-activation-personas
     kind: personas
     path: audience/personas.md
-    summary: Head of Data and Lifecycle Marketing Lead goals, concerns, and buying roles.
-    load_when: Tailoring messaging or decisions to Data Activation buying roles.
+    summary: Joint technical and business ownership, validators, blockers, evidence, objections, and journey roles.
+    load_when: Tailoring value, evidence, messaging, or decisions to Data Activation buying roles.
   - id: data-activation-buying-context
     kind: buying-context
     path: audience/buying-context.md
-    summary: Activation problems, triggers, buying jobs, committee dynamics, and evidence.
-    load_when: Understanding why and how a Data Activation purchase happens.
+    summary: Problems, triggers, alternatives, committee gates, evaluation journey, pilot evidence, and blockers.
+    load_when: Understanding why, when, and how Data Activation evaluation, purchase, and adoption happen.
   - id: data-activation-motions
     kind: gtm-motions
     path: go-to-market/motions.md
@@ -65,10 +66,10 @@ products:
   - id: warehouse-sync
     kind: product-context
     path: products/warehouse-sync.md
-    summary: Governed delivery of modeled warehouse attributes to operational systems.
+    summary: Technical sync offer with explicit features, capability chains, limits, services, benefits, and boundaries.
     load_when: Evaluating, positioning, pricing, or implementing Warehouse Sync.
   - id: audience-activation
     kind: product-context
     path: products/audience-activation.md
-    summary: Controlled audience creation and delivery for lifecycle marketing teams.
+    summary: Governed audience offer with explicit product truth, approval workflow, limits, services, and boundaries.
     load_when: Evaluating, positioning, pricing, or implementing Audience Activation.
