@@ -45,7 +45,7 @@ Schema validation, reference resolution, manifest completeness, orphaned artifac
 **Semantic pass** — what only an LLM (or a human) can judge; run it over the lint report:
 
 - glossary terms vs enum-value definitions: do they still say the same thing?
-- property `semantics` vs `business-context.md`: has the business moved?
+- property `semantics` vs the company context (the `context_root` tree): has the business moved?
 - prompt text vs the current field and stage definitions it writes into.
 - `overdue` warnings: re-verify each fact with its owner, update `last_verified`, or retire the fact.
 

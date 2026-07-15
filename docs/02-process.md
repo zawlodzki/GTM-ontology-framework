@@ -11,12 +11,12 @@ Principle throughout is the standard ontology-elicitation loop: **discover → p
 **Goal:** understand the business and decide what the ontology must cover.
 
 Steps:
-1. Business context interview (see Question Bank Q0). Capture: what the company sells, to whom (ICP), GTM motion (inbound/outbound/PLG/partner), team roles, sales cycle length, ACV range.
+1. Company context. If a company-context tree exists (a directory whose `manifest.yaml` has `kind: company-context-manifest`, conventionally `company-context/` at the workspace root), read it instead of interviewing: its manifest and the relevant product-group manifests answer what the company sells, to whom, and through which motions. Record its path — it becomes `context_root` in the ontology manifest (Phase 5). If no tree exists, fall back to the Q0 mini-interview and distill the answers into the manifest `business_summary`; a dedicated context-builder skill is planned for producing the full tree (its interim authoring spec is the tree's `ARTIFACT-GUIDE.md`).
 2. Systems inventory: every app in the GTM stack, its role, access method available (MCP / API / warehouse / none). For platform CRMs (Salesforce, HubSpot, Dynamics) additionally decide **which modules and objects are in scope** and record it in the system profile's `scope` block; the ontology covers the CRM module, not the whole platform (see `05-crm-type-mapping.md`).
 3. Use cases: what agents should be able to *answer* and *do*, i.e. the ontology's **competency questions**. They drive scope: model only what they need (see anti-patterns).
 4. Scope decision: which systems and which processes are in scope for this iteration.
 
-**Outputs:** `context/business-context.md`, `context/glossary.yaml` (initial), `binding/systems/<id>.yaml` (one per in-scope system, access section filled).
+**Outputs:** `binding/systems/<id>.yaml` (one per in-scope system, access section filled), `context/glossary.yaml` (initial, optional), the noted `context_root` path (or a drafted `business_summary` when no context tree exists).
 **Gate:** user confirms scope, systems list, and use cases.
 
 ## Phase 1: Discovery (binding, bottom-up)
@@ -64,7 +64,7 @@ Elicit, per artifact:
 
 1. **Enum value definitions** (→ object properties). For each dropdown value: the conditions for it, who/what sets it, whether transitions are ordered. *This includes lifecycle stage fields.*
 2. **AI-filled fields** (→ prompts + property `ai:` block). The exact prompt, inputs (e.g. call transcript source), trigger, model, failure behavior. If the prompt lives in n8n/Zapier, extract it verbatim into `dynamic/prompts/<id>.md`.
-3. **Processes** (→ `processes/<id>.yaml`). For each pipeline/lifecycle, per stage: entry criteria, exit criteria, **bad examples** (what does NOT suffice, common rep mistakes), **customer verifier** (objective proof on the customer side), forecast **probability**, required properties, tasks (mandatory/optional), communication **drafts** (→ A14 files, verbatim like prompts), tips, valid loss reasons, SLA (target duration + rotting threshold), owner role, automations firing; plus allowed transitions & skip policy.
+3. **Processes** (→ `processes/<id>.yaml`). For each pipeline/lifecycle, per stage: entry criteria, exit criteria, **bad examples** (what does NOT suffice, common rep mistakes), **customer verifier** (objective proof on the customer side), forecast **probability**, required properties, tasks (mandatory/optional), communication **drafts** (→ A14 files, verbatim like prompts), tips, valid loss reasons, SLA (target duration + rotting threshold), owner role, automations firing; plus allowed transitions & skip policy. When a company-context tree is linked, also capture which product group the pipeline sells and which motions feed it (→ `product_groups` / `gtm_motions` refs).
 4. **Automations** (→ `automations/<id>.yaml`). For each workflow found in Phase 1 *plus* any living outside the CRM (n8n, Zapier, Make, custom scripts; ask!): trigger, conditions, effects, **data fingerprint**, failure modes.
 5. **KPIs** (→ `kpis/`). Company, process, and stage level; formula in ontology terms; grain; target; owner; where it's reported today.
 
@@ -103,12 +103,13 @@ Checks (automatable; fail = fix before shipping):
 12. Every loop has an owner; its `permission_level` and `target_level` exist in the agent-policy ladder and respect the agent's `max_permission_level`.
 13. Every property with `pii: true` has `allowed_in_context: false` and `freshness: live-only`.
 14. No artifact is past its `valid_until`; facts past `last_verified + verify_every` are re-verified or retired.
+15. When `context_root` is set: the linked tree exists, its manifests are complete, its artifacts validate, and every `product-group:` / `gtm-motion:` / other context ref resolves (lint covers all of it in the same run).
 
 Most of the list runs in one call: `python tools/lint_ontology.py <ontology-dir>` covers schema validation, reference resolution, manifest completeness, enum gaps, draft refs, pii, temporality, and loop/ladder consistency. What stays manual: snapshot-bound checks (3), business-judgment checks (5–7), and probability monotonicity (11).
 
 Then compile the agent entry points:
 
-1. `manifest.yaml` (Tier 0 index).
+1. `manifest.yaml` (Tier 0 index); set `context_root` when a company-context tree exists.
 2. `gtm-ontology/CLAUDE.md`, the navigation file (template: `templates/ontology-claude.md`):
    reading order (CLAUDE.md → manifest → artifacts per `load_when`), hard rules (drafts,
    policy check, `writable: false`, fingerprints), directory map. Mirror to
@@ -135,7 +136,7 @@ Then compile the agent entry points:
 
 Use verbatim or adapt. Record answers directly into artifacts (`source: declared`, `status: draft` until confirmed).
 
-## Q0: Business context
+## Q0: Business context (fallback — skip anything the company-context tree already answers)
 - What do you sell, and how is it priced? Typical deal size and sales cycle?
 - Who is your ICP (industry, size, geography, buyer persona)? What disqualifies?
 - How do leads arrive (channels)? Inbound/outbound/PLG mix?
@@ -156,6 +157,7 @@ Use verbatim or adapt. Record answers directly into artifacts (`source: declared
 - May an agent regenerate it? Under what conditions?
 
 ## Q3: Per pipeline/process stage
+- Which product group does this pipeline sell? Which GTM motions feed it? (→ `product_groups` / `gtm_motions`, when a company-context tree is linked)
 - ENTRY: what must be true before a record may enter this stage? Which fields must be filled?
 - EXIT: what must be true to leave forward? What sends it to lost/disqualified?
 - BAD EXAMPLES: what do reps typically (wrongly) treat as enough to move forward?

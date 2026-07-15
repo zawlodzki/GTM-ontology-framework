@@ -22,7 +22,8 @@ sales process, this is for you.
 | `plugin/` | The same skill packaged as a Claude Code plugin, installable from this repo's marketplace (see [Install](#install)). |
 | `plugins/gtm-ontology-builder/` | The skill packaged as a Codex plugin. |
 | `.agents/plugins/marketplace.json` | The Codex marketplace manifest for installing and sharing the plugin directly from this repo. |
-| `gtm-ontology/` | A complete, validated example: fictional B2B SaaS on Pipedrive. Pipeline with entry/exit criteria, AI-filled fields with their prompt, 3 automations with data fingerprints, agent actions, KPIs. This is exactly what the skill produces. |
+| `gtm-ontology/` | A complete, validated example: fictional B2B SaaS on Pipedrive. Pipeline with entry/exit criteria, AI-filled fields with their prompt, 3 automations with data fingerprints, agent actions, KPIs. Linked to `company-context/` via `context_root`. This is exactly what the skill produces. |
+| `company-context/` | A worked example of the static company-context tree: company facts, per-product-group segments, ICPs, personas, buying context, positioning, value propositions, messaging, and GTM motions. Built before the ontology and referenced from it (`product-group:` / `gtm-motion:` refs); authored by hand today following its `ARTIFACT-GUIDE.md`, by a planned context-builder skill tomorrow. |
 | `docs/` | The method: 4 layers, a 7-phase process with interview question banks, a format spec for every artifact, CRM type mappings, extension and anti-pattern notes. |
 | `schemas/` | JSON Schema for each artifact type: validate everything, trust nothing. |
 | `templates/` | Commented starter files. |

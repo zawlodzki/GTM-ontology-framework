@@ -2,6 +2,23 @@
 
 ## 1. Layer model
 
+### Layer 0: Company context (*who we sell to, and why*)
+
+The static business context — company facts, product groups, segments, ICPs,
+personas, buying context, positioning, value propositions, messaging, GTM
+motions — lives in a **separate company-context tree**, not inside the
+ontology. It is built *before* the ontology (a dedicated context-builder skill
+is planned for producing it; today it is authored by hand following the tree's
+own `ARTIFACT-GUIDE.md`), and the ontology links to it one-way through
+`context_root` in its manifest.
+
+The tree is navigated by its own manifests and `load_when` hints, not by the
+reference graph. Ontology artifacts point into it with typed refs: a process
+declares the product group it sells (`product-group:<group-id>`) and the
+motions that feed it (`gtm-motion:<motion-id>`, ids declared in the `motions:`
+frontmatter list of each group's motions artifact). Lint and render follow
+`context_root` and treat both trees as one reference space.
+
 ### Layer 1: Semantic (*what exists*)
 
 The conceptual model of the business, independent of any tool. Canonical **object types** (Deal, Person, Organization, Subscription…), their **properties** with business meaning, and **links** between them. The semantic layer owns:
@@ -53,7 +70,6 @@ Two halves:
 | # | Artifact | Layer | Format | One per | Schema |
 |---|---|---|---|---|---|
 | A0 | `manifest.yaml` | index | YAML | ontology | `manifest.schema.json` |
-| A1 | `business-context.md` | 1 | Markdown + YAML frontmatter | ontology | none |
 | A2 | `glossary.yaml` | 1 | YAML | ontology | none (see formats doc) |
 | A3 | `objects/<id>.yaml` | 1 | YAML | object type | `object-type.schema.json` |
 | A4 | `systems/<id>.yaml` | 2 | YAML | connected app | `system.schema.json` |
@@ -71,10 +87,13 @@ Two halves:
 
 Grouping rule: artifacts marked "one per X" may be grouped into a single file (a YAML list) while the ontology is small (< ~10 entries of that kind); split into per-entity files when they grow, so agents can load them individually.
 
+A1 (`business-context.md`) is retired: the company-context tree (Layer 0, linked via `context_root`) replaced it, and the manifest `business_summary` remains the runtime summary agents always get. A-numbers stay stable. Context-tree artifacts have their own formats — two manifest kinds (`company-context-manifest.schema.json`, `product-group-manifest.schema.json`) and a shared frontmatter contract for content artifacts (`context-artifact.schema.json`); see `03-artifact-formats.md`.
+
 ## 3. Conventions
 
 - **IDs**: kebab-case, unique within artifact kind (`new-business`, `advance-deal-stage`).
 - **Cross-references**: `kind:id`, e.g. `object:deal`, `property:deal.lifecycle_stage`, `automation:lead-scoring`, `kpi:win-rate`, `action:advance-deal-stage`, `prompt:lead-qualification`, `process:new-business`, `system:pipedrive`, `loop:lead-qualification`. Validators must resolve every reference.
+- **Context refs** resolve into the company-context tree (via `context_root`): `product-group:<group-id>` (the group's manifest) and `gtm-motion:<motion-id>` (a motion declared in a motions artifact's `motions:` list), plus the context tree's own kinds — `segment:`, `use-case:`, `icp:`, `personas:`, `buying-context:`, `positioning:`, `value-propositions:`, `messaging:`, `product-context:`, `gtm-motions:`, `product-group-strategy:`.
 - **Files** are referenced by ontology-root-relative path.
 - **Names**: object types PascalCase in `name`, kebab-case in `id`. Link labels UPPER_SNAKE_CASE (`BELONGS_TO`, `ATTENDED`).
 - **Every YAML artifact** starts with `kind:` and `id:`.
@@ -106,7 +125,7 @@ Temporality rules: a fact past `last_verified + verify_every` is **overdue** —
 
 Three tiers keep agent context small:
 
-- **Tier 0, entry point.** `CLAUDE.md` in the ontology root (navigation rules, hard rules, directory map; static, ~1 page; mirrored as `AGENTS.md` where that convention is used) plus `manifest.yaml` (target < 2k tokens): business summary (1 paragraph), systems list, and an index of every artifact with `kind`, `path`, one-line `summary`, and `load_when` hint. An agent always loads these and usually nothing else up front. Agents discover the ontology via a marker-delimited block in the workspace root `CLAUDE.md`/`AGENTS.md` (written in Phase 5).
+- **Tier 0, entry point.** `CLAUDE.md` in the ontology root (navigation rules, hard rules, directory map; static, ~1 page; mirrored as `AGENTS.md` where that convention is used) plus `manifest.yaml` (target < 2k tokens): business summary (1 paragraph), systems list, and an index of every artifact with `kind`, `path`, one-line `summary`, and `load_when` hint. An agent always loads these and usually nothing else up front. The company-context tree stays out of Tier 0: an agent follows `context_root` only when the task actually concerns audiences, market, positioning, or products. Agents discover the ontology via a marker-delimited block in the workspace root `CLAUDE.md`/`AGENTS.md` (written in Phase 5).
 - **Tier 1, artifact heads.** Every artifact's first ~15 lines (kind, id, name, description, meta) are self-sufficient as a summary. Agents may head-read files cheaply.
 - **Tier 2, full artifacts**, loaded on demand per the manifest's `load_when` hints.
 

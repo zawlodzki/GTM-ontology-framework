@@ -1,8 +1,9 @@
 # GTM Ontology Framework: project guide
 
 This repo contains the GOF framework (docs, schemas, templates, tools), the
-`gtm-ontology-builder` skill (`skill/`), and a complete example ontology instance
-(`gtm-ontology/`). Framework spec: `README.md` and `docs/`.
+`gtm-ontology-builder` skill (`skill/`), a complete example ontology instance
+(`gtm-ontology/`), and its linked company-context tree (`company-context/`).
+Framework spec: `README.md` and `docs/`.
 
 <!-- gtm-ontology:start -->
 ## GTM Ontology
@@ -10,15 +11,19 @@ This repo contains the GOF framework (docs, schemas, templates, tools), the
 The business ontology of the GTM stack lives in `gtm-ontology/`. Before working
 with CRM data, sales processes, pipelines, or agent actions, read
 `gtm-ontology/CLAUDE.md` (navigation rules), then `gtm-ontology/manifest.yaml`
-(artifact index). Never act on artifacts with `meta.status: draft`; check
+(artifact index). The static company context (product groups, segments, ICPs,
+personas, motions, positioning) lives in `company-context/`, linked from the
+manifest via `context_root`; follow it only when the task concerns audiences,
+market, or products. Never act on artifacts with `meta.status: draft`; check
 `gtm-ontology/governance/agent-policy.yaml` before executing any action.
 <!-- gtm-ontology:end -->
 
 ## Commit Message Format
 
 Scope-prefixed commits: **`scope: description`**. Scope = the area that changed,
-not the type of change. Scopes: `gtm-ontology:`, `skill:`, `docs:`, `templates:`,
-`tools:`. Example: `gtm-ontology: add new-business process with lead scoring`.
+not the type of change. Scopes: `gtm-ontology:`, `company-context:`, `skill:`,
+`docs:`, `templates:`, `tools:`. Example: `gtm-ontology: add new-business
+process with lead scoring`.
 
 ## Working Agreement
 
@@ -62,11 +67,14 @@ focused and return only the conclusion you need.
 
 `skill/` is a **standalone, shareable copy** of the framework. It bundles its own
 copies of things that also live at the repo root: `tools/render_ontology.py` →
-`skill/tools/`, `schemas/*.json` → `skill/schemas/`, and the example ontology
-`gtm-ontology/` → `skill/examples/gtm-ontology/`. When you change any of those at the
-repo root, mirror the change into `skill/` in the same commit — otherwise the shared
-skill drifts and breaks for outside users. Likewise, changes to `skill/SKILL.md`,
-`skill/references/`, or `skill/templates/` stay inside the skill.
+`skill/tools/`, `schemas/*.json` → `skill/schemas/`, the example ontology
+`gtm-ontology/` → `skill/examples/gtm-ontology/`, and its linked context tree
+`company-context/` → `skill/examples/company-context/` (side by side, so the
+example's `context_root: ../company-context` resolves in the bundle too). When
+you change any of those at the repo root, mirror the change into `skill/` in the
+same commit — otherwise the shared skill drifts and breaks for outside users.
+Likewise, changes to `skill/SKILL.md`, `skill/references/`, or `skill/templates/`
+stay inside the skill.
 
 The skill is also redistributed three more ways, all generated from `skill/`:
 
@@ -114,6 +122,9 @@ Never report a task complete until you have, as applicable:
 - Run the linter after any ontology change:
   `python tools/lint_ontology.py gtm-ontology` — 0 errors required (schema
   validation, ref resolution, manifest completeness, pii/temporality, loop/ladder).
+  The linter follows the manifest's `context_root` and validates the
+  company-context tree in the same run — there is no separate lint command for
+  it; run it after `company-context/` changes too.
 - Regenerated renders after an ontology change:
   `python tools/render_ontology.py gtm-ontology` — and confirmed it runs clean.
 
@@ -127,6 +138,9 @@ surface (docs, prose), say so explicitly instead of claiming it was verified.
   stale `old_string`. Read files over ~500 lines in chunks with offset/limit.
 - When renaming an artifact id, search separately for: its typed refs
   (`type:id`) across all artifacts, its `manifest.yaml` entry, bindings, and any
-  string literals in `docs/`, `skill/`, and `templates/`.
+  string literals in `docs/`, `skill/`, and `templates/`. Product-group and
+  motion ids are cross-tree identifiers — search both `gtm-ontology/` and
+  `company-context/` (motion ids live in the `motions:` frontmatter lists)
+  before renaming, then re-run the linter.
 - Never delete an artifact without confirming no refs point to it. Never push
   unless explicitly told to.

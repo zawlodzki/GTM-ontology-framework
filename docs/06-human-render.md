@@ -9,6 +9,10 @@ field dictionary (`fields.md`), action catalog (`actions.md`), artifact referenc
 (`graph.md`; loops render as nodes with edges to their actions, prompts, and process),
 and a self-contained interactive `explorer.html` (funnel with per-stage
 business logic, objects, actions, automations with fingerprints, KPIs, graph view).
+When the manifest declares `context_root`, the graph also includes the company-context
+tree: product-group and gtm-motion nodes with edges from the processes that declare
+them (`product_groups` / `gtm_motions`), plus the context tree's internal reference
+web. Context markdown bodies are not rendered — they are already human-readable.
 
 ## Renders
 
@@ -21,6 +25,10 @@ customer verifier, probability, required fields (labels, not ids), mandatory tas
 SLA (target / rotting), owner, automations (names), KPIs, loss reasons, tips.
 
 Skip empty rows. Use property/automation display `name`s, never ids or field keys.
+When the process declares `product_groups` / `gtm_motions`, a one-line header under
+the description names them (e.g. *Product groups: commerce-analytics · GTM motions:
+commerce-analytics-inbound, commerce-analytics-outbound*); the explorer funnel shows
+the same line.
 
 ### 2. Kanban (from A8)
 

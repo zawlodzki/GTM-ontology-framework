@@ -9,6 +9,7 @@ agent_instructions: >
   Read this manifest first. Load full artifacts only when load_when matches your
   task. Never act on artifacts with meta.status: draft. Check governance/agent-policy.yaml
   before executing any action.
+# context_root: ../company-context   # relative path to the company-context tree, when one exists
 systems:
   - {id: pipedrive, role: crm, access: [mcp, api]}
 artifacts:
