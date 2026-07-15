@@ -1,0 +1,106 @@
+name: Sync skill distributions
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-skill-distributions-main
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out latest main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Test the distribution generator
+        run: python -m unittest tools.test_sync_skill_distributions -v
+
+      - name: Synchronize and verify distributions
+        id: distributions
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_revision="$(git log -1 --format=%H -- skills/)"
+          python tools/sync_skill_distributions.py sync \
+            --version-mode patch \
+            --source-revision "$source_revision"
+          python tools/sync_skill_distributions.py check \
+            --source-revision "$source_revision"
+
+          if test -n "$(git status --porcelain -- \
+            plugin/skills \
+            plugins/gtm-ontology-builder/skills \
+            gtm-ontology-builder.skill \
+            company-context-builder.skill \
+            plugin/.claude-plugin/plugin.json \
+            plugins/gtm-ontology-builder/.codex-plugin/plugin.json)"; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit generated distributions
+        if: steps.distributions.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          stage_generated() {
+            git add --all -- \
+              plugin/skills \
+              plugins/gtm-ontology-builder/skills \
+              gtm-ontology-builder.skill \
+              company-context-builder.skill \
+              plugin/.claude-plugin/plugin.json \
+              plugins/gtm-ontology-builder/.codex-plugin/plugin.json
+          }
+
+          commit_generated() {
+            stage_generated
+            if git diff --cached --quiet; then
+              return 1
+            fi
+            git commit -m "skill: regenerate distributions"
+          }
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          commit_generated
+
+          if git push origin HEAD:main; then
+            exit 0
+          fi
+
+          echo "main advanced during synchronization; retrying once from origin/main"
+          git fetch origin main
+          git reset --hard origin/main
+
+          python -m unittest tools.test_sync_skill_distributions -v
+          source_revision="$(git log -1 --format=%H -- skills/)"
+          python tools/sync_skill_distributions.py sync \
+            --version-mode patch \
+            --source-revision "$source_revision"
+          python tools/sync_skill_distributions.py check \
+            --source-revision "$source_revision"
+
+          if ! commit_generated; then
+            echo "distributions were synchronized by the concurrent push"
+            exit 0
+          fi
+          git push origin HEAD:main
