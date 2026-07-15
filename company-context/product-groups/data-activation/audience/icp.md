@@ -2,10 +2,16 @@
 kind: icp
 id: data-activation-icp
 scope: product-group:data-activation
+strategy_ref: product-group-strategy:data-activation-strategy
+segment_ref: segment:data-activation-core-segment
+use_case_ref: use-case:data-activation-core-use-case
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-14
+  updated: 2026-07-15
+  owner: Revenue
+  last_verified: 2026-07-15
+  verify_every: 90d
 ---
 
 # Data Activation ICP
@@ -30,12 +36,17 @@ Observable evidence of participation in this market includes maintained sync
 scripts, recurring exports, destination-specific mappings, business requests for
 warehouse attributes or audiences, or active evaluation of data-activation tools.
 
-## ICP segment
+## Canonical segment summary
 
 Within that market, the best fit is a data-mature commerce organization that has a
 trusted modeled layer and an owned use case for governed delivery to business or
 engagement systems. It wants to reduce custom pipelines and shorten the path from
 an approved model to operational use without replacing the warehouse.
+
+The canonical definition is `segment:data-activation-core-segment`; the umbrella
+workflow and its two offer variants are defined in
+`use-case:data-activation-core-use-case`. This summary is repeated here so the ICP
+remains usable as a self-contained qualification artifact.
 
 ## Qualification criteria
 
@@ -100,3 +111,7 @@ warehouse, modeled table, identity key, destination, consent rules, update frequ
 and success measure. Check disqualifiers before using geography or scale to prioritize
 the qualified organization. If any required criterion is unknown, record it as
 unknown; do not infer need or readiness from technology, company size, or reputation.
+
+Record each required criterion as `true`, `false`, or `unknown`. A single `false`
+required criterion means the organization is not currently qualified. Any `unknown`
+required criterion means the result is incomplete, not provisionally qualified.

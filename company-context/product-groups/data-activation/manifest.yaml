@@ -1,7 +1,7 @@
 kind: product-group-manifest
 id: data-activation
-version: 0.1.0
-updated: 2026-07-14
+version: 0.2.0
+updated: 2026-07-15
 example: true
 language: en
 name: Data Activation
@@ -14,15 +14,32 @@ inherits:
   - company-commercial-model
   - company-operating-model
 agent_instructions: >
-  Load only the artifact matching the task. The ICP is self-contained and does not
-  require personas or buying context. Establish workflow need and operational
-  readiness before using firmographics or technology signals to prioritize fit.
-  Product and GTM artifacts are indexed here when available; do not infer missing artifacts.
+  Load only the artifact matching the task. Use strategy for group-level choices,
+  segment for the canonical customer situation, and the use-case artifact for the
+  governed warehouse-to-destination workflow and its two offer variants. The ICP
+  remains self-contained for qualification. Establish workflow need, joint ownership,
+  and operational readiness before using firmographics or technology signals. Follow
+  typed refs and do not infer missing context.
 artifacts:
+  - id: data-activation-strategy
+    kind: product-group-strategy
+    path: strategy.md
+    summary: Experimentation posture, joint ownership model, offer variants, constraints, and production gates.
+    load_when: Making portfolio, prioritization, pilot, expansion, or group-level GTM decisions.
+  - id: data-activation-core-segment
+    kind: segment
+    path: market/segment.md
+    summary: Data-mature commerce organizations with an owned recurring warehouse-to-destination workflow and governance problem.
+    load_when: Understanding the target market, customer situation, alternatives, maturity, or segment boundaries.
+  - id: data-activation-core-use-case
+    kind: use-case
+    path: audience/use-cases.md
+    summary: Governed delivery of approved warehouse data to operational systems, with sync and audience variants.
+    load_when: Understanding the workflow, variants, current method, friction, desired output, or success evidence.
   - id: data-activation-icp
     kind: icp
     path: audience/icp.md
-    summary: Self-contained market basis, need and readiness criteria, priorities, and exclusions.
+    summary: Self-contained qualification rules linked to the canonical segment and use case.
     load_when: Qualifying an organization for Data Activation or explaining its ICP.
   - id: data-activation-personas
     kind: personas
