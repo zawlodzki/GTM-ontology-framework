@@ -11,6 +11,7 @@ flowchart TD
   binding_pipedrive["binding<br/><b>pipedrive</b>"]
   buying_context_commerce_analytics_buying_context["buying-context<br/><b>commerce-analytics-buying-context</b>"]
   buying_context_data_activation_buying_context["buying-context<br/><b>data-activation-buying-context</b>"]
+  claim_registry_acme_analytics_claims["claim-registry<br/><b>acme-analytics-claims</b>"]
   commercial_model_company_commercial_model["commercial-model<br/><b>company-commercial-model</b>"]
   company_context_manifest_acme_analytics_company_context["company-context-manifest<br/><b>acme-analytics-company-context</b>"]
   company_profile_company_profile["company-profile<br/><b>company-profile</b>"]
@@ -100,6 +101,8 @@ flowchart TD
   buying_context_data_activation_buying_context --> product_group_strategy_data_activation_strategy
   buying_context_data_activation_buying_context --> segment_data_activation_core_segment
   buying_context_data_activation_buying_context --> use_case_data_activation_core_use_case
+  claim_registry_acme_analytics_claims --> segment_commerce_analytics_core_segment
+  claim_registry_acme_analytics_claims --> segment_data_activation_core_segment
   discovery_snapshot_pipedrive_2026_07_01 --> system_pipedrive
   draft_qualification_followup_email --> process_new_business
   gtm_motions_commerce_analytics_motions --> buying_context_commerce_analytics_buying_context

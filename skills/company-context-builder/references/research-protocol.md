@@ -65,6 +65,12 @@ Suggested verification cadences:
 Use a shorter cadence when the source signals an active change. A fact past
 `last_verified + verify_every` is overdue and must be rechecked or left as a warning.
 
+Use the optional root claim registry only when evidence must be reviewed at a finer
+grain than the containing artifact. Give each material claim one exact statement,
+a typed scope, provenance, owner, supporting or contradicting evidence, and its own
+freshness. Inferred claims state confidence. Keep ordinary durable facts in their
+artifacts rather than expanding the registry without a review need.
+
 ## Normalization and conflicts
 
 Classify normalization as:
@@ -81,6 +87,11 @@ Create a conflict whenever two sources cannot both be treated as true in the sam
 scope and time. Do not call different product-group ICPs a conflict. Present the
 exact scope, dates, source strengths, business impact, and decision options. The
 user decides; the agent may recommend.
+
+If the conflict remains unresolved, preserve both claims and add reciprocal
+`conflicts_with` refs. If a reviewed claim replaces an older statement, use
+`supersedes` and retain the older claim for audit. Never treat a one-way conflict,
+an expired claim, or a superseded statement as current truth.
 
 ## Closed Won cohort
 

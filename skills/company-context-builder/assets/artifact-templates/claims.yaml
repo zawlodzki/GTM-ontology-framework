@@ -1,0 +1,21 @@
+kind: claim-registry
+id: {{COMPANY_ID}}-claims
+version: 0.1.0
+updated: {{UPDATED}}
+claims:
+  - id: replace-with-stable-claim-id
+    statement: Replace with one exact, material statement.
+    scope_ref: segment:replace-with-existing-scope-id
+    provenance: inferred
+    status: draft
+    owner: Replace with the accountable role
+    confidence: low
+    evidence:
+      - id: replace-with-stable-evidence-id
+        relation: supports
+        source_type: public-url
+        source: https://example.com/replace-with-direct-source
+        retrieved: {{UPDATED}}
+        limitations: Replace with source limitations and known bias.
+    last_verified: {{UPDATED}}
+    verify_every: 90d

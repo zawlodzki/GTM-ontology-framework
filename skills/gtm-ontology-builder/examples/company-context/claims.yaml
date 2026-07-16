@@ -1,0 +1,44 @@
+kind: claim-registry
+id: acme-analytics-claims
+version: 0.1.0
+updated: 2026-07-16
+claims:
+  - id: commerce-metric-reconciliation-friction
+    statement: >
+      Commerce Analytics' core segment repeatedly reconciles customer, product,
+      or revenue metrics before it can run an owned commercial review.
+    scope_ref: segment:commerce-analytics-core-segment
+    provenance: inferred
+    status: example
+    owner: Revenue
+    confidence: medium
+    evidence:
+      - id: synthetic-segment-evidence
+        relation: supports
+        source_type: synthetic
+        source: Synthetic evidence for the Acme Analytics worked example.
+        retrieved: 2026-07-16
+        limitations: Demonstrates the contract and is not evidence about a real market.
+    valid_from: 2026-07-14
+    last_verified: 2026-07-16
+    verify_every: 90d
+
+  - id: data-activation-warehouse-readiness
+    statement: >
+      Data Activation's core segment has an operating warehouse and an accountable
+      team able to own governed downstream data delivery.
+    scope_ref: segment:data-activation-core-segment
+    provenance: inferred
+    status: example
+    owner: Product
+    confidence: medium
+    evidence:
+      - id: synthetic-readiness-evidence
+        relation: supports
+        source_type: synthetic
+        source: Synthetic evidence for the Acme Analytics worked example.
+        retrieved: 2026-07-16
+        limitations: Demonstrates the contract and is not evidence about a real market.
+    valid_from: 2026-07-15
+    last_verified: 2026-07-16
+    verify_every: 90d

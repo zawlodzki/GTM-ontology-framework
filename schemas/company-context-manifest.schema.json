@@ -12,6 +12,10 @@
     "example": {"type": "boolean"},
     "language": {"type": "string"},
     "authoring_guide": {"type": "string"},
+    "claims_registry": {
+      "type": "string",
+      "description": "Optional path, relative to this manifest, to a claim-registry YAML file."
+    },
     "agent_instructions": {"type": "string"},
     "company": {
       "type": "object",

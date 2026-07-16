@@ -53,7 +53,7 @@ except ImportError:
 # precede shorter prefixes of themselves (product-group-strategy before
 # product-group, gtm-motions before gtm-motion).
 REF_RE = re.compile(
-    r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop"
+    r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop|claim"
     r"|product-group-strategy|product-group|gtm-motions|gtm-motion|segment|use-case"
     r"|icp|personas|buying-context|positioning|value-propositions|messaging"
     r"|product-context):([a-z0-9_./=-]+)")
@@ -174,6 +174,20 @@ class Linter:
                 self.ids.add(ref)
                 self.by_ref[ref] = d
                 self.motion_owner[ref] = f"gtm-motions:{d['id']}" if "id" in d else None
+        self.claims = {}
+        for f, d in sorted(self.docs.items()):
+            if d.get("kind") != "claim-registry":
+                continue
+            for claim in d.get("claims") or []:
+                if not isinstance(claim, dict) or not claim.get("id"):
+                    continue
+                ref = f"claim:{claim['id']}"
+                if ref in self.ids:
+                    self.add("ERROR", "claim-dup", f, f"duplicate claim id '{claim['id']}'")
+                    continue
+                self.ids.add(ref)
+                self.by_ref[ref] = claim
+                self.claims[ref] = (f, claim)
         self.edges = []
         for f, d in self.docs.items():
             src = f"{d['kind']}:{d['id']}" if "id" in d else None
@@ -249,6 +263,19 @@ class Linter:
             return
         mfile, m = entry
         listed = set()
+        claims_registry = m.get("claims_registry")
+        if claims_registry:
+            cp = os.path.normpath(os.path.join(self.context_dir, claims_registry))
+            if not os.path.exists(cp):
+                self.add("ERROR", "context-dangling", mfile,
+                         f"claims_registry does not exist: {claims_registry}")
+            else:
+                cd = next((d for f, d in self.docs.items() if os.path.normpath(f) == cp), None)
+                if not cd or cd.get("kind") != "claim-registry":
+                    self.add("ERROR", "context-dangling", mfile,
+                             f"claims_registry is not a claim-registry: {claims_registry}")
+                else:
+                    listed.add(cp)
         company_ids = {a.get("id") for a in m.get("artifacts", []) if isinstance(a, dict)}
         for a in m.get("artifacts", []):
             p = os.path.normpath(os.path.join(self.context_dir, a.get("path", "")))
@@ -319,6 +346,9 @@ class Linter:
             for p in d.get("properties", []) if d.get("kind") == "object-type" else []:
                 if isinstance(p, dict) and p.get("meta"):
                     yield f, f"property {p.get('id')}", p["meta"]
+            for claim in d.get("claims", []) if d.get("kind") == "claim-registry" else []:
+                if isinstance(claim, dict):
+                    yield f, f"claim {claim.get('id')}", claim
 
     def check_temporal(self):
         for f, where, meta in self.metas():
@@ -336,10 +366,38 @@ class Linter:
 
     def check_evidence(self):
         for f, where, meta in self.metas():
+            if where.startswith("claim "):
+                continue
             if meta.get("source") == "learned" and not meta.get("evidence"):
                 self.add("WARN", "evidence", f, f"{where}: source: learned without evidence")
             if meta.get("evidence") and meta.get("source") != "learned":
                 self.add("WARN", "evidence", f, f"{where}: evidence given but source is not 'learned'")
+
+    def check_claims(self):
+        for ref, (f, claim) in sorted(self.claims.items()):
+            evidence = claim.get("evidence") or []
+            evidence_ids = [item.get("id") for item in evidence if isinstance(item, dict)]
+            if len(evidence_ids) != len(set(evidence_ids)):
+                self.add("ERROR", "claim-evidence", f, f"{ref} has duplicate evidence ids")
+            if claim.get("status") in {"confirmed", "example"} and not any(
+                isinstance(item, dict) and item.get("relation") == "supports" for item in evidence
+            ):
+                self.add("ERROR", "claim-evidence", f, f"{ref} has no supporting evidence")
+            start, end = as_date(claim.get("valid_from")), as_date(claim.get("valid_until"))
+            if start and end and start > end:
+                self.add("ERROR", "claim-temporal", f, f"{ref} valid_from is after valid_until")
+            for field in ("conflicts_with", "supersedes"):
+                for target in claim.get(field) or []:
+                    if target == ref:
+                        self.add("ERROR", "claim-ref", f, f"{ref}.{field} references itself")
+                    elif claim.get("status") == "confirmed" and \
+                            (self.by_ref.get(target) or {}).get("status") == "draft":
+                        self.add("ERROR", "draft-ref", f, f"confirmed {ref}.{field} references draft {target}")
+            for target in claim.get("conflicts_with") or []:
+                other = self.by_ref.get(target) or {}
+                if ref not in (other.get("conflicts_with") or []):
+                    self.add("ERROR", "claim-conflict", f,
+                             f"{ref} conflict with {target} is not reciprocal")
 
     def check_properties(self):
         for f, d in sorted(self.docs.items()):
@@ -424,6 +482,7 @@ class Linter:
         self.check_draft_refs()
         self.check_temporal()
         self.check_evidence()
+        self.check_claims()
         self.check_properties()
         self.check_loops()
         return self.report()

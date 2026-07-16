@@ -90,6 +90,8 @@ class Validator:
         self.today = today or dt.date.today()
         self.findings: list[Finding] = []
         self.artifacts: list[Artifact] = []
+        self.claims: list[dict[str, Any]] = []
+        self.claim_registry_path: Path | None = None
         self.manifest_paths: set[Path] = set()
         self.schema_root = Path(__file__).resolve().parents[1] / "schemas"
         self.schemas: dict[str, dict[str, Any]] = {}
@@ -239,6 +241,42 @@ class Validator:
         if due < self.today:
             self.add("WARN", "overdue", path, f"verification overdue since {due.isoformat()}")
 
+    def validate_claim_registry(self, path: Path) -> None:
+        data = self.load_yaml(path)
+        if data is None:
+            return
+        self.validate_schema(data, path, "claim-registry.schema.json")
+        if data.get("kind") != "claim-registry":
+            self.add("ERROR", "claim-registry", path, "kind must be claim-registry")
+            return
+        claims = data.get("claims")
+        if not isinstance(claims, list):
+            return
+        self.claim_registry_path = path
+        self.claims = [claim for claim in claims if isinstance(claim, dict)]
+        for claim in self.claims:
+            claim_id = claim.get("id", "<missing>")
+            evidence = claim.get("evidence") or []
+            evidence_ids = [item.get("id") for item in evidence if isinstance(item, dict)]
+            if len(evidence_ids) != len(set(evidence_ids)):
+                self.add("ERROR", "claim-evidence", path, f"claim:{claim_id} has duplicate evidence ids")
+            if claim.get("status") in {"confirmed", "example"} and not any(
+                isinstance(item, dict) and item.get("relation") == "supports" for item in evidence
+            ):
+                self.add("ERROR", "claim-evidence", path, f"claim:{claim_id} has no supporting evidence")
+            self.validate_freshness(path, claim)
+            valid_from, valid_until = claim.get("valid_from"), claim.get("valid_until")
+            try:
+                start = as_date(valid_from) if valid_from else None
+                end = as_date(valid_until) if valid_until else None
+            except ValueError as exc:
+                self.add("ERROR", "claim-temporal", path, f"claim:{claim_id}: {exc}")
+                continue
+            if end and end < self.today:
+                self.add("ERROR", "claim-expired", path, f"claim:{claim_id} expired on {end}")
+            if start and end and start > end:
+                self.add("ERROR", "claim-temporal", path, f"claim:{claim_id} valid_from is after valid_until")
+
     def validate_references(self) -> None:
         index: dict[str, Artifact] = {}
 
@@ -258,6 +296,15 @@ class Validator:
                 if isinstance(motion, dict) and isinstance(motion.get("id"), str):
                     register(f"gtm-motion:{motion['id']}", artifact)
 
+        claim_index: dict[str, dict[str, Any]] = {}
+        claim_artifact = Artifact(self.claim_registry_path or self.root / "claims.yaml", {})
+        for claim in self.claims:
+            ref = f"claim:{claim.get('id')}"
+            if ref in claim_index or ref in index:
+                self.add("ERROR", "duplicate-id", claim_artifact.path, f"duplicate {ref}")
+            claim_index[ref] = claim
+            index[ref] = claim_artifact
+
         for artifact in self.artifacts:
             source_status = artifact.data.get("meta", {}).get("status")
             for key, value in artifact.data.items():
@@ -275,6 +322,23 @@ class Validator:
                     target_status = target.data.get("meta", {}).get("status")
                     if source_status == "confirmed" and target_status == "draft":
                         self.add("ERROR", "confirmed-to-draft", artifact.path, f"{key} -> {ref}")
+
+        for ref, claim in claim_index.items():
+            scope_ref = claim.get("scope_ref")
+            if scope_ref not in index:
+                self.add("ERROR", "unresolved-ref", claim_artifact.path, f"{ref}.scope_ref -> {scope_ref}")
+            for field in ("conflicts_with", "supersedes"):
+                for target_ref in claim.get(field) or []:
+                    if target_ref == ref:
+                        self.add("ERROR", "claim-ref", claim_artifact.path, f"{ref}.{field} references itself")
+                    elif target_ref not in claim_index:
+                        self.add("ERROR", "unresolved-ref", claim_artifact.path, f"{ref}.{field} -> {target_ref}")
+                    elif claim.get("status") == "confirmed" and claim_index[target_ref].get("status") == "draft":
+                        self.add("ERROR", "confirmed-to-draft", claim_artifact.path, f"{ref}.{field} -> {target_ref}")
+            for target_ref in claim.get("conflicts_with") or []:
+                if target_ref in claim_index and ref not in (claim_index[target_ref].get("conflicts_with") or []):
+                    self.add("ERROR", "claim-conflict", claim_artifact.path,
+                             f"{ref} conflict with {target_ref} is not reciprocal")
 
     def validate_completeness(self) -> None:
         excluded = {"CLAUDE.md", "AGENTS.md", "README.md", "ARTIFACT-GUIDE.md", "GAPS.md"}
@@ -312,6 +376,22 @@ class Validator:
         if not isinstance(root_data.get("company"), dict):
             self.add("ERROR", "manifest-company", root_manifest, "company must be a mapping")
         self.add_manifest_entries(root_manifest, root_data)
+
+        registry = root_data.get("claims_registry")
+        if registry is not None:
+            if not isinstance(registry, str) or not registry.strip():
+                self.add("ERROR", "claim-registry", root_manifest, "claims_registry must be a path")
+            else:
+                registry_path = (self.root / registry).resolve()
+                try:
+                    registry_path.relative_to(self.root)
+                except ValueError:
+                    self.add("ERROR", "claim-registry", root_manifest, "claims_registry must stay inside company-context")
+                else:
+                    if not registry_path.is_file():
+                        self.add("ERROR", "claim-registry", root_manifest, f"missing {registry}")
+                    else:
+                        self.validate_claim_registry(registry_path)
 
         gaps = root_data.get("gaps_report")
         gaps_path = self.root / "GAPS.md"

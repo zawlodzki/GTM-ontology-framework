@@ -167,6 +167,77 @@ class ValidatorTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("ERROR [schema]", result.stdout)
 
+    def test_claim_registry_and_artifact_refs_validate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            artifact = context / "product-groups" / "commerce-analytics" / "market" / "segment.md"
+            self.assertIn(
+                "claim:commerce-metric-reconciliation-friction",
+                artifact.read_text(encoding="utf-8"),
+            )
+            result = self.run_validator(context)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_missing_claim_ref_is_an_error(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            artifact = context / "product-groups" / "commerce-analytics" / "market" / "segment.md"
+            artifact.write_text(
+                artifact.read_text(encoding="utf-8").replace(
+                    "claim:commerce-metric-reconciliation-friction",
+                    "claim:missing-claim",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            result = self.run_validator(context)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("unresolved-ref", result.stdout)
+
+    def test_claim_requires_supporting_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            registry = context / "claims.yaml"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace("relation: supports", "relation: contradicts", 1),
+                encoding="utf-8",
+            )
+            result = self.run_validator(context)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("claim-evidence", result.stdout)
+
+    def test_expired_claim_is_an_error(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            registry = context / "claims.yaml"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace(
+                    "    valid_from: 2026-07-14\n",
+                    "    valid_from: 2026-07-14\n    valid_until: 2026-07-14\n",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            result = self.run_validator(context)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("claim-expired", result.stdout)
+
+    def test_claim_conflict_must_be_reciprocal(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            registry = context / "claims.yaml"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace(
+                    "    valid_from: 2026-07-14\n",
+                    "    conflicts_with: [claim:data-activation-warehouse-readiness]\n    valid_from: 2026-07-14\n",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            result = self.run_validator(context)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("claim-conflict", result.stdout)
+
     def test_gaps_report_contract_validates(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             context = self.copy_example(directory)

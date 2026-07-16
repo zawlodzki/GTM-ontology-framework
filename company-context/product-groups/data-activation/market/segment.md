@@ -6,6 +6,8 @@ strategy_ref: product-group-strategy:data-activation-strategy
 primary_use_case_ref: use-case:data-activation-core-use-case
 icp_ref: icp:data-activation-icp
 persona_ref: personas:data-activation-personas
+claim_refs:
+  - claim:data-activation-warehouse-readiness
 meta:
   source: synthetic
   status: example
