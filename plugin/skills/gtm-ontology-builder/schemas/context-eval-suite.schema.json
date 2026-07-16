@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/context-eval-suite.schema.json",
+  "title": "GOF Context Competency Evaluation Suite",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "id", "version", "cases"],
+  "properties": {
+    "kind": {"const": "context-eval-suite"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "stringSet": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "expectations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_artifacts", "allowed_artifacts", "forbidden_artifacts",
+        "required_refs", "required_provenance_refs", "forbidden_provenance_refs",
+        "allowed_decisions", "forbidden_persisted_refs"
+      ],
+      "properties": {
+        "required_artifacts": {"$ref": "#/$defs/stringSet"},
+        "allowed_artifacts": {"$ref": "#/$defs/stringSet"},
+        "forbidden_artifacts": {"$ref": "#/$defs/stringSet"},
+        "required_refs": {"$ref": "#/$defs/stringSet"},
+        "required_provenance_refs": {"$ref": "#/$defs/stringSet"},
+        "forbidden_provenance_refs": {"$ref": "#/$defs/stringSet"},
+        "allowed_decisions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"enum": ["answer", "abstain", "act", "propose", "refuse"]},
+          "uniqueItems": true
+        },
+        "expected_action_ref": {"type": ["string", "null"], "pattern": "^action:"},
+        "forbidden_action_refs": {"$ref": "#/$defs/stringSet"},
+        "forbidden_persisted_refs": {"$ref": "#/$defs/stringSet"}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "prompt", "expectations"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "description": {"type": "string", "minLength": 1},
+        "prompt": {"type": "string", "minLength": 1},
+        "expectations": {"$ref": "#/$defs/expectations"}
+      }
+    }
+  }
+}

@@ -208,6 +208,19 @@ Run the bundled validator. Errors block completion; present warnings as a review
 list. Report sources, freshness, resolved conflicts, deferred decisions, and files
 created.
 
+When the workspace has the GOF context evaluator, add or update competency cases
+for material routing and evidence risks introduced by this context: product-group
+separation, overdue claims, unresolved conflicts, required provenance, and
+distractor artifacts. Evaluate structured response traces with:
+
+```text
+python tools/evaluate_context.py <cases.yaml> <responses.jsonl>
+```
+
+Golden responses must pass all hard checks. Deliberately bad responses must fail
+the intended dimension. Keep any scenario-only claims outside the confirmed context
+tree, and report tokens without imposing a budget unless the owner has approved one.
+
 ## Completion handoff
 
 Suggest, but do not start automatically:
