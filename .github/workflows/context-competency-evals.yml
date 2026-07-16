@@ -51,10 +51,31 @@ jobs:
             evals/context-competency.yaml /tmp/context-eval-prompts.jsonl \
             --workspace-root .
           test "$(wc -l < /tmp/context-eval-prompts.jsonl)" -eq 9
-          if grep -E 'expectations|allowed_decisions|expected_action_ref' /tmp/context-eval-prompts.jsonl; then
-            echo "Prompt pack leaks evaluator expectations" >&2
-            exit 1
-          fi
+          python - /tmp/context-eval-prompts.jsonl <<'PY'
+          import json
+          import sys
+
+          forbidden = {"expectations", "allowed_decisions", "expected_action_ref"}
+
+          def find_forbidden(value, path=""):
+              if isinstance(value, dict):
+                  for key, child in value.items():
+                      child_path = f"{path}.{key}" if path else key
+                      if key in forbidden:
+                          yield child_path
+                      yield from find_forbidden(child, child_path)
+              elif isinstance(value, list):
+                  for index, child in enumerate(value):
+                      yield from find_forbidden(child, f"{path}[{index}]")
+
+          with open(sys.argv[1], encoding="utf-8") as stream:
+              for line_number, line in enumerate(stream, start=1):
+                  leaked = sorted(set(find_forbidden(json.loads(line))))
+                  if leaked:
+                      raise SystemExit(
+                          f"Prompt pack leaks evaluator keys on line {line_number}: {leaked}"
+                      )
+          PY
 
       - name: Evaluate golden responses with standalone skill
         run: >-

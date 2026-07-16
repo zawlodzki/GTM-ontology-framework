@@ -55,6 +55,19 @@ class StandaloneContextEvaluatorTests(unittest.TestCase):
         self.assertEqual(rows[0]["case_id"], suite["cases"][0]["id"])
         self.assertEqual(rows[0]["workspace_root"], ".")
 
+    def test_prompt_text_may_safely_contain_forbidden_key_names(self) -> None:
+        suite = self.preparer.load_and_validate_suite(TEMPLATE)
+        suite["cases"][0]["prompt"] = (
+            "Explain why expectations and allowed_decisions are evaluator metadata."
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "prompts.jsonl"
+            self.preparer.write_prompt_pack(suite, output, ".")
+            rows = [json.loads(line) for line in output.read_text(encoding="utf-8").splitlines()]
+        self.assertIn("expectations", rows[0]["task"])
+        self.assertNotIn("expectations", rows[0])
+        self.assertNotIn("allowed_decisions", rows[0])
+
     def test_duplicate_case_ids_are_rejected(self) -> None:
         suite = self.evaluator.yaml.safe_load(TEMPLATE.read_text(encoding="utf-8"))
         suite["cases"].append(dict(suite["cases"][0]))
