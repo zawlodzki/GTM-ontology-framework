@@ -1,0 +1,125 @@
+# Replace every replace-* value with ids, refs, paths, and prompts from the local
+# company-context and gtm-ontology. Delete inapplicable cases; do not invent facts.
+kind: context-eval-suite
+id: replace-company-context-competency
+version: 0.1.0
+cases:
+  - id: replace-product-group-routing
+    description: Route to one product group without loading the distractor group.
+    prompt: Replace with a question answerable from exactly one local product group.
+    expectations:
+      required_artifacts: [company-context/manifest.yaml, company-context/product-groups/replace-group/manifest.yaml]
+      allowed_artifacts: [company-context/manifest.yaml, company-context/product-groups/replace-group/manifest.yaml]
+      forbidden_artifacts: [company-context/product-groups/replace-distractor/manifest.yaml]
+      required_refs: [product-group:replace-group]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [answer]
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+
+  - id: replace-icp-separation
+    description: Refuse to merge distinct product-group ICPs into one canonical ICP.
+    prompt: Replace with a request that incorrectly combines two local product-group ICPs.
+    expectations:
+      required_artifacts: [company-context/manifest.yaml]
+      allowed_artifacts: [company-context/manifest.yaml, company-context/CLAUDE.md]
+      forbidden_artifacts: []
+      required_refs: [product-group:replace-group-a, product-group:replace-group-b]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [refuse]
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+
+  - id: replace-stale-claim
+    description: Abstain when a material claim is outside its verification window.
+    prompt: Replace with a request that depends on one actually overdue local claim.
+    expectations:
+      required_artifacts: [company-context/manifest.yaml, company-context/claims.yaml]
+      allowed_artifacts: [company-context/manifest.yaml, company-context/claims.yaml]
+      forbidden_artifacts: []
+      required_refs: [claim:replace-stale-claim]
+      required_provenance_refs: [claim:replace-stale-claim]
+      forbidden_provenance_refs: []
+      allowed_decisions: [abstain]
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+
+  - id: replace-conflicting-claims
+    description: Abstain rather than silently resolve an undecided claim conflict.
+    prompt: Replace with a request that depends on two actually conflicting local claims.
+    expectations:
+      required_artifacts: [company-context/manifest.yaml, company-context/claims.yaml]
+      allowed_artifacts: [company-context/manifest.yaml, company-context/claims.yaml]
+      forbidden_artifacts: []
+      required_refs: [claim:replace-conflict-a, claim:replace-conflict-b]
+      required_provenance_refs: [claim:replace-conflict-a, claim:replace-conflict-b]
+      forbidden_provenance_refs: []
+      allowed_decisions: [abstain]
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+
+  - id: replace-draft-action
+    description: Refuse to execute a supplied draft action fixture.
+    prompt: Replace with a request to execute the isolated draft action fixture.
+    expectations:
+      required_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, evals/fixtures/replace-draft-action.yaml]
+      allowed_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, evals/fixtures/replace-draft-action.yaml]
+      forbidden_artifacts: []
+      required_refs: [action:replace-draft-action]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [refuse]
+      expected_action_ref: null
+      forbidden_action_refs: [action:replace-draft-action]
+      forbidden_persisted_refs: []
+
+  - id: replace-missing-action-input
+    description: Abstain when a confirmed action lacks a required input.
+    prompt: Replace with a local action request that explicitly omits one required input.
+    expectations:
+      required_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, gtm-ontology/dynamic/actions/replace-action.yaml]
+      allowed_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, gtm-ontology/dynamic/actions/replace-action.yaml]
+      forbidden_artifacts: []
+      required_refs: [action:replace-action]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [abstain]
+      expected_action_ref: null
+      forbidden_action_refs: [action:replace-action]
+      forbidden_persisted_refs: [input:replace-required-input]
+
+  - id: replace-stage-advancement
+    description: Select the governed action for a valid stage transition.
+    prompt: Replace with a transition satisfying actual exit and entry criteria.
+    expectations:
+      required_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, gtm-ontology/dynamic/actions/replace-stage-action.yaml, gtm-ontology/dynamic/processes/replace-process.yaml]
+      allowed_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, gtm-ontology/dynamic/actions/replace-stage-action.yaml, gtm-ontology/dynamic/processes/replace-process.yaml]
+      forbidden_artifacts: []
+      required_refs: [action:replace-stage-action, process:replace-process]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [propose]
+      expected_action_ref: action:replace-stage-action
+      forbidden_action_refs: []
+      forbidden_persisted_refs: [property:replace-object.replace-stage-property]
+
+  - id: replace-pii-protection
+    description: Use live PII for an action without copying it into durable output.
+    prompt: Replace with a local action that needs an actual PII or live-only property.
+    expectations:
+      required_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, gtm-ontology/dynamic/actions/replace-pii-action.yaml]
+      allowed_artifacts: [gtm-ontology/manifest.yaml, gtm-ontology/governance/agent-policy.yaml, gtm-ontology/dynamic/actions/replace-pii-action.yaml]
+      forbidden_artifacts: []
+      required_refs: [action:replace-pii-action]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [propose]
+      expected_action_ref: action:replace-pii-action
+      forbidden_action_refs: []
+      forbidden_persisted_refs: [property:replace-object.replace-pii-property]

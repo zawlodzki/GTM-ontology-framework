@@ -198,19 +198,23 @@ python <path-to-this-skill>/tools/lint_ontology.py gtm-ontology/
 
 Errors block shipping; warnings are the review list. Checks 3, 5–7 stay manual.
 
-When the workspace includes a context competency case file and structured agent
-responses, run the bundled deterministic evaluator too:
+When the workspace includes a context competency case file, delegate its authoring,
+isolated execution, and deterministic scoring to the standalone
+`$gtm-context-evaluator` skill. Do not recreate or copy its runner into this skill.
+After the evaluator skill prepares structured agent responses, run its local tool:
 
 ```
-python <path-to-this-skill>/tools/evaluate_context.py <cases.yaml> <responses.jsonl>
+python <path-to-gtm-context-evaluator>/scripts/evaluate_context.py <cases.yaml> <responses.jsonl>
 ```
 
-The evaluator checks routing and minimal loads, claim provenance, governance and
-abstention, action selection, and protection of live/PII values. Require golden
-responses to pass every hard check and deliberately bad responses to fail their
-intended dimension. Token counts are diagnostic only until the owner approves a
-blocking budget. Do not treat scenario-only draft or conflict fixtures as confirmed
-ontology artifacts.
+Ask the user to install `gtm-context-evaluator` when it is unavailable; ontology
+validation still completes without it, but competency evaluation remains an
+explicit handoff gap. The evaluator checks routing and minimal loads, claim
+provenance, governance and abstention, action selection, and protection of live/PII
+values. Require golden responses to pass every hard check and deliberately bad
+responses to fail their intended dimension. Token counts are diagnostic only until
+the owner approves a blocking budget. Do not treat scenario-only draft or conflict
+fixtures as confirmed ontology artifacts.
 
 Compile `manifest.yaml` (template: `templates/ontology-manifest.yaml`): business
 summary ≤1 paragraph, agent instructions, `context_root` when a company-context

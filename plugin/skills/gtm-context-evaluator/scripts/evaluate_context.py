@@ -2,7 +2,7 @@
 """Evaluate structured agent responses against GOF context competency cases.
 
 Usage:
-    python tools/evaluate_context.py <cases.yaml> <responses.jsonl>
+    python scripts/evaluate_context.py <cases.yaml> <responses.jsonl>
 
 The evaluator is deterministic. It validates both input contracts, reports each
 hard dimension separately, reports token totals when supplied, and exits 1 when
