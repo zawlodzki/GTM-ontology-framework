@@ -85,12 +85,20 @@ contracts, approval gates, a permission ladder). Built second, with the
 **gtm-ontology-builder** skill. The ontology links to the context tree, never the other
 way around.
 
+## Why evaluate context use
+
+Schemas and linters verify the context itself; the **gtm-context-evaluator** verifies
+that an agent uses it correctly before deployment or after context and policy changes.
+It locally scores expectation-free traces for minimal routing, provenance, governance,
+action selection, and privacy without grading prose or depending on a model provider.
+
 ## What's inside
 
 | Folder | What it is |
 |---|---|
 | `skills/gtm-ontology-builder/` | Source for the **gtm-ontology-builder** skill. Install it in Claude, say "map my CRM" and it interviews you, introspects the CRM through MCP or API, and builds the ontology folder with you. |
 | `skills/company-context-builder/` | Source for the **company-context-builder** skill, which builds the company, market, audience, product, positioning, messaging, and GTM context used by the ontology. |
+| `skills/gtm-context-evaluator/` | Source for the standalone **gtm-context-evaluator** skill. It builds project-specific competency cases, prepares expectation-free prompts, and scores local agent traces without GitHub Actions. |
 | `gtm-ontology/` | A complete, validated example: fictional B2B SaaS on Pipedrive. Pipeline with entry/exit criteria, AI-filled fields with their prompt, 3 automations with data fingerprints, agent actions, KPIs. Linked to `company-context/` via `context_root`. This is exactly what the skill produces. |
 | `company-context/` | A worked example of the static company-context tree: company facts, per-product-group segments, ICPs, personas, buying context, positioning, value propositions, messaging, and GTM motions. Built with **company-context-builder** and referenced from the ontology (`product-group:` / `gtm-motion:` refs). |
 | `docs/` | The method: the layer model, a 7-phase process with interview question banks, a format spec for every artifact, CRM type mappings, extension and anti-pattern notes. |
@@ -122,12 +130,14 @@ As **standalone skills with `npx skills`**:
 ```sh
 npx skills add zawlodzki/GTM-ontology-framework --skill gtm-ontology-builder
 npx skills add zawlodzki/GTM-ontology-framework --skill company-context-builder
+npx skills add zawlodzki/GTM-ontology-framework --skill gtm-context-evaluator
 ```
 
-Or grab `gtm-ontology-builder.skill` and `company-context-builder.skill` from this repo
-and add them to Claude (Cowork or Claude Code), or copy the folders under `skills/`
-into your skills folder. Every path is self-contained: the skills bundle the renderer,
-validators, JSON schemas, and the complete worked example.
+Or grab `gtm-ontology-builder.skill`, `company-context-builder.skill`, and
+`gtm-context-evaluator.skill` from this repo and add them to Claude (Cowork or
+Claude Code), or copy the folders under `skills/` into your skills folder. Every
+path is self-contained: the builders bundle their validators and examples, while
+the evaluator bundles its runner, schemas, prompt generator, and case template.
 
 Then:
 
@@ -143,6 +153,9 @@ Then:
    phases, asks before it writes, links the ontology to your context tree, and ends
    with a `gtm-ontology/` folder in your repo plus an entry in your root `CLAUDE.md`
    so every future agent knows where to look.
+4. Say: *"Evaluate how agents use this context."* The **gtm-context-evaluator**
+   skill creates cases from the local manifests, prepares prompts that hide the
+   expected answers, and scores the collected traces entirely on the local machine.
 
 Before running anything, open `gtm-ontology/render/explorer.html` from the example:
 funnel, business logic per stage, actions, automations and the reference graph, all

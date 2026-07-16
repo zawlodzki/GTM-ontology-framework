@@ -4,6 +4,7 @@ The source of truth for shareable skills is:
 
 - `skills/gtm-ontology-builder/`
 - `skills/company-context-builder/`
+- `skills/gtm-context-evaluator/`
 
 Do not edit their plugin payloads or `.skill` archives directly. Those are
 generated distributions.
@@ -11,13 +12,18 @@ generated distributions.
 ## Root framework copies
 
 `skills/gtm-ontology-builder/` is standalone and therefore bundles selected
-files that also exist at the repository root:
+ontology framework files that also exist at the repository root:
 
-- `tools/render_ontology.py`, `tools/lint_ontology.py`, and
-  `tools/evaluate_context.py` → skill `tools/`
-- `schemas/*.json` → skill `schemas/`
+- `tools/render_ontology.py` and `tools/lint_ontology.py` → skill `tools/`
+- ontology and company-context artifact schemas → skill `schemas/`
 - `gtm-ontology/` → skill `examples/gtm-ontology/`
 - `company-context/` → skill `examples/company-context/`
+
+`skills/gtm-context-evaluator/` owns the standalone context evaluation runner,
+prompt-pack generator, evaluation schemas, and generic case template. Root
+`tools/evaluate_context.py`, root context-eval schemas, and the repository's
+Acme fixtures test the framework implementation; they are not copied into the
+builder skill.
 
 When any of those root files change, update the corresponding source-skill copy
 in the same commit. This root-to-skill step is intentionally not performed by
@@ -73,9 +79,10 @@ Before a tagged release:
 2. Validate `plugins/gtm-ontology-builder/` with the `plugin-creator` validator.
 3. Install from the repository marketplace with
    `codex plugin add gtm-ontology-builder@personal`.
-4. Confirm the installed cache contains both source skill entrypoints:
+4. Confirm the installed cache contains all source skill entrypoints:
    `skills/gtm-ontology-builder/SKILL.md` and
-   `skills/company-context-builder/SKILL.md`.
+   `skills/company-context-builder/SKILL.md`, plus
+   `skills/gtm-context-evaluator/SKILL.md`.
 
 Use the `plugin-creator` cachebuster flow for local Codex updates. Never edit an
 installed plugin cache directly.

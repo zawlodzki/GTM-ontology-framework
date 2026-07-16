@@ -79,6 +79,26 @@ class SyncSkillDistributionsTests(unittest.TestCase):
             self.assertNotIn(".DS_Store", "\n".join(names))
             self.assertNotIn("__pycache__", "\n".join(names))
 
+    def test_context_evaluator_is_packaged_as_plugin_skills_and_archive(self) -> None:
+        source = self.repo / "skills/gtm-context-evaluator"
+        (source / "scripts").mkdir()
+        (source / "scripts/evaluate_context.py").write_text("print('ok')\n", encoding="utf-8")
+
+        result = sync.sync_distributions(self.repo)
+
+        self.assertIn("gtm-context-evaluator.skill", result.changed)
+        for target in sync._distribution_targets(self.repo, "gtm-context-evaluator"):
+            self.assertEqual(
+                (target / "scripts/evaluate_context.py").read_text(encoding="utf-8"),
+                "print('ok')\n",
+            )
+        with zipfile.ZipFile(self.repo / "gtm-context-evaluator.skill") as archive:
+            names = archive.namelist()
+            self.assertIn(
+                "gtm-context-evaluator/scripts/evaluate_context.py",
+                names,
+            )
+
     def test_check_detects_drift_without_writing(self) -> None:
         sync.sync_distributions(self.repo)
         target = self.repo / "plugin/skills/company-context-builder/SKILL.md"

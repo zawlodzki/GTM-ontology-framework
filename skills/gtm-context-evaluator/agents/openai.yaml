@@ -1,0 +1,4 @@
+interface:
+  display_name: "GTM Context Evaluator"
+  short_description: "Evaluate agent use of GTM context locally"
+  default_prompt: "Use $gtm-context-evaluator to evaluate how an agent uses my local company context and GTM ontology."

@@ -5,7 +5,54 @@ context, preserves claim provenance, respects governance, chooses the right acti
 and keeps live or personal data out of durable output. It evaluates a structured
 trace of the response, not the quality of its prose.
 
-Run the checked-in golden responses with:
+The `gtm-context-evaluator` skill is the standalone distribution. GitHub Actions
+protects the framework's own fixtures, but it is not required to create or run an
+evaluation in another workspace.
+
+## Local standalone workflow
+
+Install `gtm-context-evaluator` next to the builder skills, then work in the project
+that contains the generated trees:
+
+```text
+company-context/ + gtm-ontology/
+              ↓ inspect manifests and confirmed contracts
+evals/context-competency.yaml
+              ↓ strip descriptions and expectations
+evals/prompts.jsonl
+              ↓ one fresh agent context per line
+evals/responses.jsonl
+              ↓ deterministic local scoring
+evals/report.json
+```
+
+1. Copy the installed skill's `assets/context-competency.template.yaml` to
+   `evals/context-competency.yaml`.
+2. Replace every `replace-*` value with refs and paths from the actual local
+   manifests. Delete categories with no confirmed local basis and report them as
+   coverage gaps.
+3. Create the expectation-free prompt pack:
+
+   ```bash
+   python <path-to-gtm-context-evaluator>/scripts/prepare_eval_prompts.py \
+     evals/context-competency.yaml evals/prompts.jsonl --workspace-root .
+   ```
+
+4. Run every JSONL prompt in a fresh agent context when isolation is available.
+   The tested agent receives the task and response contract, never the suite's
+   descriptions or expectations. Save its actual traces as `evals/responses.jsonl`.
+5. Score locally:
+
+   ```bash
+   python <path-to-gtm-context-evaluator>/scripts/evaluate_context.py \
+     evals/context-competency.yaml evals/responses.jsonl > evals/report.json
+   ```
+
+Both scripts need only Python, PyYAML, and jsonschema. They do not call GitHub,
+external APIs, or a specific model provider. The evaluator never executes an agent;
+isolation stays under the control of the local Codex, Claude, or other harness.
+
+Framework maintainers can run the checked-in golden responses with:
 
 ```bash
 python tools/evaluate_context.py evals/context-competency.yaml evals/fixtures/golden.jsonl

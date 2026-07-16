@@ -18,7 +18,11 @@ from pathlib import Path, PurePosixPath
 from typing import Iterable
 
 
-SKILL_NAMES = ("gtm-ontology-builder", "company-context-builder")
+SKILL_NAMES = (
+    "gtm-ontology-builder",
+    "company-context-builder",
+    "gtm-context-evaluator",
+)
 EXCLUDED_NAMES = {".DS_Store", "__pycache__"}
 EXCLUDED_SUFFIXES = {".pyc"}
 ARCHIVE_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
