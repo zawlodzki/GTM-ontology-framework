@@ -13,7 +13,8 @@ generated distributions.
 `skills/gtm-ontology-builder/` is standalone and therefore bundles selected
 files that also exist at the repository root:
 
-- `tools/render_ontology.py` and `tools/lint_ontology.py` → skill `tools/`
+- `tools/render_ontology.py`, `tools/lint_ontology.py`, and
+  `tools/evaluate_context.py` → skill `tools/`
 - `schemas/*.json` → skill `schemas/`
 - `gtm-ontology/` → skill `examples/gtm-ontology/`
 - `company-context/` → skill `examples/company-context/`
