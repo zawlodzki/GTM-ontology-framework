@@ -144,12 +144,17 @@ The human layer: interview, one topic at a time, record as `source: declared`:
 ### Phase 4: Agent actions, loops & policy
 
 1. From use cases, propose agent actions. Per action (`templates/action.yaml`):
-   preconditions (checkable), inputs, ORDERED workflow with `on_failure` per step,
+   a minimal `context` contract (required static refs, required live properties,
+   optional refs, values forbidden to persist, and response mode), preconditions
+   (checkable), inputs, ORDERED workflow with `on_failure` per step,
    effects, **side_effects** (cross-check automations: which will fire? empty list
    = explicit none), approval (`none/required/conditional`), **abstain_when**
    (when the agent stops and asks instead of guessing: missing inputs, low
    confidence, prices/contracts; recommended for every write action), idempotency,
    implementations (MCP tool / endpoint per system).
+   Require `context` for every new `agent` or `either` action. Put every required
+   live PII or `freshness: live-only` property in `forbidden_to_persist`; the
+   contract selects inputs to the workflow and must not restate its steps.
 2. Write `governance/agent-policy.yaml` (`templates/agent-policy.yaml`): the
    **permission ladder** (levels 1–3, promotion criteria — "2 weeks stable
    read-only", "9/10 runs without correction" — and the ceiling: prices, contracts,
