@@ -336,8 +336,19 @@ class Linter:
             src = self.docs[f]
             if (src.get("meta") or {}).get("status") != "confirmed":
                 continue
-            if (self.by_ref.get(tgt, {}).get("meta") or {}).get("status") == "draft":
+            target = self.by_ref.get(tgt, {})
+            target_status = target.get("status") if tgt.startswith("claim:") \
+                else (target.get("meta") or {}).get("status")
+            if target_status == "draft":
                 self.add("ERROR", "draft-ref", f, f"confirmed artifact references draft {tgt}")
+
+    def check_expired_claim_refs(self):
+        for f, tgt in self.edges:
+            if not tgt.startswith("claim:") or self.docs[f].get("kind") == "claim-registry":
+                continue
+            valid_until = as_date(self.by_ref.get(tgt, {}).get("valid_until"))
+            if valid_until and valid_until < self.today:
+                self.add("ERROR", "expired-ref", f, f"artifact references expired {tgt}")
 
     def metas(self):
         for f, d in sorted(self.docs.items()):
@@ -361,7 +372,7 @@ class Linter:
                         self.add("WARN", "overdue", f,
                                  f"{where}: last_verified {lv} + verify_every {ve} - overdue since {due}")
             vu = as_date(meta.get("valid_until"))
-            if vu and vu < self.today:
+            if vu and vu < self.today and not where.startswith("claim "):
                 self.add("ERROR", "expired", f, f"{where}: valid_until {vu} has passed")
 
     def check_evidence(self):
@@ -480,6 +491,7 @@ class Linter:
         self.check_context_manifest()
         self.check_orphans()
         self.check_draft_refs()
+        self.check_expired_claim_refs()
         self.check_temporal()
         self.check_evidence()
         self.check_claims()

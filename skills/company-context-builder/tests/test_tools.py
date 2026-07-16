@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[1]
 PYTHON = sys.executable
+LINTER = REPO / "tools" / "lint_ontology.py"
 
 
 def load_module(name: str, path: Path):
@@ -95,6 +96,19 @@ class ValidatorTests(unittest.TestCase):
         target = Path(directory) / "company-context"
         shutil.copytree(REPO / "company-context", target)
         return target
+
+    def copy_instance(self, directory: str) -> tuple[Path, Path]:
+        context = self.copy_example(directory)
+        ontology = Path(directory) / "gtm-ontology"
+        shutil.copytree(REPO / "gtm-ontology", ontology)
+        return ontology, context
+
+    def run_linter(self, ontology: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [PYTHON, str(LINTER), str(ontology)],
+            capture_output=True,
+            text=True,
+        )
 
     def test_current_example_validates(self) -> None:
         result = self.run_validator(REPO / "company-context")
@@ -206,7 +220,24 @@ class ValidatorTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("claim-evidence", result.stdout)
 
-    def test_expired_claim_is_an_error(self) -> None:
+    def test_confirmed_artifact_cannot_reference_draft_claim(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            registry = context / "claims.yaml"
+            artifact = context / "product-groups" / "commerce-analytics" / "market" / "segment.md"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace("    status: example\n", "    status: draft\n", 1),
+                encoding="utf-8",
+            )
+            artifact.write_text(
+                artifact.read_text(encoding="utf-8").replace("  status: example\n", "  status: confirmed\n", 1),
+                encoding="utf-8",
+            )
+            result = self.run_validator(context)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("confirmed-to-draft", result.stdout)
+
+    def test_referenced_expired_claim_is_an_error(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             context = self.copy_example(directory)
             registry = context / "claims.yaml"
@@ -220,7 +251,88 @@ class ValidatorTests(unittest.TestCase):
             )
             result = self.run_validator(context)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("claim-expired", result.stdout)
+        self.assertIn("claim-expired-ref", result.stdout)
+
+    def test_unreferenced_expired_claim_remains_for_audit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            context = self.copy_example(directory)
+            registry = context / "claims.yaml"
+            artifact = context / "product-groups" / "commerce-analytics" / "market" / "segment.md"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace(
+                    "    valid_from: 2026-07-14\n",
+                    "    valid_from: 2026-07-14\n    valid_until: 2026-07-14\n",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            artifact.write_text(
+                artifact.read_text(encoding="utf-8").replace(
+                    "claim_refs:\n  - claim:commerce-metric-reconciliation-friction\n",
+                    "",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            result = self.run_validator(context)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_linter_rejects_confirmed_artifact_ref_to_draft_claim(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            registry = context / "claims.yaml"
+            artifact = context / "product-groups" / "commerce-analytics" / "market" / "segment.md"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace("    status: example\n", "    status: draft\n", 1),
+                encoding="utf-8",
+            )
+            artifact.write_text(
+                artifact.read_text(encoding="utf-8").replace("  status: example\n", "  status: confirmed\n", 1),
+                encoding="utf-8",
+            )
+            result = self.run_linter(ontology)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("draft-ref", result.stdout)
+
+    def test_linter_rejects_artifact_ref_to_expired_claim(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            registry = context / "claims.yaml"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace(
+                    "    valid_from: 2026-07-14\n",
+                    "    valid_from: 2026-07-14\n    valid_until: 2026-07-14\n",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            result = self.run_linter(ontology)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("expired-ref", result.stdout)
+
+    def test_linter_allows_unreferenced_expired_claim_for_audit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            registry = context / "claims.yaml"
+            artifact = context / "product-groups" / "commerce-analytics" / "market" / "segment.md"
+            registry.write_text(
+                registry.read_text(encoding="utf-8").replace(
+                    "    valid_from: 2026-07-14\n",
+                    "    valid_from: 2026-07-14\n    valid_until: 2026-07-14\n",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            artifact.write_text(
+                artifact.read_text(encoding="utf-8").replace(
+                    "claim_refs:\n  - claim:commerce-metric-reconciliation-friction\n",
+                    "",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            result = self.run_linter(ontology)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_claim_conflict_must_be_reciprocal(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

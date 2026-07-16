@@ -272,8 +272,6 @@ class Validator:
             except ValueError as exc:
                 self.add("ERROR", "claim-temporal", path, f"claim:{claim_id}: {exc}")
                 continue
-            if end and end < self.today:
-                self.add("ERROR", "claim-expired", path, f"claim:{claim_id} expired on {end}")
             if start and end and start > end:
                 self.add("ERROR", "claim-temporal", path, f"claim:{claim_id} valid_from is after valid_until")
 
@@ -319,9 +317,22 @@ class Validator:
                     if target is None:
                         self.add("ERROR", "unresolved-ref", artifact.path, f"{key} -> {ref}")
                         continue
-                    target_status = target.data.get("meta", {}).get("status")
+                    target_claim = claim_index.get(ref)
+                    target_status = (
+                        target_claim.get("status")
+                        if target_claim is not None
+                        else target.data.get("meta", {}).get("status")
+                    )
                     if source_status == "confirmed" and target_status == "draft":
                         self.add("ERROR", "confirmed-to-draft", artifact.path, f"{key} -> {ref}")
+                    if target_claim is not None:
+                        valid_until = target_claim.get("valid_until")
+                        try:
+                            expired = valid_until and as_date(valid_until) < self.today
+                        except ValueError:
+                            expired = False  # validate_claim_registry already reported the invalid date
+                        if expired:
+                            self.add("ERROR", "claim-expired-ref", artifact.path, f"{key} -> {ref}")
 
         for ref, claim in claim_index.items():
             scope_ref = claim.get("scope_ref")
