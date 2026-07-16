@@ -1,5 +1,13 @@
 # Changelog: acme-analytics ontology
 
+## 1.5.0 (2026-07-16)
+- Added minimal context contracts to both agent actions: required static refs,
+  required live properties, optional refs, values forbidden to persist, and the
+  response mode.
+- Lint now warns on confirmed legacy agent/either actions without a context
+  contract and blocks unknown inputs/properties or unprotected PII/live-only
+  properties in new contracts.
+
 ## 1.4.0 (2026-07-15)
 - Linked the company-context tree: `context_root: ../company-context` in the
   manifest. Company, audience, and GTM context now lives there (product groups,

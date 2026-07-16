@@ -15,6 +15,37 @@
     "executor": {"enum": ["agent", "human", "either"]},
     "approval": {"enum": ["none", "required", "conditional"]},
     "approval_condition": {"type": "string"},
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_static_refs", "required_live_refs", "optional_refs", "forbidden_to_persist", "response_mode"],
+      "properties": {
+        "required_static_refs": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9./_-]*$"},
+          "uniqueItems": true
+        },
+        "required_live_refs": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^property:[a-z0-9]+(-[a-z0-9]+)*\\.[a-z0-9_]+$"},
+          "uniqueItems": true
+        },
+        "optional_refs": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9./_-]*$"},
+          "uniqueItems": true
+        },
+        "forbidden_to_persist": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(input:[a-zA-Z0-9_-]+|property:[a-z0-9]+(-[a-z0-9]+)*\\.[a-z0-9_]+)$"
+          },
+          "uniqueItems": true
+        },
+        "response_mode": {"enum": ["concise", "detailed", "file-reference"]}
+      }
+    },
     "preconditions": {
       "type": "array",
       "minItems": 1,

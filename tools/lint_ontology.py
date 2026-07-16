@@ -432,6 +432,45 @@ class Linter:
                         self.add("WARN", "enum-gap", f,
                                  f"property {pid}: enum value '{v.get('value')}' has definition: null")
 
+    def check_action_contexts(self):
+        property_defs = {}
+        for d in self.docs.values():
+            if d.get("kind") != "object-type":
+                continue
+            for prop in d.get("properties") or []:
+                if isinstance(prop, dict) and prop.get("id"):
+                    property_defs[f"property:{d['id']}.{prop['id']}"] = prop
+
+        for f, action in sorted(self.docs.items()):
+            if action.get("kind") != "action":
+                continue
+            meta = action.get("meta") or {}
+            context = action.get("context")
+            if not context:
+                if meta.get("status") == "confirmed" and action.get("executor") in {"agent", "either"}:
+                    self.add("WARN", "action-context", f,
+                             "confirmed agent/either action has no context contract")
+                continue
+
+            input_ids = {item.get("id") for item in action.get("inputs") or []
+                         if isinstance(item, dict) and item.get("id")}
+            protected = set(context.get("forbidden_to_persist") or [])
+            for ref in protected:
+                if ref.startswith("input:") and ref.removeprefix("input:") not in input_ids:
+                    self.add("ERROR", "action-context", f,
+                             f"forbidden_to_persist references unknown {ref}")
+
+            for ref in context.get("required_live_refs") or []:
+                prop = property_defs.get(ref)
+                if prop is None:
+                    self.add("ERROR", "action-context", f,
+                             f"required_live_refs contains unknown {ref}")
+                    continue
+                if (prop.get("pii") is True or prop.get("freshness") == "live-only") \
+                        and ref not in protected:
+                    self.add("ERROR", "action-context", f,
+                             f"{ref} is pii/live-only and must be in forbidden_to_persist")
+
     def check_loops(self):
         loops = [(f, d) for f, d in sorted(self.docs.items()) if d.get("kind") == "loop"]
         if not loops:
@@ -496,6 +535,7 @@ class Linter:
         self.check_evidence()
         self.check_claims()
         self.check_properties()
+        self.check_action_contexts()
         self.check_loops()
         return self.report()
 

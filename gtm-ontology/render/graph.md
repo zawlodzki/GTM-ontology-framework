@@ -67,6 +67,8 @@ flowchart TD
   action_advance_deal_stage --> system_pipedrive
   action_qualify_lead --> automation_qualify_from_transcript
   action_qualify_lead --> object_type_deal
+  action_qualify_lead --> object_type_person
+  action_qualify_lead --> process_new_business
   action_qualify_lead --> prompt_lead_qualification
   action_qualify_lead --> system_pipedrive
   agent_policy_agent_policy --> action_advance_deal_stage
@@ -310,4 +312,4 @@ flowchart TD
   value_propositions_data_activation_value_propositions --> use_case_data_activation_core_use_case
 ```
 
-*Generated from ontology `acme-analytics` v1.4.0 (2026-07-15), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.5.0 (2026-07-16), do not hand-edit.*

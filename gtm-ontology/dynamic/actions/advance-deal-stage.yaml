@@ -11,6 +11,19 @@ executor: agent
 approval: conditional
 approval_condition: "required when target stage is won or lost, or deal.amount > 50000"
 
+context:
+  required_static_refs:
+    - process:new-business
+    - binding:pipedrive
+  required_live_refs:
+    - property:deal.stage
+    - property:deal.amount
+  optional_refs:
+    - automation:create-demo-activity
+  forbidden_to_persist:
+    - property:deal.stage
+  response_mode: concise
+
 preconditions:
   - description: Target stage is a directly allowed transition from current stage
     check: "[current, target] in process:new-business.transitions.allowed"
