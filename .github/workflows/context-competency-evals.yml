@@ -8,6 +8,7 @@ on:
       - "schemas/context-eval-*.schema.json"
       - "tools/evaluate_context.py"
       - "tools/test_evaluate_context.py"
+      - "skills/gtm-context-evaluator/**"
   push:
     branches:
       - main
@@ -17,6 +18,7 @@ on:
       - "schemas/context-eval-*.schema.json"
       - "tools/evaluate_context.py"
       - "tools/test_evaluate_context.py"
+      - "skills/gtm-context-evaluator/**"
   workflow_dispatch:
 
 permissions:
@@ -40,8 +42,24 @@ jobs:
       - name: Test evaluator
         run: python -m unittest tools.test_evaluate_context -v
 
-      - name: Evaluate golden responses
-        run: python tools/evaluate_context.py evals/context-competency.yaml evals/fixtures/golden.jsonl
+      - name: Test standalone evaluator skill
+        run: python -m unittest discover -s skills/gtm-context-evaluator/tests -p "test_*.py" -v
+
+      - name: Prepare expectation-free prompts with standalone skill
+        run: |
+          python skills/gtm-context-evaluator/scripts/prepare_eval_prompts.py \
+            evals/context-competency.yaml /tmp/context-eval-prompts.jsonl \
+            --workspace-root .
+          test "$(wc -l < /tmp/context-eval-prompts.jsonl)" -eq 9
+          if grep -E 'expectations|allowed_decisions|expected_action_ref' /tmp/context-eval-prompts.jsonl; then
+            echo "Prompt pack leaks evaluator expectations" >&2
+            exit 1
+          fi
+
+      - name: Evaluate golden responses with standalone skill
+        run: >-
+          python skills/gtm-context-evaluator/scripts/evaluate_context.py
+          evals/context-competency.yaml evals/fixtures/golden.jsonl
 
       - name: Confirm negative fixtures fail
         shell: bash
@@ -53,7 +71,8 @@ jobs:
             evals/fixtures/fail-provenance-privacy.jsonl
           do
             report="$(mktemp)"
-            if python tools/evaluate_context.py evals/context-competency.yaml "$fixture" > "$report"; then
+            if python skills/gtm-context-evaluator/scripts/evaluate_context.py \
+              evals/context-competency.yaml "$fixture" > "$report"; then
               echo "Expected $fixture to fail" >&2
               exit 1
             fi
