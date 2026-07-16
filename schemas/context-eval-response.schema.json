@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/context-eval-response.schema.json",
+  "title": "GOF Context Competency Evaluation Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "loaded_artifacts", "cited_refs", "decision"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "loaded_artifacts": {
+      "type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+    },
+    "cited_refs": {
+      "type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+    },
+    "decision": {"enum": ["answer", "abstain", "act", "propose", "refuse"]},
+    "action_ref": {"type": "string", "pattern": "^action:"},
+    "provenance_refs": {
+      "type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+    },
+    "persisted_refs": {
+      "type": "array",
+      "description": "Inputs or property values copied into a durable artifact, log, note, or outbound payload.",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "input_tokens": {"type": "integer", "minimum": 0},
+    "output_tokens": {"type": "integer", "minimum": 0}
+  }
+}
