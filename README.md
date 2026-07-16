@@ -85,6 +85,31 @@ contracts, approval gates, a permission ladder). Built second, with the
 **gtm-ontology-builder** skill. The ontology links to the context tree, never the other
 way around.
 
+## Why evaluate context use
+
+Schemas and linters can prove that the context is internally consistent. They cannot
+prove that an agent uses it correctly. An agent may still load the wrong product
+group, read far more files than the task needs, drop the provenance of a claim, act on
+draft or stale knowledge, choose an action outside its permission level, or copy PII
+and live-only values into durable output.
+
+The **gtm-context-evaluator** is a competency test for that behavior. It creates cases
+from the project's own `company-context/` and `gtm-ontology/`, gives the tested agent
+prompts without the expected answers, and deterministically scores the resulting
+traces across five dimensions:
+
+- **routing** — did the agent load the smallest correct set of artifacts and refs?
+- **provenance** — did it preserve the evidence and status behind material claims?
+- **governance** — did it answer, abstain, refuse, or propose within the local policy?
+- **action selection** — did it choose the correct governed action, if any?
+- **privacy** — did sensitive or live-only inputs remain ephemeral?
+
+The goal is not to grade prose or declare one model universally better. It is to test
+whether an agent is safe and competent in *your* GTM context before deployment, after
+context or policy changes, and when comparing context-loading strategies. The harness
+is local and provider-neutral: it prepares expectation-free prompts and scores traces,
+while the choice of agent and execution environment stays with you.
+
 ## What's inside
 
 | Folder | What it is |
