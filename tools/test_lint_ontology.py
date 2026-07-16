@@ -62,6 +62,38 @@ class ActionContextLintTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unknown input:missing-input", result.stdout)
 
+    def test_unknown_protected_property_is_an_error(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, _ = self.copy_instance(directory)
+            action = ontology / "dynamic" / "actions" / "qualify-lead.yaml"
+            self.rewrite(action, "    - property:deal.stage\n", "    - property:deal.missing\n")
+            result = self.run_linter(ontology)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("unknown property:deal.missing", result.stdout)
+
+    def test_non_mapping_context_is_reported_without_crashing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, _ = self.copy_instance(directory)
+            action = ontology / "dynamic" / "actions" / "qualify-lead.yaml"
+            text = action.read_text(encoding="utf-8")
+            start = text.index("context:\n")
+            end = text.index("\npreconditions:\n", start)
+            action.write_text(text[:start] + "context: invalid\n" + text[end + 1 :], encoding="utf-8")
+            result = self.run_linter(ontology)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("context must be an object", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
+    def test_object_type_without_id_is_reported_without_crashing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, _ = self.copy_instance(directory)
+            object_type = ontology / "semantic" / "objects" / "deal.yaml"
+            self.rewrite(object_type, "id: deal\n", "")
+            result = self.run_linter(ontology)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("schema", result.stdout)
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_unknown_live_property_is_an_error(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             ontology, _ = self.copy_instance(directory)

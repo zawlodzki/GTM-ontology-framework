@@ -156,8 +156,8 @@ class Linter:
     def build_refs(self):
         """ids, per-object property index, and resolved edges (src_file, tgt_ref)."""
         self.ids = {f"{d['kind']}:{d['id']}" for d in self.docs.values() if "id" in d}
-        self.props = {d["id"]: {p.get("id") for p in d.get("properties", [])}
-                      for d in self.docs.values() if d.get("kind") == "object-type"}
+        self.props = {d["id"]: {p.get("id") for p in d.get("properties", []) if isinstance(p, dict)}
+                      for d in self.docs.values() if d.get("kind") == "object-type" and d.get("id")}
         self.by_ref = {f"{d['kind']}:{d['id']}": d for d in self.docs.values() if "id" in d}
         # Motion ids declared in gtm-motions frontmatter are canonical gtm-motion: targets.
         self.motion_owner = {}
@@ -437,9 +437,12 @@ class Linter:
         for d in self.docs.values():
             if d.get("kind") != "object-type":
                 continue
+            object_id = d.get("id")
+            if not object_id:
+                continue  # schema validation reports the missing id
             for prop in d.get("properties") or []:
                 if isinstance(prop, dict) and prop.get("id"):
-                    property_defs[f"property:{d['id']}.{prop['id']}"] = prop
+                    property_defs[f"property:{object_id}.{prop['id']}"] = prop
 
         for f, action in sorted(self.docs.items()):
             if action.get("kind") != "action":
@@ -451,12 +454,18 @@ class Linter:
                     self.add("WARN", "action-context", f,
                              "confirmed agent/either action has no context contract")
                 continue
+            if not isinstance(context, dict):
+                self.add("ERROR", "action-context", f, "context must be an object")
+                continue
 
             input_ids = {item.get("id") for item in action.get("inputs") or []
                          if isinstance(item, dict) and item.get("id")}
             protected = set(context.get("forbidden_to_persist") or [])
             for ref in protected:
                 if ref.startswith("input:") and ref.removeprefix("input:") not in input_ids:
+                    self.add("ERROR", "action-context", f,
+                             f"forbidden_to_persist references unknown {ref}")
+                elif ref.startswith("property:") and ref not in property_defs:
                     self.add("ERROR", "action-context", f,
                              f"forbidden_to_persist references unknown {ref}")
 
