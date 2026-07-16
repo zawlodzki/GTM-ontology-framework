@@ -1,10 +1,11 @@
 kind: company-context-manifest
 id: acme-analytics-company-context
-version: 0.4.0
-updated: 2026-07-15
+version: 0.5.0
+updated: 2026-07-16
 example: true
 language: en
 authoring_guide: ARTIFACT-GUIDE.md
+claims_registry: claims.yaml
 company:
   id: acme-analytics
   name: Acme Analytics
