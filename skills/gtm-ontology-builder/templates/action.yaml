@@ -12,6 +12,13 @@ executor: agent                    # agent | human | either
 approval: conditional              # none | required | conditional
 approval_condition: "required when target stage is 'won' or amount > 50000"
 
+context:                           # minimal context contract; do not repeat workflow
+  required_static_refs: [process:new-business, binding:pipedrive]
+  required_live_refs: [property:deal.stage, property:deal.amount]
+  optional_refs: [automation:create-demo-activity]
+  forbidden_to_persist: []        # input:<id> or property:<object>.<property>
+  response_mode: concise           # concise | detailed | file-reference
+
 preconditions:                     # verifiable BEFORE executing
   - description: All exit criteria of the current stage are met
     check: "process:new-business.current_stage.exit_criteria all true"

@@ -271,6 +271,7 @@ apart — e.g. two branch offices of one company: same `name`, same `domain`, di
 | `intent` | R | when an agent should reach for this action |
 | `executor` | R | `agent / human / either` |
 | `approval` | R | `none / required / conditional` (+ `approval_condition`) |
+| `context` | O schema / R for new `agent` or `either` actions | Minimal context contract: `required_static_refs[]`, property-only `required_live_refs[]`, `optional_refs[]`, `forbidden_to_persist[]` (`input:<id>` or `property:<object>.<property>`), and `response_mode: concise / detailed / file-reference`. Do not repeat workflow. Confirmed legacy actions without it lint as a warning. Every required live PII or `freshness: live-only` property must be forbidden to persist. |
 | `preconditions[]` | R | `{description, check (O)}`; must be verifiable from ontology terms |
 | `abstain_when[]` | O | `{description, check (O)}`; when the agent STOPS and asks the loop steward instead of proceeding: missing inputs, low confidence, price/contract territory. Never fill the gap with a guess. Recommended for every action with write effects; actions without it fall back to `defaults.missing_data` in agent-policy |
 | `inputs[]` | R | `{id, type, required, description}` |

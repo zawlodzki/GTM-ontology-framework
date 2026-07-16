@@ -12,6 +12,23 @@ intent: >
 executor: agent
 approval: none
 
+context:
+  required_static_refs:
+    - prompt:lead-qualification
+    - binding:pipedrive
+    - process:new-business
+  required_live_refs:
+    - property:deal.stage
+    - property:deal.ai_qualification_summary
+    - property:deal.ai_qualification_score
+  optional_refs:
+    - automation:qualify-from-transcript
+  forbidden_to_persist:
+    - input:transcript
+    - property:deal.stage
+    - property:person.email
+  response_mode: concise
+
 preconditions:
   - description: Deal exists and is in stage incoming or qualified
     check: "deal.stage in [incoming, qualified]"

@@ -39,4 +39,4 @@ An individual we market or sell to, i.e. lead, contact, or user at a customer.
 | **Engagement Score** | number |  | automation |  |
 | **Lifecycle Stage** | enum |  | mixed | **Lead**: Known email, no ICP/engagement threshold crossed yet.<br>**MQL**: Organization matches ICP (org.icp_fit == true) AND engagement_score >= 40 within the last 30 days.<br><br>**SQL**: SDR spoke with the person, confirmed fit and interest, and a deal was created or is being created. Human judgment call; no automation sets this.<br><br>**Opportunity**: Primary contact on a deal that reached Qualified or beyond.<br>**Customer**: Contact at an organization with at least one won deal. |
 
-*Generated from ontology `acme-analytics` v1.4.0 (2026-07-15), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.5.0 (2026-07-16), do not hand-edit.*
