@@ -52,8 +52,25 @@ jobs:
             evals/fixtures/fail-governance-action.jsonl \
             evals/fixtures/fail-provenance-privacy.jsonl
           do
-            if python tools/evaluate_context.py evals/context-competency.yaml "$fixture"; then
+            report="$(mktemp)"
+            if python tools/evaluate_context.py evals/context-competency.yaml "$fixture" > "$report"; then
               echo "Expected $fixture to fail" >&2
               exit 1
             fi
+            python - "$report" <<'PY'
+          import json
+          import sys
+
+          with open(sys.argv[1], encoding="utf-8") as stream:
+              report = json.load(stream)
+          if report.get("passed") is not False:
+              raise SystemExit("Negative fixture did not produce passed=false")
+          if report.get("input_failures"):
+              raise SystemExit(f"Negative fixture has input failures: {report['input_failures']}")
+          if report.get("structural_failures"):
+              raise SystemExit(f"Negative fixture has structural failures: {report['structural_failures']}")
+          if not any(not case["passed"] for case in report.get("cases", [])):
+              raise SystemExit("Negative fixture did not fail a hard evaluation check")
+          PY
+            rm "$report"
           done

@@ -134,9 +134,15 @@ def score_case(case: dict[str, Any], response: dict[str, Any]) -> dict[str, Any]
 
 
 def evaluate(suite: dict[str, Any], responses: list[dict[str, Any]]) -> dict[str, Any]:
-    case_index = {case["id"]: case for case in suite["cases"]}
-    response_index: dict[str, dict[str, Any]] = {}
+    case_index: dict[str, dict[str, Any]] = {}
     structural: list[str] = []
+    for case in suite["cases"]:
+        case_id = case["id"]
+        if case_id in case_index:
+            structural.append(f"duplicate case id: {case_id}")
+            continue
+        case_index[case_id] = case
+    response_index: dict[str, dict[str, Any]] = {}
     for response in responses:
         case_id = response["case_id"]
         if case_id in response_index:

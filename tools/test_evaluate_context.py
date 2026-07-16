@@ -109,6 +109,17 @@ class ContextCompetencyEvaluationTests(unittest.TestCase):
             ],
         )
 
+    def test_duplicate_case_ids_are_structural_failures(self) -> None:
+        responses, errors = self.evaluator.read_jsonl(FIXTURES / "golden.jsonl")
+        self.assertEqual(errors, [])
+        duplicate_suite = {**self.suite, "cases": [*self.suite["cases"], self.suite["cases"][0]]}
+        report = self.evaluator.evaluate(duplicate_suite, responses)
+        self.assertFalse(report["passed"])
+        self.assertEqual(
+            report["structural_failures"],
+            ["duplicate case id: commerce-analytics-icp"],
+        )
+
     def test_schemas_accept_the_published_suite_and_responses(self) -> None:
         schema_dir = ROOT / "schemas"
         suite_errors = self.evaluator.validation_errors(
