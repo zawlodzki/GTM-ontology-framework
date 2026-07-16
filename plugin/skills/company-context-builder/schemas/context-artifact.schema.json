@@ -15,6 +15,11 @@
     },
     "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
     "scope": {"type": "string"},
+    "claim_refs": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^claim:[a-z0-9]+(-[a-z0-9]+)*$"},
+      "uniqueItems": true
+    },
     "meta": {
       "type": "object",
       "required": ["source", "status"],

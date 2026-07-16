@@ -48,10 +48,34 @@ Markdown artifacts use YAML frontmatter with:
 - `meta.owner` when a business owner exists;
 - `meta.last_verified` and `meta.verify_every` for facts that age;
 - `meta.evidence` when a claim depends on research, customer evidence, or a review.
+- optional `claim_refs` for material, changing, disputed, or decision-critical
+  statements whose evidence needs claim-level traceability.
 
 Use typed references such as `segment:commerce-analytics-core-segment`, never
 file paths. Manifests map artifact IDs to paths and supply `summary` and
 `load_when`.
+
+## Claim registry
+
+Use the optional root `claims_registry` when artifact-level metadata is too coarse
+for a material statement. The registry is not a second copy of every fact. Create a
+claim for a changing market or competitor assertion, a consequential inference, a
+disputed statement, or a statement whose supporting and contradicting evidence
+must be reviewed independently from the containing artifact.
+
+Each claim has a stable `claim:<id>`, one exact statement, a typed `scope_ref`,
+provenance, status, owner, evidence, and optional validity and verification dates.
+An inferred claim also states confidence. Confirmed claims require supporting
+evidence. Evidence records whether a source supports or contradicts the statement;
+public URLs may be stored directly, while private systems use public-safe aggregate
+descriptions without record identifiers or private links.
+
+Use `conflicts_with` only for claims that cannot both be true in the same scope and
+time, and record the relationship on both claims. Use `supersedes` when a newer
+claim replaces an older one without deleting the historical statement. Expired or
+superseded claims remain in the registry for audit but must not be treated as
+current. Artifacts reference relevant claims through `claim_refs`; ordinary durable
+content needs no claim entry.
 
 ## Company strategy
 

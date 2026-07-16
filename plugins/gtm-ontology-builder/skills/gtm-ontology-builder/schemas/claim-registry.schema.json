@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gof/claim-registry.schema.json",
+  "title": "GOF Company-Context Claim Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "id", "version", "updated", "claims"],
+  "properties": {
+    "kind": {"const": "claim-registry"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "updated": {"type": "string", "format": "date"},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/claim"}
+    }
+  },
+  "$defs": {
+    "claimRef": {
+      "type": "string",
+      "pattern": "^claim:[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "relation", "source_type", "source", "retrieved"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "relation": {"enum": ["supports", "contradicts"]},
+        "source_type": {
+          "enum": [
+            "user-statement", "supplied-document", "public-url",
+            "system-observation", "crm-aggregate", "customer-evidence",
+            "review", "synthetic"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Public URL or public-safe source description; never a private record URL or identifier."
+        },
+        "retrieved": {"type": "string", "format": "date"},
+        "limitations": {"type": "string"}
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "scope_ref", "provenance", "status", "owner"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "statement": {"type": "string", "minLength": 1},
+        "scope_ref": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*:[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "provenance": {"enum": ["declared", "discovered", "inferred", "learned", "synthetic"]},
+        "status": {"enum": ["draft", "confirmed", "example"]},
+        "owner": {"type": "string", "minLength": 1},
+        "confidence": {"enum": ["low", "medium", "high"]},
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidence"}
+        },
+        "conflicts_with": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/claimRef"},
+          "uniqueItems": true
+        },
+        "supersedes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/claimRef"},
+          "uniqueItems": true
+        },
+        "valid_from": {"type": "string", "format": "date"},
+        "valid_until": {"type": "string", "format": "date"},
+        "last_verified": {"type": "string", "format": "date"},
+        "verify_every": {"type": "string", "pattern": "^[0-9]+[dwmy]$"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"status": {"enum": ["confirmed", "example"]}},
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["evidence"],
+            "properties": {"evidence": {"minItems": 1}}
+          }
+        },
+        {
+          "if": {"properties": {"provenance": {"const": "inferred"}}, "required": ["provenance"]},
+          "then": {"required": ["confidence"]}
+        },
+        {
+          "if": {"required": ["last_verified"]},
+          "then": {"required": ["verify_every"]}
+        },
+        {
+          "if": {"required": ["verify_every"]},
+          "then": {"required": ["last_verified"]}
+        }
+      ]
+    }
+  }
+}

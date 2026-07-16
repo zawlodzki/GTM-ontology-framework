@@ -23,6 +23,10 @@ For each approved offer, copy `assets/artifact-templates/product-context.md`,
 replace its product and group tokens, add it to the group manifest `products`, and
 add its typed ref to the relevant group artifacts. Create `GAPS.md` from
 `assets/artifact-templates/GAPS.md` only when consequential gaps remain.
+Create a root `claims.yaml` from `assets/artifact-templates/claims.yaml` only when
+material, changing, disputed, or decision-critical statements need evidence below
+the artifact level; then set `claims_registry: claims.yaml` in the root manifest
+and add `claim_refs` only to artifacts that actually rely on those claims.
 
 The validator requires PyYAML and jsonschema. Install them once when unavailable.
 Initialize and validate with:
@@ -119,9 +123,11 @@ offers, pricing, proof, and comparison dimensions. When several competitors requ
 broad external research and subagents are available, delegate one company per
 subagent and require source URLs and retrieval dates.
 
-Record every changing claim with URL, retrieval date, `last_verified`, and
-`verify_every`. Do not use search snippets as evidence when the underlying page can
-be opened.
+Record every material changing claim in the claim registry with its typed scope,
+supporting or contradicting evidence, retrieval date, `last_verified`, and
+`verify_every`. Keep minor claims at artifact level when separate review would add
+no value. Do not use search snippets as evidence when the underlying page can be
+opened.
 
 **GATE:** present findings, confidence, unsupported claims, and conflicts with
 declared inputs. User chooses which disputed claims become canonical.
@@ -167,6 +173,10 @@ Require the user to decide conflicts affecting ICP, segment, product truth,
 positioning, pricing, or GTM motion. Merge complementary evidence only when it does
 not change meaning. Record unresolved conflicts as gaps; never choose silently.
 
+When both sides remain useful hypotheses, record separate claims and reciprocal
+`conflicts_with` refs. When a decision replaces an older claim, keep the old claim
+for audit and link the replacement with `supersedes`.
+
 **GATE:** user resolves or explicitly defers every material conflict.
 
 ## Phase 5: Build the context
@@ -189,6 +199,10 @@ If consequential data remains missing, create `GAPS.md` and set
 `gaps_report: GAPS.md` in the root manifest. For each gap include the artifact or
 field, sources checked, impact, owner or question, and next action. Omit both when
 there are no consequential gaps.
+
+When an approved claim registry is needed, create `claims.yaml`, set the manifest
+pointer, and attach `claim_refs` before confirming dependent artifacts. Do not
+create an empty registry or duplicate every artifact statement into it.
 
 Run the bundled validator. Errors block completion; present warnings as a review
 list. Report sources, freshness, resolved conflicts, deferred decisions, and files

@@ -6,6 +6,8 @@ strategy_ref: product-group-strategy:commerce-analytics-strategy
 primary_use_case_ref: use-case:commerce-analytics-core-use-case
 icp_ref: icp:commerce-analytics-icp
 persona_ref: personas:commerce-analytics-personas
+claim_refs:
+  - claim:commerce-metric-reconciliation-friction
 meta:
   source: synthetic
   status: example
