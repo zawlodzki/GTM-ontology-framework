@@ -1,5 +1,17 @@
 # Field dictionary
 
+## Activity
+
+A scheduled interaction on a deal or person: a call, meeting, or task anchored to a point in time. The only object whose correctness depends on timezone handling — a naive "13:00" means nothing until anchored to a zone — so due_datetime is the canonical test of system:pipedrive data_standards.
+
+| Field | Type | Required | Filled by | Values |
+|---|---|---|---|---|
+| **Subject** | string |  | mixed |  |
+| **Activity Type** | enum |  | human | **call**: Phone or video call<br>**meeting**: Scheduled meeting with attendees<br>**task**: To-do with a due time<br>**deadline**: Hard date marker, no attendee |
+| **Due (start) datetime** | datetime |  | mixed |  |
+| **Duration (minutes)** | number |  | mixed |  |
+| **Done** | boolean |  | mixed |  |
+
 ## Deal
 
 A concrete revenue opportunity with an identified organization: someone at the account has shown buying intent worth SDR/AE time. Not every form-fill becomes a deal; see process:new-business Incoming entry criteria.
@@ -39,4 +51,4 @@ An individual we market or sell to, i.e. lead, contact, or user at a customer.
 | **Engagement Score** | number |  | automation |  |
 | **Lifecycle Stage** | enum |  | mixed | **Lead**: Known email, no ICP/engagement threshold crossed yet.<br>**MQL**: Organization matches ICP (org.icp_fit == true) AND engagement_score >= 40 within the last 30 days.<br><br>**SQL**: SDR spoke with the person, confirmed fit and interest, and a deal was created or is being created. Human judgment call; no automation sets this.<br><br>**Opportunity**: Primary contact on a deal that reached Qualified or beyond.<br>**Customer**: Contact at an organization with at least one won deal. |
 
-*Generated from ontology `acme-analytics` v1.5.0 (2026-07-16), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.6.0 (2026-07-23), do not hand-edit.*

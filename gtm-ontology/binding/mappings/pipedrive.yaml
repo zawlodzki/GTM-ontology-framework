@@ -18,7 +18,8 @@ objects:
         notes: >
           won/lost are NOT stage_ids; they map to Pipedrive deal.status
           ('won'/'lost'). Writing terminal states = update status, not stage_id.
-      - {property: expected_close_date, field_key: expected_close_date, transform: none, writable: true}
+      - {property: expected_close_date, field_key: expected_close_date, transform: none, writable: true,
+         datetime: {precision: date}, notes: "date-only: no time, no timezone — sent verbatim, never tz-convert"}
       - property: source_channel
         field_key: "b7d9f1a3c5e7b9d1f3a5c7e9b1d3f5a7c9e1b3d5"
         transform: enum_options
@@ -75,3 +76,32 @@ objects:
         enum_map: {"401": true, "402": false}
         writable: false
         notes: computed by automation:lead-scoring enrichment step
+
+  - object: object:activity
+    entity: activities
+    id_field: id
+    properties:
+      - {property: subject, field_key: subject, transform: none, writable: true}
+      - property: activity_type
+        field_key: type
+        transform: enum_options
+        enum_map: {call: call, meeting: meeting, task: task, deadline: deadline}
+        writable: true
+        notes: "Pipedrive activity 'type' is a string key, not a numeric option id."
+      - property: due_datetime
+        field_key: due_date
+        transform: datetime_tz
+        datetime: {precision: datetime, source_tz: Europe/Warsaw}
+        writable: true
+        notes: >
+          Pipedrive splits this into due_date (YYYY-MM-DD) + due_time (HH:MM),
+          both UTC. Convert the Europe/Warsaw wall-clock start to UTC before
+          writing; the date can roll a day near midnight. Never send a naive
+          local time. On read, convert UTC back to Europe/Warsaw.
+      - property: duration_minutes
+        field_key: duration
+        transform: expression
+        expression: "minutes <-> 'HH:MM'"
+        writable: true
+      - {property: done, field_key: done, transform: enum_options, enum_map: {"0": false, "1": true}, writable: true,
+         notes: "Pipedrive boolean encoding is 1/0 per data_standards"}

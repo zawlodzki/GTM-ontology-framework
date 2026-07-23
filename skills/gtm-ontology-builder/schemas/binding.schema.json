@@ -30,6 +30,14 @@
                 "transform": {"enum": ["none", "enum_options", "currency", "datetime_tz", "expression"]},
                 "enum_map": {"type": "object"},
                 "expression": {"type": "string"},
+                "datetime": {
+                  "type": "object",
+                  "description": "How a date/datetime field serializes at this system's boundary. Defaults come from the system's data_standards; set here only to be explicit or to override for one field. Required semantics: transform:datetime_tz means precision:datetime and a tz conversion from source_tz to the API timezone; a date-only field uses transform:none and precision:date and is NEVER tz-converted.",
+                  "properties": {
+                    "precision": {"enum": ["date", "datetime"], "description": "date = no timezone, sent verbatim; datetime = converted from source_tz to the system's api_timezone before writing, and back on read."},
+                    "source_tz": {"type": "string", "description": "IANA zone a naive incoming value is authored in. Defaults to the system's data_standards.business_timezone."}
+                  }
+                },
                 "writable": {"type": "boolean"},
                 "visibility": {
                   "type": "object",

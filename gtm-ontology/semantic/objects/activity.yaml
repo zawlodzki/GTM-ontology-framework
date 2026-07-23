@@ -1,0 +1,65 @@
+kind: object-type
+id: activity
+name: Activity
+description: >
+  A scheduled interaction on a deal or person: a call, meeting, or task anchored
+  to a point in time. The only object whose correctness depends on timezone
+  handling — a naive "13:00" means nothing until anchored to a zone — so
+  due_datetime is the canonical test of system:pipedrive data_standards.
+meta: {source: declared, status: confirmed, confirmed_by: "Anna (RevOps)", updated: 2026-07-23}
+
+properties:
+  - id: subject
+    name: Subject
+    type: string
+    semantics: "Short human label, e.g. 'Discovery call - Acme'. Set at creation."
+    filled_by: mixed
+    filled_by_detail: "human when booking; agent when scheduling from an action"
+
+  - id: activity_type
+    name: Activity Type
+    type: enum
+    semantics: Kind of interaction; drives which team owns the follow-up.
+    filled_by: human
+    enum:
+      - {value: call, definition: "Phone or video call", set_by: human}
+      - {value: meeting, definition: "Scheduled meeting with attendees", set_by: human}
+      - {value: task, definition: "To-do with a due time", set_by: human}
+      - {value: deadline, definition: "Hard date marker, no attendee", set_by: human}
+
+  - id: due_datetime
+    name: Due (start) datetime
+    type: datetime
+    semantics: >
+      Scheduled start as a point in time. Authored in Europe/Warsaw (the business
+      zone) and stored by Pipedrive in UTC — see system:pipedrive data_standards.
+      A 13:00 Warsaw meeting is 11:00 UTC in summer; writing a naive "13:00"
+      corrupts it to 15:00 on read. Always convert; never send a naive local time.
+    filled_by: mixed
+    filled_by_detail: "human when booking; agent via a scheduling action"
+    user_access: editable
+    freshness: live-only
+
+  - id: duration_minutes
+    name: Duration (minutes)
+    type: number
+    semantics: Length of the activity in minutes; Pipedrive stores it as HH:MM.
+    filled_by: mixed
+
+  - id: done
+    name: Done
+    type: boolean
+    semantics: "Whether the activity is completed. Null or false = still open."
+    filled_by: mixed
+
+links:
+  - id: deal
+    label: RELATES_TO
+    target: object:deal
+    cardinality: many-to-one
+    semantics: The deal this activity belongs to, if any.
+  - id: contact
+    label: WITH_CONTACT
+    target: object:person
+    cardinality: many-to-many
+    semantics: People attending or targeted by the activity.
