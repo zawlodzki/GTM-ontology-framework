@@ -44,4 +44,4 @@ flowchart LR
 | **Loss reasons** |  | No budget; No decision power; Bad timing |  | Too expensive; Chose competitor |  |  |  |
 | **Tips** |  | Ask about the decision process before showing pricing. |  |  |  |  |  |
 
-*Generated from ontology `acme-analytics` v1.5.0 (2026-07-16), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.6.0 (2026-07-23), do not hand-edit.*

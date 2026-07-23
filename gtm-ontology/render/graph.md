@@ -35,6 +35,7 @@ flowchart TD
   market_overview_company_market_overview["market-overview<br/><b>company-market-overview</b>"]
   messaging_commerce_analytics_messaging["messaging<br/><b>commerce-analytics-messaging</b>"]
   messaging_data_activation_messaging["messaging<br/><b>data-activation-messaging</b>"]
+  object_type_activity["object-type<br/><b>activity</b>"]
   object_type_deal["object-type<br/><b>deal</b>"]
   object_type_organization["object-type<br/><b>organization</b>"]
   object_type_person["object-type<br/><b>person</b>"]
@@ -83,6 +84,7 @@ flowchart TD
   binding_pipedrive --> action_qualify_lead
   binding_pipedrive --> automation_lead_scoring
   binding_pipedrive --> automation_qualify_from_transcript
+  binding_pipedrive --> object_type_activity
   binding_pipedrive --> object_type_deal
   binding_pipedrive --> object_type_organization
   binding_pipedrive --> object_type_person
@@ -171,6 +173,9 @@ flowchart TD
   messaging_data_activation_messaging --> segment_data_activation_core_segment
   messaging_data_activation_messaging --> use_case_data_activation_core_use_case
   messaging_data_activation_messaging --> value_propositions_data_activation_value_propositions
+  object_type_activity --> object_type_deal
+  object_type_activity --> object_type_person
+  object_type_activity --> system_pipedrive
   object_type_deal --> action_advance_deal_stage
   object_type_deal --> action_qualify_lead
   object_type_deal --> automation_lead_scoring
@@ -312,4 +317,4 @@ flowchart TD
   value_propositions_data_activation_value_propositions --> use_case_data_activation_core_use_case
 ```
 
-*Generated from ontology `acme-analytics` v1.5.0 (2026-07-16), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.6.0 (2026-07-23), do not hand-edit.*

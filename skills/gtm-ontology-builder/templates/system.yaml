@@ -23,3 +23,12 @@ write_access: limited              # none|limited|full
 write_access_notes: agents write only fields marked writable in bindings
 rate_limits: "API: token-budget per day; be conservative in bulk ops"
 environment_notes: no sandbox — all writes hit production
+data_standards:                    # serialization contract the API enforces — from the vendor's date-format docs
+  api_timezone: UTC                # zone the API stores/returns datetimes in; a naive datetime is read as this
+  business_timezone: Europe/Warsaw # zone the team authors times in; a naive local time means this, convert before writing
+  datetime_format: "YYYY-MM-DD HH:mm:ss"   # ISO 8601
+  date_format: "YYYY-MM-DD"        # date-only fields carry no timezone; never tz-convert them
+  time_format: "HH:mm"
+  number_format: "dot-decimal, no grouping (1234.56)"
+  boolean_encoding: "1/0"          # e.g. 1/0 or true/false
+  docs_ref: https://pipedrive.readme.io/docs/core-api-concepts-date-format

@@ -67,7 +67,12 @@ gtm-ontology/
    For platform CRMs (Salesforce, HubSpot, Dynamics) also agree WHICH modules/objects
    are in scope and record it in the system profile's `scope` block; the ontology
    covers the CRM module (e.g. Salesforce Sales Cloud: Lead, Account, Contact,
-   Opportunity, Task/Event), never the whole platform.
+   Opportunity, Task/Event), never the whole platform. Also capture each
+   system's `data_standards` — the serialization contract its API enforces
+   (storage timezone, the zone the team authors times in, datetime/date formats,
+   number and boolean encoding), from the vendor's date-format docs. A datetime
+   written in the wrong zone silently shifts (a 13:00 meeting surfacing at 15:00),
+   so this contract is not optional for any system agents write timestamps to.
 3. Use cases: what should agents ANSWER and DO? These are the ontology's competency questions; they define scope.
 
 Scaffold the `gtm-ontology/` directory tree (layout above), then write
@@ -107,7 +112,12 @@ Report anomalies (unused fields, duplicates, empty pipelines). No gate; these ar
 
 Write draft `semantic/objects/*.yaml` (template: `templates/object-type.yaml`) and
 `binding/mappings/<system>.yaml` (template: `templates/binding.yaml`; every
-`field_key` must exist in the snapshot). If >1 system: `binding/identity.yaml`
+`field_key` must exist in the snapshot). For date/datetime properties set the
+`datetime` block per the system's `data_standards`: a timestamp uses
+`transform: datetime_tz` with `precision: datetime` and `source_tz` (convert the
+business zone → api_timezone on write, back on read); a date-only field uses
+`transform: none` with `precision: date` and is never tz-converted. If >1 system:
+`binding/identity.yaml`
 (natural keys, master source, conflict strategy; ask, don't assume).
 
 **GATE:** user confirms objects, mappings, collapses, gaps.
