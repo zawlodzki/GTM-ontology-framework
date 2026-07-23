@@ -26,3 +26,17 @@ objects:
         visibility:                # CRM UI config (binding — lives here, not in semantics)
           pipelines: [New Business]          # [] = visible in all pipelines
           important_on_stage: qualified      # stage where CRM highlights the field
+      - property: expected_close_date        # date-only field: no time, no timezone
+        field_key: expected_close_date
+        transform: none
+        datetime: {precision: date}          # sent verbatim — never tz-convert a date
+        writable: true
+  - object: object:activity
+    entity: activities
+    id_field: id
+    properties:
+      - property: due_datetime               # timestamp: tz-sensitive, the 13:00->15:00 trap
+        field_key: due_date                  # Pipedrive splits into due_date + due_time, both UTC
+        transform: datetime_tz
+        datetime: {precision: datetime, source_tz: Europe/Warsaw}  # convert Warsaw wall-clock -> api_timezone (UTC)
+        writable: true

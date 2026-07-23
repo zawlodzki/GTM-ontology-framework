@@ -57,6 +57,33 @@ Gotchas:
   process per record type. **Lead conversion** (Lead → Account+Contact+Opportunity) is
   not a stage transition; model it as an action with explicit effects.
 
+## Datetime & timezone serialization (A4 `data_standards` + A6 `datetime`)
+
+A datetime is a point in time, not a wall-clock string. If the ontology doesn't
+record what zone a system stores and expects, an agent writing a 13:00 local
+meeting sends a naive "13:00", the API reads it as UTC, and it resurfaces at
+15:00. Capture the contract once on the system profile, then reference it per field.
+
+System profile (A4) — `data_standards`: `api_timezone` (zone the API stores and
+returns datetimes in), `business_timezone` (zone humans/agents author times in),
+`datetime_format` / `date_format` / `time_format`, `number_format`,
+`boolean_encoding`, and `docs_ref` (the vendor's date-format page — verify per
+release).
+
+Binding (A6) — per date/datetime property, set the `datetime` block:
+
+- **Timestamp**: `transform: datetime_tz`, `datetime: {precision: datetime, source_tz: <business_timezone>}`.
+  Convert business zone → `api_timezone` on write, back on read.
+- **Date-only**: `transform: none`, `datetime: {precision: date}`. No time, no
+  zone — sent verbatim, NEVER tz-converted (converting a date can shift it a day).
+
+| Vendor | Stores datetimes in | Format | Notes |
+|---|---|---|---|
+| **Pipedrive** | UTC | `YYYY-MM-DD HH:mm:ss` (ISO 8601) | No single datetime type: an activity time is `due_date` + `due_time`, both UTC; booleans 1/0. |
+| **HubSpot** | UTC (epoch ms) | epoch milliseconds | Date-only properties are midnight UTC; sending a local-midnight timestamp shifts the day. |
+| **Attio** | UTC | ISO 8601 (`timestamp`) | Native `timestamp`; still convert from the business zone before writing. |
+| **Salesforce** | UTC | ISO 8601 (`DateTime`) | `Date` fields are zone-less; `DateTime` is stored/returned in UTC, displayed in the user's locale zone. |
+
 ## Field/metadata endpoints (discovery + bindings)
 
 | Concern | Pipedrive | HubSpot | Attio | Salesforce |

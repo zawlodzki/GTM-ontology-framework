@@ -42,7 +42,23 @@
     "write_access": {"enum": ["none", "limited", "full"]},
     "write_access_notes": {"type": "string"},
     "rate_limits": {"type": "string"},
-    "environment_notes": {"type": "string"}
+    "environment_notes": {"type": "string"},
+    "data_standards": {
+      "type": "object",
+      "description": "Serialization contract this system enforces at its API boundary: how datetimes, dates, numbers, and booleans must be sent and are returned. Any agent writing through this system MUST conform. Prevents silent corruption such as a 13:00 local meeting landing at 15:00 because a naive time was read as UTC.",
+      "required": ["api_timezone"],
+      "properties": {
+        "api_timezone": {"type": "string", "description": "IANA zone or 'UTC' the API stores and returns datetimes in. A naive datetime sent to the API is interpreted as this zone."},
+        "business_timezone": {"type": "string", "description": "IANA zone humans and agents author times in. A naive local time (a 13:00 meeting) means this zone and MUST be converted to api_timezone before writing."},
+        "datetime_format": {"type": "string", "description": "Expected datetime string format, e.g. 'YYYY-MM-DD HH:mm:ss' (ISO 8601)."},
+        "date_format": {"type": "string", "description": "Expected date-only format, e.g. 'YYYY-MM-DD'. Date-only fields carry no timezone and MUST NOT be tz-converted."},
+        "time_format": {"type": "string", "description": "Expected time-of-day format when a field is time-only, e.g. 'HH:mm:ss'."},
+        "number_format": {"type": "string", "description": "Decimal separator and grouping the API expects, e.g. dot-decimal with no grouping ('1234.56')."},
+        "boolean_encoding": {"type": "string", "description": "How booleans are represented on the wire, e.g. '1/0' or 'true/false'."},
+        "docs_ref": {"type": "string", "description": "URL to the vendor's data-format documentation."},
+        "notes": {"type": "string"}
+      }
+    }
   },
   "$defs": {
     "meta": {

@@ -1,6 +1,6 @@
 {
   "name": "gtm-ontology-builder",
-  "version": "1.4.4+codex.fd80e8cf3758",
+  "version": "1.4.5+codex.edf87d1e7eb0",
   "description": "Build evidence-backed company context and agent-ready GTM ontologies from business materials, market research, CRM evidence, and live-system discovery.",
   "author": {
     "name": "Grzegorz Zaw\u0142odzki",

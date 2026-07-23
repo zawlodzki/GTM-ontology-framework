@@ -1,7 +1,7 @@
 {
   "name": "gtm-ontology-builder",
   "description": "Build evidence-backed company context and agent-ready GTM ontologies. Inventory products, ICPs, personas, positioning, and won CRM evidence, then model CRM objects, pipelines, automations, agent actions, governance, and KPIs.",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "author": {
     "name": "Grzegorz Zawłodzki",
     "email": "grzesiek@zawlodzki.pl"
