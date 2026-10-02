@@ -26,7 +26,10 @@ Define the segment, use case, offers, and perception this positioning governs.
 
 ## Market maturity and awareness
 
-Record the category's maturity and the audience's likely starting awareness.
+Summarize the category's maturity and the role-specific audience profile from
+`segment:{{PRODUCT_GROUP_ID}}-core-segment`. Preserve the distinction between
+knowing the category and using, evaluating, or planning to buy it. Keep unsupported
+observations `unknown`; do not infer a comparison frame from either dimension.
 
 ## Anchors and category choice
 
@@ -51,6 +54,17 @@ explicit. Do not start with a tagline.
 |---|---|---|---|
 | Unknown | Unknown | Unknown | Unknown |
 
+## Comparison frames
+
+Select the primary comparison for each material role and situation from the
+buyer-perceived alternatives above. Distinguish how the buyer works today from
+what they would compare with this offer. A category-aware non-user may compare
+vendors, the current workflow, or both; establish the frame from evidence.
+
+| Role and situation | Primary comparison | When another frame applies | Evidence and source refs |
+|---|---|---|---|
+| Unknown | Unknown vendor, current workflow, other category, or no change | Unknown | Unknown; use approved typed refs |
+
 ## Differentiation chains
 
 | Alternative weakness | Product truth | Capability | Direct benefit | Proof in context |
@@ -72,6 +86,36 @@ Route offers by evidenced use-case complexity and adoption scope, not budget alo
 | Claim | Required proof | Strength |
 |---|---|---|
 | Unknown | Unknown | Guaranteed, expected, or possible |
+
+## Decision summary
+
+Complete this compact review card after the argument is explicit. Select approved
+facts from the sections above and their canonical upstream artifacts; keep typed
+refs with the summary. Do not introduce a new audience, capability, or claim here.
+
+| Decision | Approved selection and source refs |
+|---|---|
+| Audience and situation | Unknown; select from `segment:{{PRODUCT_GROUP_ID}}-core-segment` and `personas:{{PRODUCT_GROUP_ID}}-personas` |
+| Category and rationale | Unknown; summarize the category choice above |
+| Awareness and participation | Unknown; summarize the scoped segment profile |
+| Primary comparison | Unknown; select the applicable comparison frame above |
+| Alternative limitation | Unknown; select the limitation relevant to that comparison |
+| Product mechanism and direct benefit | Unknown; select the differentiation chain and approved product refs |
+| Proof and claim strength | Unknown; select the proof, assumptions, and applicable claim refs |
+
+## Semantic review
+
+Before confirmation, check the complete argument:
+
+- The comparison frame fits the intended role and situation and has evidence.
+- The stated limitation belongs to that alternative in the scoped use case.
+- The differentiator addresses that limitation through an available product mechanism.
+- The proof supports the direct benefit and the strength of the promise; assumptions
+  behind higher-order outcomes remain explicit.
+- Messaging selects the applicable comparison frame without changing these decisions.
+
+Record consequential unknowns and leave affected arguments draft until resolved.
+Schema checks and competency trace scoring do not establish semantic correctness.
 
 ## Message guardrails
 

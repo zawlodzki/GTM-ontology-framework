@@ -36,11 +36,6 @@ written plan, follow it exactly; if you spot a problem, flag it and wait rather
 than improvising. For non-trivial work (3+ steps — a new process, a schema
 change, a multi-artifact edit), plan first and confirm intent before editing.
 
-### Phased Execution
-
-Never refactor many artifacts in one response. Work in phases of max 5 files:
-complete a phase, validate, get approval before the next.
-
 ### Follow References, Not Descriptions
 
 When the user points to an existing artifact, schema, or skill template, match

@@ -44,7 +44,21 @@ unacceptable. Do not manufacture urgency.
 
 ## Maturity and awareness
 
-Record market maturity and the buyer's likely starting awareness with evidence.
+Record market maturity separately from audience awareness. For each material role
+and situation, identify the category being assessed and record the following with
+evidence. Repeat the profile only when observations differ materially.
+
+| Dimension | Observation | Evidence and scope |
+|---|---|---|
+| Category awareness | Unknown; knows or does not know the named category | Unknown role, situation, and supporting evidence |
+| Category participation | Unknown; uses, evaluates, plans to buy, or does not use the named category | Unknown role, situation, and supporting evidence |
+
+Knowing a category does not establish using it, buying intent, or which alternatives
+the buyer will compare. Performing the job without a category solution can still
+establish market participation; assess need and readiness through the linked ICP.
+Distinguish awareness at the start of buying from knowledge gained during the sale.
+Do not infer awareness from a title or from the category's maturity. Keep missing
+evidence `unknown` and persist only aggregate or role-level conclusions.
 
 ## Common buying behavior
 

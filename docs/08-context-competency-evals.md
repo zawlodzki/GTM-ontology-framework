@@ -5,6 +5,18 @@ context, preserves claim provenance, respects governance, chooses the right acti
 and keeps live or personal data out of durable output. It evaluates a structured
 trace of the response, not the quality of its prose.
 
+Passing these checks does not establish that a positioning argument is sound.
+The shared context-artifact schema validates frontmatter; it does not validate the
+meaning of the Markdown body. Before confirming positioning and messaging, review
+the argument against the company-context artifact guide: the buyer's comparison
+frame, the alternative's limitation, the available product mechanism, the direct
+benefit, and the proof must align for the intended role and situation. Category
+awareness and category participation do not by themselves establish that frame.
+
+Additional routing or provenance cases can test which sources an agent uses for
+that argument. Scoring their traces still does not check the argument's meaning;
+that requires a separate semantic review of the actual content.
+
 The `gtm-context-evaluator` skill is the standalone distribution. GitHub Actions
 protects the framework's own fixtures, but it is not required to create or run an
 evaluation in another workspace.
