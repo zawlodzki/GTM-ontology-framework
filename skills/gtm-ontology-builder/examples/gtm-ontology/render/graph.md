@@ -11,6 +11,7 @@ flowchart TD
   binding_pipedrive["binding<br/><b>pipedrive</b>"]
   buying_context_commerce_analytics_buying_context["buying-context<br/><b>commerce-analytics-buying-context</b>"]
   buying_context_data_activation_buying_context["buying-context<br/><b>data-activation-buying-context</b>"]
+  claim_registry_acme_analytics_claims["claim-registry<br/><b>acme-analytics-claims</b>"]
   commercial_model_company_commercial_model["commercial-model<br/><b>company-commercial-model</b>"]
   company_context_manifest_acme_analytics_company_context["company-context-manifest<br/><b>acme-analytics-company-context</b>"]
   company_profile_company_profile["company-profile<br/><b>company-profile</b>"]
@@ -34,6 +35,7 @@ flowchart TD
   market_overview_company_market_overview["market-overview<br/><b>company-market-overview</b>"]
   messaging_commerce_analytics_messaging["messaging<br/><b>commerce-analytics-messaging</b>"]
   messaging_data_activation_messaging["messaging<br/><b>data-activation-messaging</b>"]
+  object_type_activity["object-type<br/><b>activity</b>"]
   object_type_deal["object-type<br/><b>deal</b>"]
   object_type_organization["object-type<br/><b>organization</b>"]
   object_type_person["object-type<br/><b>person</b>"]
@@ -66,6 +68,8 @@ flowchart TD
   action_advance_deal_stage --> system_pipedrive
   action_qualify_lead --> automation_qualify_from_transcript
   action_qualify_lead --> object_type_deal
+  action_qualify_lead --> object_type_person
+  action_qualify_lead --> process_new_business
   action_qualify_lead --> prompt_lead_qualification
   action_qualify_lead --> system_pipedrive
   agent_policy_agent_policy --> action_advance_deal_stage
@@ -80,6 +84,7 @@ flowchart TD
   binding_pipedrive --> action_qualify_lead
   binding_pipedrive --> automation_lead_scoring
   binding_pipedrive --> automation_qualify_from_transcript
+  binding_pipedrive --> object_type_activity
   binding_pipedrive --> object_type_deal
   binding_pipedrive --> object_type_organization
   binding_pipedrive --> object_type_person
@@ -100,6 +105,8 @@ flowchart TD
   buying_context_data_activation_buying_context --> product_group_strategy_data_activation_strategy
   buying_context_data_activation_buying_context --> segment_data_activation_core_segment
   buying_context_data_activation_buying_context --> use_case_data_activation_core_use_case
+  claim_registry_acme_analytics_claims --> segment_commerce_analytics_core_segment
+  claim_registry_acme_analytics_claims --> segment_data_activation_core_segment
   discovery_snapshot_pipedrive_2026_07_01 --> system_pipedrive
   draft_qualification_followup_email --> process_new_business
   gtm_motions_commerce_analytics_motions --> buying_context_commerce_analytics_buying_context
@@ -166,6 +173,9 @@ flowchart TD
   messaging_data_activation_messaging --> segment_data_activation_core_segment
   messaging_data_activation_messaging --> use_case_data_activation_core_use_case
   messaging_data_activation_messaging --> value_propositions_data_activation_value_propositions
+  object_type_activity --> object_type_deal
+  object_type_activity --> object_type_person
+  object_type_activity --> system_pipedrive
   object_type_deal --> action_advance_deal_stage
   object_type_deal --> action_qualify_lead
   object_type_deal --> automation_lead_scoring
@@ -191,6 +201,7 @@ flowchart TD
   personas_data_activation_personas --> use_case_data_activation_core_use_case
   positioning_commerce_analytics_positioning --> buying_context_commerce_analytics_buying_context
   positioning_commerce_analytics_positioning --> icp_commerce_analytics_icp
+  positioning_commerce_analytics_positioning --> messaging_commerce_analytics_messaging
   positioning_commerce_analytics_positioning --> personas_commerce_analytics_personas
   positioning_commerce_analytics_positioning --> product_context_growth_plan
   positioning_commerce_analytics_positioning --> product_context_scale_plan
@@ -200,6 +211,7 @@ flowchart TD
   positioning_commerce_analytics_positioning --> use_case_commerce_analytics_core_use_case
   positioning_data_activation_positioning --> buying_context_data_activation_buying_context
   positioning_data_activation_positioning --> icp_data_activation_icp
+  positioning_data_activation_positioning --> messaging_data_activation_messaging
   positioning_data_activation_positioning --> personas_data_activation_personas
   positioning_data_activation_positioning --> product_context_audience_activation
   positioning_data_activation_positioning --> product_context_warehouse_sync
@@ -264,11 +276,13 @@ flowchart TD
   product_group_strategy_data_activation_strategy --> use_case_data_activation_core_use_case
   prompt_lead_qualification --> action_qualify_lead
   prompt_lead_qualification --> object_type_deal
+  segment_commerce_analytics_core_segment --> buying_context_commerce_analytics_buying_context
   segment_commerce_analytics_core_segment --> icp_commerce_analytics_icp
   segment_commerce_analytics_core_segment --> personas_commerce_analytics_personas
   segment_commerce_analytics_core_segment --> product_group_manifest_commerce_analytics
   segment_commerce_analytics_core_segment --> product_group_strategy_commerce_analytics_strategy
   segment_commerce_analytics_core_segment --> use_case_commerce_analytics_core_use_case
+  segment_data_activation_core_segment --> buying_context_data_activation_buying_context
   segment_data_activation_core_segment --> icp_data_activation_icp
   segment_data_activation_core_segment --> personas_data_activation_personas
   segment_data_activation_core_segment --> product_group_manifest_data_activation
@@ -307,4 +321,4 @@ flowchart TD
   value_propositions_data_activation_value_propositions --> use_case_data_activation_core_use_case
 ```
 
-*Generated from ontology `acme-analytics` v1.4.0 (2026-07-15), do not hand-edit.*
+*Generated from ontology `acme-analytics` v1.6.0 (2026-07-23), do not hand-edit.*
