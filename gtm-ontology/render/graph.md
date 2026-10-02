@@ -201,6 +201,7 @@ flowchart TD
   personas_data_activation_personas --> use_case_data_activation_core_use_case
   positioning_commerce_analytics_positioning --> buying_context_commerce_analytics_buying_context
   positioning_commerce_analytics_positioning --> icp_commerce_analytics_icp
+  positioning_commerce_analytics_positioning --> messaging_commerce_analytics_messaging
   positioning_commerce_analytics_positioning --> personas_commerce_analytics_personas
   positioning_commerce_analytics_positioning --> product_context_growth_plan
   positioning_commerce_analytics_positioning --> product_context_scale_plan
@@ -210,6 +211,7 @@ flowchart TD
   positioning_commerce_analytics_positioning --> use_case_commerce_analytics_core_use_case
   positioning_data_activation_positioning --> buying_context_data_activation_buying_context
   positioning_data_activation_positioning --> icp_data_activation_icp
+  positioning_data_activation_positioning --> messaging_data_activation_messaging
   positioning_data_activation_positioning --> personas_data_activation_personas
   positioning_data_activation_positioning --> product_context_audience_activation
   positioning_data_activation_positioning --> product_context_warehouse_sync
@@ -274,11 +276,13 @@ flowchart TD
   product_group_strategy_data_activation_strategy --> use_case_data_activation_core_use_case
   prompt_lead_qualification --> action_qualify_lead
   prompt_lead_qualification --> object_type_deal
+  segment_commerce_analytics_core_segment --> buying_context_commerce_analytics_buying_context
   segment_commerce_analytics_core_segment --> icp_commerce_analytics_icp
   segment_commerce_analytics_core_segment --> personas_commerce_analytics_personas
   segment_commerce_analytics_core_segment --> product_group_manifest_commerce_analytics
   segment_commerce_analytics_core_segment --> product_group_strategy_commerce_analytics_strategy
   segment_commerce_analytics_core_segment --> use_case_commerce_analytics_core_use_case
+  segment_data_activation_core_segment --> buying_context_data_activation_buying_context
   segment_data_activation_core_segment --> icp_data_activation_icp
   segment_data_activation_core_segment --> personas_data_activation_personas
   segment_data_activation_core_segment --> product_group_manifest_data_activation

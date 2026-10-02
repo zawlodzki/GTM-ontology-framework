@@ -14,7 +14,7 @@ product_refs:
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-15
+  updated: 2026-10-02
   owner: Product
   last_verified: 2026-07-15
   verify_every: 90d
@@ -40,6 +40,10 @@ reverse ETL and compare products directly; business champions are often use-case
 aware and describe engineering wait, audience inconsistency, or delivery failure.
 Lead each role with its recognizable workflow and current alternative before using
 the governed warehouse data-activation label.
+
+The role-specific awareness and participation profile is canonical in
+`segment:data-activation-core-segment`. Neither a technical title nor an existing
+delivery script establishes category adoption or the buyer's comparison frame.
 
 ## Anchors and category choice
 
@@ -85,6 +89,22 @@ customer model.
 | Broad customer-data platform | Collection, identity, and activation in one suite | Scope and administration may exceed a bounded delivery need when the model already exists | Position the narrow workflow; acknowledge the suite when identity or collection is the real need |
 | No change | Avoids procurement, security review, and migration risk | The business delay, hidden failure, governance gap, or maintenance load remains | Respect no-decision when urgency, ownership, or recurring volume is insufficient |
 
+## Comparison frames
+
+These conditional selections use the alternatives above and the fictional buying
+situations in `buying-context:data-activation-buying-context`. Technical and business
+roles can compare the same offer with different ways of doing the job.
+
+| Role and situation | Primary comparison | When another frame applies | Evidence and source refs |
+|---|---|---|---|
+| Head of Data maintaining destination-specific delivery | Custom pipelines or native connectors | Use a broad customer-data platform only when it is considered for the actual collection, identity, or delivery need | Technical ownership and gates in `personas:data-activation-personas`; `buying-context:data-activation-buying-context` |
+| Lifecycle Marketing Lead waiting for audience changes | Engineering requests, manual exports, or destination-built definitions | Use vendor comparison only when the buyer names an audience-product shortlist | Audience workflow and objections in `personas:data-activation-personas`; `use-case:data-activation-core-use-case` |
+| Joint owners assessing whether to proceed | No change when urgency or production ownership is insufficient | Return to the relevant current-workflow frame when an owned failure or delay justifies evaluation | Readiness and no-decision conditions in `buying-context:data-activation-buying-context` |
+
+A category-aware technical buyer can compare reverse ETL vendors without already
+using one. The named shortlist and relative vendor limitations are `unknown` here;
+confirm them before selecting that frame or claiming superiority.
+
 ## Differentiation chains
 
 | Alternative weakness | Product truth | Capability | Direct benefit | Proof in context |
@@ -121,6 +141,32 @@ definition and publishing.
 | Business iteration becomes faster | Baseline request workflow and post-adoption cycle-time evidence | Expected, not guaranteed |
 | Engineering maintenance decreases | Retired custom work and measured ownership effort for the adopted flow | Expected, not guaranteed |
 | Campaign, retention, conversion, or revenue improves | Customer execution, adoption, delivery, response, and causal evidence | Hypothesis; never a default promise |
+
+## Decision summary
+
+This card selects the two existing delivery variants from the sections above.
+Every source is synthetic within the Acme example.
+
+| Decision | Approved selection and source refs |
+|---|---|
+| Audience and situation | Joint technical and business owners of recurring warehouse delivery; `segment:data-activation-core-segment`, `personas:data-activation-personas` |
+| Category and rationale | Warehouse data activation, with reverse ETL as a technical frame and a governed modifier earned by controls and run evidence; category choice above |
+| Awareness and participation | Delivery job present; named-category knowledge, standalone product adoption, and shortlist remain role-specific or `unknown`; `segment:data-activation-core-segment` |
+| Primary comparison | Custom pipeline for technical sync; engineering requests or exports for audience iteration; select by role and workflow from the comparison frames above |
+| Alternative limitation | Repeated mapping and recovery work, engineering wait, or unclear delivery ownership; `use-case:data-activation-core-use-case`, `buying-context:data-activation-buying-context` |
+| Product mechanism and direct benefit | Versioned mappings and recovery support observable sync; approved fields, preview counts, history, and review support controlled audience iteration; `product-context:warehouse-sync`, `product-context:audience-activation` |
+| Proof and claim strength | Mapping, failure exercise, runbook, and audience pilot support scoped product facts; reduced maintenance or faster iteration requires baseline evidence; product refs above and `buying-context:data-activation-buying-context` |
+
+## Semantic review
+
+- Technical sync and audience iteration have distinct baselines and owners;
+  category knowledge does not substitute for their stated comparisons.
+- Versioned mappings and recovery address delivery maintenance; governed audience
+  controls address engineering wait within approved business access.
+- Proof must exercise the supported flow and destination. Effort and cycle-time
+  benefits remain expected; downstream campaign outcomes remain hypotheses.
+- `messaging:data-activation-messaging` selects the role's comparison frame and
+  preserves these proof limits. The review is internal to this synthetic example.
 
 ## Message guardrails
 

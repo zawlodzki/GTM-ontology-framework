@@ -1,5 +1,18 @@
 # Changelog: acme-analytics ontology
 
+## 1.6.0 (2026-07-23)
+- System profiles now carry a `data_standards` block: the serialization contract
+  the API enforces at its boundary (api_timezone, business_timezone, datetime/
+  date/time formats, number format, boolean encoding). Pipedrive declared as
+  UTC storage, Europe/Warsaw authoring, ISO 8601, 1/0 booleans.
+- Field mappings gained an optional `datetime {precision, source_tz}` so a
+  binding states the tz conversion, not just the `datetime_tz` label. Rule:
+  `datetime` fields convert business_timezone -> api_timezone; `date` fields are
+  never tz-converted.
+- New object type: activity (call/meeting/task) with a tz-sensitive due_datetime,
+  the canonical case for the standard — prevents a 13:00 Warsaw meeting landing
+  at 15:00 because a naive time was read as UTC.
+
 ## 1.5.0 (2026-07-16)
 - Added minimal context contracts to both agent actions: required static refs,
   required live properties, optional refs, values forbidden to persist, and the

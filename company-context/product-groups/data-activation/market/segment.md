@@ -11,7 +11,7 @@ claim_refs:
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-15
+  updated: 2026-10-02
   owner: Revenue
   last_verified: 2026-07-15
   verify_every: 90d
@@ -80,6 +80,22 @@ describe the delay, audience, or operational workflow rather than the category.
 Messaging should lead technical roles with warehouse authority and delivery behavior,
 and business roles with the owned operational workflow. Do not require the buyer to
 adopt an unfamiliar category label before the problem is clear.
+
+The profiles below summarize the existing fictional roles at the start of buying.
+They are synthetic scenario evidence, not customer research. The delivery workflow
+establishes market participation; a warehouse or script does not establish category
+adoption, a vendor shortlist, or purchase intent.
+
+| Dimension | Observation | Evidence and scope |
+|---|---|---|
+| Category awareness: Head of Data or Data Engineer | May know reverse ETL and compare products; knowledge of the named category is `unknown` until confirmed for the role and situation | Technical evaluation and acceptance in `personas:data-activation-personas` and `buying-context:data-activation-buying-context` |
+| Category participation: technical team | Custom pipelines or native connectors can perform the delivery job; use, evaluation, or planned purchase of a standalone reverse ETL product is `unknown` | Current ways above and `use-case:data-activation-core-use-case` |
+| Category awareness: Lifecycle Marketing Lead | Recognizes engineering wait and audience inconsistency; knowledge of reverse ETL or warehouse data activation is `unknown` | Workflow, triggers, and objections in `personas:data-activation-personas` |
+| Category participation: lifecycle team | Performs the audience job through requests, exports, or destination workflows; use or planned purchase of a governed audience product is `unknown` | Audience variant in `use-case:data-activation-core-use-case` and `buying-context:data-activation-buying-context` |
+
+Technical category knowledge does not establish the business champion's awareness.
+Positioning selects the comparison from the stated situation; terminology learned
+during technical discovery must not be treated as starting awareness.
 
 ## Common buying behavior
 
