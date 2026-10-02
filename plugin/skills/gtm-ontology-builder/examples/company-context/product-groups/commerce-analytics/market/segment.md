@@ -11,7 +11,7 @@ claim_refs:
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-14
+  updated: 2026-10-02
   owner: Revenue
   last_verified: 2026-07-14
   verify_every: 90d
@@ -74,6 +74,22 @@ commerce analytics" as a standard category. Buyers are usually use-case or categ
 aware: they know the reporting workflow and may compare storefront reports,
 spreadsheets, BI, or analytics products. Messaging should use a recognizable
 commerce-analytics frame before introducing a narrower governed modifier.
+
+The profiles below summarize the existing fictional roles at the start of buying.
+They are synthetic scenario evidence, not customer research. Performing the analysis
+job establishes market participation; it does not establish category knowledge,
+standalone product use, or purchase intent.
+
+| Dimension | Observation | Evidence and scope |
+|---|---|---|
+| Category awareness: Head of E-commerce | Recognizes the recurring analysis problem; knowledge of commerce analytics as a category is `unknown` for a particular buyer | Workflow, triggers, and objections in `personas:commerce-analytics-personas` |
+| Category participation: commerce team | Uses storefront reporting or spreadsheet reconciliation in the current-method scenario; standalone commerce analytics use, evaluation, or planned purchase is `unknown` | Current ways above and `use-case:commerce-analytics-core-use-case` |
+| Category awareness: Data or Analytics Lead | Validates models and sources; category knowledge remains `unknown` until the role names its comparison | Technical gate in `personas:commerce-analytics-personas`; a title does not establish awareness |
+| Category participation: data team | A custom warehouse-and-BI workflow is an alternative in this scenario, not evidence of a commerce analytics subscription or shortlist | Current ways above and `buying-context:commerce-analytics-buying-context`; actual category participation is `unknown` |
+
+Knowledge of the narrower governed modifier remains `unknown` for both roles.
+Positioning selects the comparison from the buyer's stated situation; knowledge
+acquired during a demo must not be treated as starting awareness.
 
 ## Common buying behavior
 

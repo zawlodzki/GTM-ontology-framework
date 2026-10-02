@@ -14,7 +14,7 @@ product_refs:
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-15
+  updated: 2026-10-02
   owner: Product
   last_verified: 2026-07-15
   verify_every: 90d
@@ -39,6 +39,10 @@ The broad analytics market is mature. The narrower "governed commerce analytics"
 modifier is less established, so buyers are normally use-case or category aware
 rather than already shopping for that exact phrase. Lead with the recognizable
 commerce-analysis workflow and alternatives before introducing the modifier.
+
+The role-specific awareness and participation profile is canonical in
+`segment:commerce-analytics-core-segment`. A recognized reporting problem does not
+prove knowledge or adoption of commerce analytics; unknowns remain explicit.
 
 ## Anchors and category choice
 
@@ -83,6 +87,22 @@ supported sources, and explicit onboarding responsibilities.
 | Broad enterprise suite | Wide coverage and consolidated procurement | Scope and administration can exceed the defined commerce workflow | Emphasize fit and boundaries rather than claiming broader capability |
 | No change | Avoids switching and implementation risk | The reporting failure, delay, or dependency remains | Respect no-decision when urgency and ownership are insufficient |
 
+## Comparison frames
+
+These conditional selections use the alternatives above and the fictional buying
+situations in `buying-context:commerce-analytics-buying-context`. The current method
+and the alternatives considered are separate observations.
+
+| Role and situation | Primary comparison | When another frame applies | Evidence and source refs |
+|---|---|---|---|
+| Head of E-commerce rebuilding the review from exports | Storefront reports or spreadsheet reconciliation | Use custom BI when the buyer actually considers building it; category knowledge alone does not select that frame | Workflow and objections in `personas:commerce-analytics-personas`; `use-case:commerce-analytics-core-use-case` |
+| Data or Analytics Lead evaluating build versus buy | Custom warehouse and BI | Use storefront reports or spreadsheets when they are the actual baseline | Technical scope and ownership in `buying-context:commerce-analytics-buying-context` |
+| CMO assessing a broader program | Broad enterprise suite when shortlisted; otherwise the current cross-team reporting workflow | Use no change when implementation effort and urgency dominate | Budget, governance, and adoption gates in `personas:commerce-analytics-personas` |
+
+A named commerce analytics vendor comparison remains `unknown` in this example.
+Confirm the buyer's shortlist and relevant limitations before making vendor-specific
+claims; awareness alone does not supply either.
+
 ## Differentiation chains
 
 | Alternative weakness | Product truth | Capability | Direct benefit | Proof in context |
@@ -119,6 +139,32 @@ changing the primary use case.
 | Preparation effort decreases | Baseline workflow and post-adoption workflow evidence | Expected, not guaranteed |
 | Teams make faster or better decisions | Adoption cadence plus customer action evidence | Possible higher-order outcome |
 | Revenue, retention, margin, or conversion improves | Customer-controlled execution and causal evidence | Hypothesis; never a default promise |
+
+## Decision summary
+
+This card selects the argument for the commerce team's recurring review from the
+sections above. Every source is synthetic within the Acme example.
+
+| Decision | Approved selection and source refs |
+|---|---|
+| Audience and situation | First-party commerce team rebuilding an owned recurring review; `segment:commerce-analytics-core-segment`, `personas:commerce-analytics-personas` |
+| Category and rationale | Commerce analytics with a governed modifier earned by definitions and traceability; category choice above |
+| Awareness and participation | Analysis job present; category knowledge and standalone product participation remain `unknown` for an individual buyer; `segment:commerce-analytics-core-segment` |
+| Primary comparison | Storefront reporting or spreadsheet reconciliation in this situation; use the comparison frames above for another role or baseline |
+| Alternative limitation | Repeated preparation, drifting definitions, or insufficient explainable detail; `use-case:commerce-analytics-core-use-case`, `claim:commerce-metric-reconciliation-friction` |
+| Product mechanism and direct benefit | Models, metric dictionary, and drill-down support a repeatable, explainable review; `product-context:growth-plan`; use `product-context:scale-plan` for evidenced multi-team scope |
+| Proof and claim strength | Representative demonstration and validated definitions support scoped product facts; reduced preparation is expected and needs baseline evidence; `buying-context:commerce-analytics-buying-context` and product refs above |
+
+## Semantic review
+
+- The current-workflow frame follows the champion's stated problem and objections;
+  vendor-specific limitations remain unknown.
+- Models and documented definitions address repeated reconciliation; drill-down
+  addresses unexplained results within the supported scope.
+- Product facts require a scoped demonstration; reduced effort requires before/after
+  evidence. Commercial outcomes remain hypotheses.
+- `messaging:commerce-analytics-messaging` selects the role's comparison frame and
+  preserves these proof limits. The review is internal to this synthetic example.
 
 ## Message guardrails
 

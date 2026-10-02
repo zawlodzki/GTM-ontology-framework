@@ -19,3 +19,19 @@ write_access_notes: >
   Stage writes only via action:advance-deal-stage.
 rate_limits: "token-budget per day (v2 API); batch reads, avoid per-record loops"
 environment_notes: "No sandbox, all writes hit production. api-bot user id 42 is the automation identity."
+data_standards:
+  api_timezone: UTC
+  business_timezone: Europe/Warsaw
+  datetime_format: "YYYY-MM-DD HH:mm:ss"
+  date_format: "YYYY-MM-DD"
+  time_format: "HH:mm"
+  number_format: "dot-decimal, no grouping (1234.56)"
+  boolean_encoding: "1/0"
+  docs_ref: https://pipedrive.readme.io/docs/core-api-concepts-date-format
+  notes: >
+    Every datetime the API stores and returns is UTC; a naive time sent to the
+    API is read as UTC. The team authors times in Europe/Warsaw, so a datetime
+    field (e.g. activity.due_datetime) MUST be converted Warsaw -> UTC before a
+    write and UTC -> Warsaw on read. A 13:00 Warsaw meeting is 11:00 UTC in
+    summer; sending "13:00" naive makes it surface at 15:00. Date-only fields
+    (deal.expected_close_date) carry no time and are never tz-converted.

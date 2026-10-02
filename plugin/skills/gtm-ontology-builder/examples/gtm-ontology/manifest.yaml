@@ -1,7 +1,7 @@
 kind: manifest
 ontology: acme-analytics
-version: 1.5.0
-updated: 2026-07-16
+version: 1.6.0
+updated: 2026-07-23
 business_summary: >
   Acme Analytics sells commerce analytics and data activation to mid-market
   e-commerce companies (ACV EUR 12-40k, sales cycle 4-8 weeks). Two product
@@ -38,6 +38,10 @@ artifacts:
     kind: object-type
     summary: "Organization: account; domain, industry, icp_fit (enrichment-filled)"
     load_when: "working with accounts, ICP checks"
+  - path: semantic/objects/activity.yaml
+    kind: object-type
+    summary: "Activity: scheduled call/meeting/task; due_datetime is tz-sensitive (Pipedrive stores UTC)"
+    load_when: "scheduling or reading activities, meetings, calls, tasks; anything time-of-day sensitive"
   - path: binding/systems/pipedrive.yaml
     kind: system
     summary: "Pipedrive profile: MCP server + API v2 access, limited write"
