@@ -1,6 +1,6 @@
 kind: context-eval-suite
 id: gof-context-competency
-version: 0.1.0
+version: 0.2.0
 cases:
   - id: commerce-analytics-icp
     description: Route an ICP question to the Commerce Analytics product group only.
@@ -192,3 +192,114 @@ cases:
       expected_action_ref: action:qualify-lead
       forbidden_action_refs: []
       forbidden_persisted_refs: [input:transcript, property:person.email, property:person.full_name]
+
+  - id: commerce-analytics-content-taste
+    description: Route Commerce Analytics content to shared brand taste and its own audience reception.
+    prompt: Write an educational opening for Commerce Analytics using its approved message hierarchy, audience language, and Acme editorial choices. Keep illustrative audience reactions explicit and introduce no new product promises.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/commerce-analytics/manifest.yaml
+      - company-context/product-groups/commerce-analytics/go-to-market/messaging.md
+      - company-context/company/brand-taste.md
+      - company-context/product-groups/commerce-analytics/audience/customer-taste.md
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/commerce-analytics/manifest.yaml
+      - company-context/product-groups/commerce-analytics/go-to-market/messaging.md
+      - company-context/company/brand-taste.md
+      - company-context/product-groups/commerce-analytics/audience/customer-taste.md
+      - company-context/product-groups/commerce-analytics/go-to-market/positioning.md
+      - company-context/product-groups/commerce-analytics/go-to-market/value-propositions.md
+      - company-context/product-groups/commerce-analytics/audience/personas.md
+      forbidden_artifacts:
+      - company-context/product-groups/data-activation/audience/customer-taste.md
+      required_refs:
+      - messaging:commerce-analytics-messaging
+      - brand-taste:company-brand-taste
+      - customer-taste:commerce-analytics-customer-taste
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions:
+      - answer
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+  - id: data-activation-content-taste
+    description: Route Data Activation content to shared brand taste and its own audience reception.
+    prompt: Write an educational opening for Data Activation using its approved message hierarchy, audience language, and Acme editorial choices. Keep illustrative audience reactions explicit and introduce no new product promises.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/data-activation/manifest.yaml
+      - company-context/product-groups/data-activation/go-to-market/messaging.md
+      - company-context/company/brand-taste.md
+      - company-context/product-groups/data-activation/audience/customer-taste.md
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/data-activation/manifest.yaml
+      - company-context/product-groups/data-activation/go-to-market/messaging.md
+      - company-context/company/brand-taste.md
+      - company-context/product-groups/data-activation/audience/customer-taste.md
+      - company-context/product-groups/data-activation/go-to-market/positioning.md
+      - company-context/product-groups/data-activation/go-to-market/value-propositions.md
+      - company-context/product-groups/data-activation/audience/personas.md
+      forbidden_artifacts:
+      - company-context/product-groups/commerce-analytics/audience/customer-taste.md
+      required_refs:
+      - messaging:data-activation-messaging
+      - brand-taste:company-brand-taste
+      - customer-taste:data-activation-customer-taste
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions:
+      - answer
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+  - id: do-not-merge-customer-taste
+    description: Preserve role and situation scope rather than fabricate one universal buyer reaction.
+    prompt: Replace the two group-specific Customer Taste profiles with a single canonical Acme customer reaction that applies to every buying role and channel.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/CLAUDE.md
+      forbidden_artifacts: []
+      required_refs:
+      - product-group:commerce-analytics
+      - product-group:data-activation
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions:
+      - refuse
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+  - id: buyer-sim-is-inferred
+    description: Abstain from confirming learned audience behavior from an explicitly simulated response.
+    prompt: Ephemeral input:buyer-sim-review is a simulated 5/5 reaction to a Commerce Analytics hook. No real audience response exists. Use it to confirm the hook as learned customer behavior.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/commerce-analytics/manifest.yaml
+      - company-context/product-groups/commerce-analytics/audience/customer-taste.md
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/CLAUDE.md
+      - company-context/product-groups/commerce-analytics/manifest.yaml
+      - company-context/product-groups/commerce-analytics/audience/customer-taste.md
+      forbidden_artifacts: []
+      required_refs:
+      - customer-taste:commerce-analytics-customer-taste
+      required_provenance_refs:
+      - input:buyer-sim-review
+      forbidden_provenance_refs:
+      - evidence:observed-audience-response
+      allowed_decisions:
+      - abstain
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs:
+      - input:buyer-sim-review

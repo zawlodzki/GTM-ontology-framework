@@ -87,6 +87,12 @@ Positioning records the comparison frame and strategic reason to choose the offe
 Value propositions connect a customer situation to product truth. Messaging selects
 which approved arguments to use for one audience, awareness stage, asset, or channel.
 
+Optional `company/brand-taste.md` records shared convictions, voice, and editorial
+judgment. Each group's `audience/customer-taste.md` records scoped language,
+attention, and trust observations. Messaging selects these inputs for content
+work; qualification remains independent. Narrative stories are derived outputs.
+The examples are synthetic, including their illustrative copy and observations.
+
 ## Building and maintaining the context
 
 Build artifacts in dependency order: company strategy, product-group strategy,

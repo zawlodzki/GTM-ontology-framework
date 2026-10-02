@@ -39,6 +39,8 @@ REQUIRED_REFS: dict[str, tuple[str, ...]] = {
     "use-case": ("strategy_ref", "segment_ref", "persona_ref", "product_refs"),
     "icp": ("strategy_ref", "segment_ref", "use_case_ref"),
     "personas": ("strategy_ref", "segment_ref", "use_case_ref", "icp_ref"),
+    "brand-taste": ("strategy_ref",),
+    "customer-taste": ("segment_ref", "persona_ref", "use_case_ref"),
     "buying-context": (
         "strategy_ref", "segment_ref", "use_case_ref", "icp_ref", "persona_ref", "product_refs"
     ),
@@ -317,6 +319,14 @@ class Validator:
                     if target is None:
                         self.add("ERROR", "unresolved-ref", artifact.path, f"{key} -> {ref}")
                         continue
+                    scoped_fields = {"customer_taste_ref", "brand_taste_ref"}
+                    if artifact.data.get("kind") == "customer-taste":
+                        scoped_fields.update({"segment_ref", "persona_ref", "use_case_ref"})
+                    if key in scoped_fields:
+                        expected_scope = "company" if key == "brand_taste_ref" else artifact.data.get("scope")
+                        if target.data.get("scope") != expected_scope:
+                            self.add("ERROR", "taste-scope", artifact.path,
+                                     f"{key} -> {ref} must have scope {expected_scope!r}")
                     target_claim = claim_index.get(ref)
                     target_status = (
                         target_claim.get("status")

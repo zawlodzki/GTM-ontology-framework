@@ -376,6 +376,16 @@ The company-context tree linked via manifest `context_root` has its own artifact
 
 - **`company-context-manifest.schema.json`** — the tree's root `manifest.yaml` (`kind: company-context-manifest`): `id`, `version`, `updated`, `company {id, name, domain}`, `artifacts[] {id, kind, path, summary ≤140, load_when}`, `product_groups[] {id, path, summary, load_when}`, optional `authoring_guide`.
 - **`product-group-manifest.schema.json`** — one `manifest.yaml` per group (`kind: product-group-manifest`): `id` (= the group id that `product-group:` refs resolve to), `name`, `summary`, `inherits[]` (company artifact ids), `artifacts[]`, `products[]` (same entry shape).
-- **`context-artifact.schema.json`** — shared frontmatter for every content artifact (`company-profile`, `company-strategy`, `commercial-model`, `operating-model`, `market-overview`, `competitor-landscape`, `product-group-strategy`, `segment`, `use-case`, `icp`, `personas`, `buying-context`, `gtm-motions`, `positioning`, `value-propositions`, `messaging`, `product-context`): `kind`, `id`, `meta {source, status, ...}`, optional `scope` and typed-ref fields. A `gtm-motions` artifact must declare its `motions[] {id, name, summary}` list — those ids are the canonical `gtm-motion:` ref targets.
+- **`context-artifact.schema.json`** — shared frontmatter for every content artifact (`company-profile`, `company-strategy`, `commercial-model`, `operating-model`, `market-overview`, `competitor-landscape`, `product-group-strategy`, `segment`, `use-case`, `icp`, `personas`, `buying-context`, `gtm-motions`, `positioning`, `value-propositions`, `messaging`, `product-context`, `brand-taste`, `customer-taste`): `kind`, `id`, `meta {source, status, ...}`, optional `scope` and typed-ref fields. A `gtm-motions` artifact must declare its `motions[] {id, name, summary}` list — those ids are the canonical `gtm-motion:` ref targets.
 
-The deep per-kind content spec (what a segment, ICP, or positioning artifact must say) lives in the tree's own `ARTIFACT-GUIDE.md`, which the planned context-builder skill will own. Guide files (`kind: company-context-readme / -agent-guide / -artifact-guide`) are documentation, not artifacts: lint and render skip them.
+Optional taste contracts:
+
+- `brand-taste`: company scope, required `strategy_ref` to company strategy;
+  shared convictions, voice, editorial judgment, and reviewed examples.
+- `customer-taste`: product-group scope, required same-group `segment_ref`,
+  `persona_ref`, and `use_case_ref`; scoped communication-reception observations.
+- Messaging may select these with optional typed `brand_taste_ref` and
+  `customer_taste_ref`. Neither is a prerequisite for qualification. Schemas check
+  frontmatter; actual content quality requires a separate review.
+
+The deep per-kind content spec (what a segment, ICP, or positioning artifact must say) lives in the tree's own `ARTIFACT-GUIDE.md`, owned by the company-context-builder skill. Guide files (`kind: company-context-readme / -agent-guide / -artifact-guide`) are documentation, not artifacts: lint and render skip them.

@@ -50,10 +50,15 @@ jobs:
           python skills/gtm-context-evaluator/scripts/prepare_eval_prompts.py \
             evals/context-competency.yaml /tmp/context-eval-prompts.jsonl \
             --workspace-root .
-          test "$(wc -l < /tmp/context-eval-prompts.jsonl)" -eq 9
           python - /tmp/context-eval-prompts.jsonl <<'PY'
           import json
           import sys
+          import yaml
+
+          with open("evals/context-competency.yaml", encoding="utf-8") as stream:
+              expected_count = len(yaml.safe_load(stream)["cases"])
+          with open(sys.argv[1], encoding="utf-8") as stream:
+              assert sum(bool(line.strip()) for line in stream) == expected_count
 
           forbidden = {"expectations", "allowed_decisions", "expected_action_ref"}
 
@@ -89,7 +94,9 @@ jobs:
           for fixture in \
             evals/fixtures/fail-routing.jsonl \
             evals/fixtures/fail-governance-action.jsonl \
-            evals/fixtures/fail-provenance-privacy.jsonl
+            evals/fixtures/fail-provenance-privacy.jsonl \
+            evals/fixtures/fail-taste-routing.jsonl \
+            evals/fixtures/fail-taste-provenance.jsonl
           do
             report="$(mktemp)"
             if python skills/gtm-context-evaluator/scripts/evaluate_context.py \

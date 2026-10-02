@@ -10,6 +10,7 @@ buying_context_ref: buying-context:{{PRODUCT_GROUP_ID}}-buying-context
 positioning_ref: positioning:{{PRODUCT_GROUP_ID}}-positioning
 value_proposition_ref: value-propositions:{{PRODUCT_GROUP_ID}}-value-propositions
 product_refs: []
+{{TASTE_REFS_BLOCK}}
 meta:
   source: inferred
   status: draft
@@ -62,6 +63,14 @@ markets or product capabilities.
 
 For each approved channel record the audience, customer question, argument, proof,
 guardrails, and call to action.
+
+## Expression selection
+
+When present, follow `brand_taste_ref` for shared editorial choices and
+`customer_taste_ref` for this group's scoped audience observations. For each
+channel brief select the role, situation, stage, relevant observation, language,
+opening scene, and trust guardrails. Keep untested predictions explicit; an
+appealing hook cannot change approved positioning, product truth, or proof strength.
 
 ## Must say
 

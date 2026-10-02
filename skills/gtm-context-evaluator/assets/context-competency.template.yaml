@@ -123,3 +123,98 @@ cases:
       expected_action_ref: action:replace-pii-action
       forbidden_action_refs: []
       forbidden_persisted_refs: [property:replace-object.replace-pii-property]
+
+# Optional taste cases: retain only when the local context supports them.
+  - id: replace-content-taste-routing
+    description: Route content to the selected group's customer taste and shared brand taste.
+    prompt: Replace with a content request using one local group's approved messaging, scoped audience observations, and shared brand choices.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/replace-group/manifest.yaml
+      - company-context/product-groups/replace-group/go-to-market/messaging.md
+      - company-context/company/brand-taste.md
+      - company-context/product-groups/replace-group/audience/customer-taste.md
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/replace-group/manifest.yaml
+      - company-context/product-groups/replace-group/go-to-market/messaging.md
+      - company-context/company/brand-taste.md
+      - company-context/product-groups/replace-group/audience/customer-taste.md
+      - company-context/product-groups/replace-group/go-to-market/positioning.md
+      - company-context/product-groups/replace-group/go-to-market/value-propositions.md
+      - company-context/product-groups/replace-group/audience/personas.md
+      forbidden_artifacts:
+      - company-context/product-groups/replace-other-group/audience/customer-taste.md
+      required_refs:
+      - messaging:replace-group-messaging
+      - brand-taste:replace-brand-taste
+      - customer-taste:replace-group-customer-taste
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions:
+      - answer
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+  - id: replace-taste-separation
+    description: Preserve role and situation scope rather than fabricate one universal buyer reaction.
+    prompt: Replace with a request that incorrectly replaces distinct local audience profiles with one universal reaction across roles and channels.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/CLAUDE.md
+      forbidden_artifacts: []
+      required_refs:
+      - product-group:replace-group
+      - product-group:replace-other-group
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions:
+      - refuse
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
+  - id: replace-simulated-reception
+    description: Abstain from confirming learned audience behavior from an explicitly simulated response.
+    prompt: Replace with a local request to confirm learned audience behavior using only an explicitly simulated input:buyer-sim-review, with no real audience evidence.
+    expectations:
+      required_artifacts:
+      - company-context/manifest.yaml
+      - company-context/product-groups/replace-group/manifest.yaml
+      - company-context/product-groups/replace-group/audience/customer-taste.md
+      allowed_artifacts:
+      - company-context/manifest.yaml
+      - company-context/CLAUDE.md
+      - company-context/product-groups/replace-group/manifest.yaml
+      - company-context/product-groups/replace-group/audience/customer-taste.md
+      forbidden_artifacts: []
+      required_refs:
+      - customer-taste:replace-group-customer-taste
+      required_provenance_refs:
+      - input:buyer-sim-review
+      forbidden_provenance_refs:
+      - evidence:observed-audience-response
+      allowed_decisions:
+      - abstain
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs:
+      - input:buyer-sim-review
+
+  - id: replace-icp-without-taste
+    description: Keep optional communication taste out of a qualification-only task.
+    prompt: Replace with a question answerable from the local self-contained ICP only.
+    expectations:
+      required_artifacts: [company-context/manifest.yaml, company-context/product-groups/replace-group/manifest.yaml, company-context/product-groups/replace-group/audience/icp.md]
+      allowed_artifacts: [company-context/manifest.yaml, company-context/product-groups/replace-group/manifest.yaml, company-context/product-groups/replace-group/audience/icp.md]
+      forbidden_artifacts: [company-context/company/brand-taste.md, company-context/product-groups/replace-group/audience/customer-taste.md]
+      required_refs: [icp:replace-group-icp]
+      required_provenance_refs: []
+      forbidden_provenance_refs: []
+      allowed_decisions: [answer]
+      expected_action_ref: null
+      forbidden_action_refs: []
+      forbidden_persisted_refs: []
