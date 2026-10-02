@@ -123,6 +123,12 @@ offers, pricing, proof, and comparison dimensions. When several competitors requ
 broad external research and subagents are available, delegate one company per
 subagent and require source URLs and retrieval dates.
 
+For each material audience situation, distinguish category awareness, category
+participation, and the buyer's comparison frame. Scope observations to the category,
+role, and situation; record their evidence or `unknown`. Knowing a category does
+not establish using it or comparing its vendors. Keep the audience profile in the
+segment and the selected comparison frames in positioning.
+
 Record every material changing claim in the claim registry with its typed scope,
 supporting or contradicting evidence, retrieval date, `last_verified`, and
 `verify_every`. Keep minor claims at artifact level when separate review would add
@@ -158,6 +164,11 @@ For each selected opportunity inspect available notes, activities, transcripts,
 emails, and linked organization data for problem, workflow, trigger, alternative,
 committee, objections, criteria, selected offer, reason won, and implementation
 evidence. Persist only aggregate or anonymized conclusions and evidence metadata.
+
+Where evidence permits, distinguish awareness and category participation at the
+start of buying from knowledge acquired during the sale, and separate the previous
+way of working from alternatives considered. Do not generalize won-buyer awareness
+to the whole market; report missing evidence as `unknown`.
 
 **GATE:** user confirms exclusions, cohort interpretation, Top 10 selection, and
 which CRM-derived ICP hypotheses may be used.
@@ -207,6 +218,14 @@ create an empty registry or duplicate every artifact statement into it.
 Run the bundled validator. Errors block completion; present warnings as a review
 list. Report sources, freshness, resolved conflicts, deferred decisions, and files
 created.
+
+Before confirming positioning and messaging, review the argument using the
+positioning template's decision summary and semantic review: the selected
+alternative, its limitation, the product mechanism, and the proof must support
+the claim for the intended role and situation. The summary selects approved facts
+and typed refs; it must not introduce another strategy. Keep consequential unknowns
+explicit and leave affected arguments draft. Schema validation and competency
+trace scoring do not perform this semantic review.
 
 When `$gtm-context-evaluator` is installed, delegate competency case authoring,
 isolated execution, and deterministic scoring to it. Cover material routing and

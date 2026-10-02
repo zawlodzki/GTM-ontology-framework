@@ -7,9 +7,10 @@
 The static business context — company facts, product groups, segments, ICPs,
 personas, buying context, positioning, value propositions, messaging, GTM
 motions — lives in a **separate company-context tree**, not inside the
-ontology. It is built *before* the ontology (a dedicated context-builder skill
-is planned for producing it; today it is authored by hand following the tree's
-own `ARTIFACT-GUIDE.md`), and the ontology links to it one-way through
+ontology. It is built *before* the ontology with the **company-context-builder**
+skill, which inventories materials, researches the market, analyzes Closed Won
+evidence, and reconciles findings before recording approved artifacts. The tree's
+own `ARTIFACT-GUIDE.md` defines their content, and the ontology links to it one-way through
 `context_root` in its manifest.
 
 The tree is navigated by its own manifests and `load_when` hints, not by the

@@ -5,7 +5,7 @@ scope: company-context
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-14
+  updated: 2026-10-02
 ---
 
 # Company-context artifact guide
@@ -119,12 +119,21 @@ A segment is a shared customer situation. Capture:
 - recurring workflow and desired progress;
 - current alternative, including manual work or doing nothing;
 - limitation, problem, and observable struggling moment;
-- market maturity and starting awareness state;
+- market maturity, category awareness, and category participation;
 - common buying criteria and behavior;
 - observable signals, qualification boundaries, and disqualifiers;
 - reachable channels or communities;
 - priority and relationship to adjacent segments;
 - owner, evidence, assumptions, and freshness.
+
+Keep category awareness and participation as separate observations for each
+material role and situation. Name the category, record whether the role knows it,
+and whether the organization uses, evaluates, plans to buy, or does not use it.
+Retain evidence and `unknown` where observations are missing. Do not infer awareness
+from a title or market maturity, or buying intent from awareness. Performing the
+job without a category solution can establish market participation; qualification
+still follows the ICP. Distinguish awareness at the start of buying from knowledge
+gained during the sale and persist only aggregate or role-level conclusions.
 
 Start with the workflow or category. Apply industry, geography, revenue, headcount,
 technology, and role filters only after the customer situation is coherent. Split
@@ -230,6 +239,7 @@ Positioning records how one offer should be understood by a defined segment. Inc
 - secondary anchors: organization type or persona that add context;
 - category choice and rationale;
 - buyer-perceived current alternatives;
+- primary comparison frames by role and situation, evidence, and when they change;
 - problem and struggling moment linked to the primary anchor;
 - differentiation chains from alternative weakness through capability and feature
   to direct benefit;
@@ -240,6 +250,30 @@ Build positioning only after the market, audience, and product truth are explici
 Do not start with a tagline. Claims such as "easy to use", "AI-powered", "platform",
 or distant revenue outcomes are not differentiation without a specific comparison,
 mechanism, and evidence.
+
+Separate the buyer's current way of working from what they will compare with the
+offer. A category-aware non-user may compare vendors, the current workflow, or
+both. Select the frame from evidence rather than deriving it from awareness or
+category participation. The segment owns the audience profile; positioning owns
+the selected comparison frame and summarizes that profile through typed refs.
+
+Include a compact decision summary selecting the approved audience and situation,
+category and rationale, awareness and participation, primary comparison,
+alternative limitation, product mechanism and direct benefit, and proof with claim
+strength. Keep canonical source refs alongside the selections. The summary must
+not introduce a new audience, capability, or claim.
+
+Before confirming positioning and messaging, review the complete argument:
+
+- the comparison frame fits the role and situation and has evidence;
+- the limitation belongs to that alternative in the scoped use case;
+- an available product mechanism addresses that limitation;
+- the proof supports the direct benefit and claim strength, with assumptions for
+  higher-order outcomes explicit;
+- messaging uses the applicable frame without changing the approved decisions.
+
+Keep consequential unknowns explicit and affected arguments draft until resolved.
+Schema validation and competency trace scoring do not perform this semantic review.
 
 ## Value proposition
 
@@ -277,6 +311,10 @@ For each brief or matrix row capture:
 Homepage, product page, sales conversation, campaign, and onboarding need different
 selections from the same strategy. A copy edit does not authorize a positioning
 change, and messaging feedback must not silently change product truth.
+
+Select the comparison frame approved for the intended role and situation. Knowing
+the category does not require a vendor comparison; the relevant alternative may be
+the current workflow or no change. Preserve the scope and evidence of that choice.
 
 ## GTM motion
 
