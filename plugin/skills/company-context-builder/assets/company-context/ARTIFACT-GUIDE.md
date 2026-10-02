@@ -28,6 +28,10 @@ company strategy and constraints
 -> value propositions
 -> messaging by persona, awareness stage, and channel
 -> GTM motions, handoffs, and measures
+
+Optional expression inputs to messaging:
+company strategy -> brand taste
+segment + use case + personas -> customer taste
 ```
 
 An artifact may summarize an upstream decision for readability, but the typed
@@ -294,9 +298,57 @@ Record first-order benefits separately from second-order or business outcomes.
 State claim strength as guaranteed, expected, or possible. Do not invent personal
 motives or imply that software alone controls a result with external dependencies.
 
+## Customer taste (optional)
+
+Customer Taste describes reception of communication for a product group's
+canonical audience. It does not qualify organizations or redefine buying roles.
+Use `audience/customer-taste.md` with `kind: customer-taste`, group scope, and
+`segment_ref`, `persona_ref`, and `use_case_ref` pointing to artifacts in the same
+group. Begin with one file per group; split only when material audience differences
+or size justify selective loading.
+
+Capture six components: emotional register, language, content triggers,
+anti-triggers, situational framings, and trusted voices. Scope each observation to
+canonical role name, situation, awareness stage, and channel when relevant. Local
+observation ids are navigation aids, not a new persona registry or typed-ref kind.
+Keep safe evidence, provenance, status, confidence, freshness, and limitations with
+the observation. Use `claim_refs` when a material hypothesis needs separate review.
+
+Distinguish buying triggers from attention triggers, purchasing blockers from loss
+of trust in content, and requested buying proof from observed content response.
+Verified quotations, anonymized patterns, paraphrases, and illustrative copy must
+remain distinguishable. No raw transcripts, identifying quotations, or PII belong
+here. Unsupported predictions stay inferred; Buyer Sim feedback is not evidence of
+real audience behavior. Owner confirmation does not change provenance.
+
+## Brand taste (optional)
+
+Brand Taste governs shared expression: convictions and their basis, voice and
+language choices, editorial judgment, accepted/rejected examples with reasons,
+and narrative principles. Use `company/brand-taste.md` with `kind: brand-taste`,
+`scope: company`, and `strategy_ref` selecting company strategy. Keep mission,
+market choices, and evidenced differentiation in strategy; brand expression must
+not introduce competing product facts or positioning.
+
+Use concrete decisions and reviewed examples rather than abstract voice adjectives.
+Do not invent founder experiences, contrarian beliefs, or endorsements. Brand,
+product, thought-leadership, and customer stories are derived outputs of strategy,
+product truth, positioning, and evidence. Approved stories may be examples with
+source refs; they do not become separate sources of truth. Adapt shared expression
+for an audience or channel in messaging.
+
+Both taste kinds are optional. Create them for agreed content work with usable
+sources, preserving unknowns and draft hypotheses. Suggested review cadences are
+90d for Customer Taste and 180d for Brand Taste, with earlier review after material
+new evidence or editorial decisions. Their absence does not block ICP work.
+
 ## Messaging
 
 Messaging selects approved positioning and value propositions for one context.
+When present, optional `brand_taste_ref` and `customer_taste_ref` select shared
+brand expression and the current group's audience observations. They must resolve
+through manifests; a confirmed brief cannot reference a draft profile. Taste
+influences presentation, never the approved argument or product mechanism.
 For each brief or matrix row capture:
 
 - positioning, product, segment, persona, and use-case references;
@@ -352,6 +404,12 @@ channels or broadening the ICP.
 9. Build messaging briefs by persona, awareness stage, asset, and channel.
 10. Define the GTM motion, handoffs, measures, and expansion gates.
 11. Validate references, manifest completeness, evidence, freshness, and conflicts.
+
+Build Brand Taste after company strategy and Customer Taste after segment,
+use cases, and personas, before relevant messaging consumes them. For content
+creation, load messaging and its selected taste artifacts; for qualification,
+load the self-contained ICP without taste. Review equivalent drafts with and
+without taste separately from structural and competency trace validation.
 
 Review downstream artifacts whenever an upstream decision changes. Do not mark a
 downstream artifact more certain than the market, product, or evidence it depends on.

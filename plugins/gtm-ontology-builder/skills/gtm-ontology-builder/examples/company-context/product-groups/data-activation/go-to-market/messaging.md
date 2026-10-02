@@ -12,10 +12,12 @@ value_proposition_ref: value-propositions:data-activation-value-propositions
 product_refs:
   - product-context:warehouse-sync
   - product-context:audience-activation
+brand_taste_ref: brand-taste:company-brand-taste
+customer_taste_ref: customer-taste:data-activation-customer-taste
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-15
+  updated: 2026-10-02
   owner: Revenue
   last_verified: 2026-07-15
   verify_every: 90d
@@ -109,6 +111,18 @@ proof point, or production promise.
   to validate the workflow, current limitation, and ownership.
 - **Proof:** no private architecture or performance claim; use relevant workflow
   evidence and record unknowns.
+
+## Expression selection
+
+Use `brand-taste:company-brand-taste` for shared direct language, traceability,
+customer agency, and explicit responsibilities.
+
+For a Head of Data technical brief, select DA-1 from
+`customer-taste:data-activation-customer-taste`: lead with bounded architecture,
+identity, operators, and recovery. For a Lifecycle Marketing Lead educational
+brief, select DA-2 and use the governed audience-change scene. These are
+illustrative presentation hypotheses, not observed content preferences. Keep
+readiness and joint ownership explicit and preserve the approved offer boundaries.
 
 ## Must say
 

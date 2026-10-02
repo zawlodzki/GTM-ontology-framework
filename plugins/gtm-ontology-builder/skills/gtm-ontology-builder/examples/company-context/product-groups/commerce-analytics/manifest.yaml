@@ -1,7 +1,7 @@
 kind: product-group-manifest
 id: commerce-analytics
-version: 0.4.0
-updated: 2026-07-15
+version: 0.5.0
+updated: 2026-10-02
 example: true
 language: en
 name: Commerce Analytics
@@ -14,6 +14,8 @@ inherits:
   - company-commercial-model
   - company-operating-model
 agent_instructions: >
+  For content work follow messaging's optional customer_taste_ref and brand_taste_ref.
+  Qualification does not require taste.
   Load only the artifact matching the task. Use strategy for group-level choices,
   segment for the canonical customer situation, and the use-case artifact for the
   recurring workflow. The ICP remains self-contained for qualification. Establish
@@ -71,6 +73,11 @@ artifacts:
     path: go-to-market/motions.md
     summary: Primary channels, stage-specific assets, qualification, routing, handoffs, adoption, and expansion gates.
     load_when: Planning demand generation, sales routing, channel execution, handoffs, or motion review.
+  - id: commerce-analytics-customer-taste
+    kind: customer-taste
+    path: audience/customer-taste.md
+    summary: Scoped audience language, attention, trust, and illustrative communication hypotheses.
+    load_when: Creating or reviewing content for this group's audience reception.
 products:
   - id: growth-plan
     kind: product-context

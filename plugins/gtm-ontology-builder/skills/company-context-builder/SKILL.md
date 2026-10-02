@@ -5,9 +5,10 @@ description: >
   materials, normalizing them into the GTM Ontology Framework company-context format,
   researching the company and competitors, and analyzing Closed Won CRM opportunities.
   Use when Codex needs to create, extend, or repair company-context/; document products,
-  product groups, segments, ICPs, personas, buying context, positioning, messaging, or
-  GTM motions; reconcile declared strategy with market or CRM evidence; or prepare the
-  business context required before running gtm-ontology-builder.
+  product groups, segments, ICPs, personas, buying context, positioning, messaging,
+  customer taste, brand taste, or GTM motions; reconcile declared strategy with market
+  or CRM evidence; or prepare the business context required before running
+  gtm-ontology-builder.
 ---
 
 # Company Context Builder
@@ -28,6 +29,11 @@ material, changing, disputed, or decision-critical statements need evidence belo
 the artifact level; then set `claims_registry: claims.yaml` in the root manifest
 and add `claim_refs` only to artifacts that actually rely on those claims.
 
+For audience reception and brand expression work, read `references/taste-protocol.md`.
+Use the optional `assets/artifact-templates/customer-taste.md` and `brand-taste.md`
+only for agreed content work with usable sources. Customer Taste is group-scoped;
+Brand Taste is company-scoped. Neither replaces personas, strategy, or positioning.
+
 The validator requires PyYAML and jsonschema. Install them once when unavailable.
 Initialize and validate with:
 
@@ -40,6 +46,13 @@ Pass `--motion` only after the user approves its globally unique canonical id,
 name, and summary. Repeat it for additional motions. When no motion is approved,
 the initializer omits the motions artifact and manifest entry rather than inventing
 a cross-tree identifier.
+
+Add `--brand-taste` to include a company Brand Taste draft and repeat
+`--customer-taste <group-id>` for each approved group. These opt-ins add the
+artifacts, manifest entries, and optional messaging refs. Without the flags,
+the initializer creates no taste artifacts or refs. For an existing tree, copy
+the optional templates and register them in the appropriate manifests; attach
+messaging refs only when their prerequisites can retain the required status.
 
 For a normalized Closed Won CSV, run
 `scripts/analyze_closed_won.py`; keep its record-level working report outside
@@ -76,6 +89,8 @@ Ask first for:
 - products, product groups, offer architecture, pricing, and commercial boundaries;
 - strategy, ICPs, personas, use cases, procedures, GTM motions, positioning,
   messaging, research, and sales enablement materials;
+- for agreed taste work: brand-owner convictions, editorial choices and accepted
+  or rejected examples, audience language, and actual responses to content;
 - competitor names and known company/social URLs;
 - CRM, pipelines in scope, Closed Won semantics, base currency, access method, and
   available exports or connectors.
@@ -173,6 +188,11 @@ to the whole market; report missing evidence as `unknown`.
 **GATE:** user confirms exclusions, cohort interpretation, Top 10 selection, and
 which CRM-derived ICP hypotheses may be used.
 
+When taste is in scope, perform the separate communication-reception analysis in
+`references/taste-protocol.md`. Buying criteria do not establish content triggers.
+Propose lost/no-decision, support, and content-response sources when needed; include
+them only within the agreed source scope. Keep simulated response inferred.
+
 ## Phase 4: Reconciliation
 
 Present every material conflict before writing:
@@ -201,6 +221,12 @@ content, in this order:
 3. self-contained ICP, personas, and buying context;
 4. product truth and offer boundaries;
 5. positioning, value propositions, messaging, and motions.
+
+When approved, build Brand Taste after company strategy and Customer Taste after
+the group's segment, use cases, and personas, before messaging consumes them.
+Use `brand_taste_ref` and `customer_taste_ref` in relevant messaging only. Record
+unknowns rather than completing all sections through invention. Narrative stories
+are derived outputs with source refs, not additional sources of product truth.
 
 Write at most five files per batch. Validate after each batch and wait for approval.
 Keep partial artifacts `draft`. Do not create downstream artifacts whose required
@@ -242,6 +268,13 @@ the intended dimension. Keep any scenario-only claims outside the confirmed cont
 tree, and report tokens without imposing a budget unless the owner has approved one.
 If the evaluator skill is unavailable, ask the user to install it and report the
 competency evaluation as a handoff gap; do not block structural context validation.
+
+For taste work, cover content routing to the correct group and shared brand,
+exclusion of taste from ICP-only tasks, and preservation of simulated feedback as
+inferred. Separately compare actual drafts with and without taste using the same
+brief, product facts, and model. Review audience language, situation recognition,
+brand judgment, unsupported claims, and editing effort. Trace scoring does not
+establish content quality or audience response.
 
 ## Completion handoff
 

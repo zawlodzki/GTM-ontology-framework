@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import warnings
 from pathlib import Path
 
 
@@ -114,6 +115,89 @@ class ValidatorTests(unittest.TestCase):
         result = self.run_validator(REPO / "company-context")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("0 error(s)", result.stdout)
+
+    def test_taste_cannot_select_another_groups_audience(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            taste = context / "product-groups/commerce-analytics/audience/customer-taste.md"
+            text = taste.read_text(encoding="utf-8")
+            taste.write_text(text.replace(
+                "segment:commerce-analytics-core-segment", "segment:data-activation-core-segment"
+            ), encoding="utf-8")
+            validation = self.run_validator(context)
+            lint = self.run_linter(ontology)
+        for result in (validation, lint):
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("taste-scope", result.stdout)
+
+    def test_messaging_cannot_select_another_groups_taste(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            messaging = context / "product-groups/commerce-analytics/go-to-market/messaging.md"
+            text = messaging.read_text(encoding="utf-8")
+            messaging.write_text(text.replace(
+                "customer-taste:commerce-analytics-customer-taste",
+                "customer-taste:data-activation-customer-taste"
+            ), encoding="utf-8")
+            validation = self.run_validator(context)
+            lint = self.run_linter(ontology)
+        for result in (validation, lint):
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("taste-scope", result.stdout)
+
+    def test_confirmed_messaging_cannot_use_draft_taste(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            taste = context / "product-groups/commerce-analytics/audience/customer-taste.md"
+            taste.write_text(taste.read_text().replace("status: example", "status: draft", 1))
+            messaging = context / "product-groups/commerce-analytics/go-to-market/messaging.md"
+            messaging.write_text(messaging.read_text().replace("status: example", "status: confirmed", 1))
+            validation = self.run_validator(context)
+            lint = self.run_linter(ontology)
+        self.assertNotEqual(validation.returncode, 0)
+        self.assertIn("confirmed-to-draft", validation.stdout)
+        self.assertNotEqual(lint.returncode, 0)
+        self.assertIn("draft-ref", lint.stdout)
+
+    def test_taste_schema_rejects_scope_and_reference_kind_errors(self) -> None:
+        for relative, old, new in [
+            ("company/brand-taste.md", "scope: company", "scope: product-group:commerce-analytics"),
+            ("company/brand-taste.md", "company-strategy:company-strategy", "personas:commerce-analytics-personas"),
+            ("product-groups/commerce-analytics/audience/customer-taste.md",
+             "persona_ref: personas:commerce-analytics-personas", "persona_ref: icp:commerce-analytics-icp"),
+        ]:
+            with self.subTest(relative=relative, replacement=new), tempfile.TemporaryDirectory() as directory:
+                ontology, context = self.copy_instance(directory)
+                artifact = context / relative
+                artifact.write_text(artifact.read_text().replace(old, new, 1))
+                for result in (self.run_validator(context), self.run_linter(ontology)):
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("schema", result.stdout)
+
+    def test_missing_taste_ref_is_detected_in_markdown_body(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            ontology, context = self.copy_instance(directory)
+            messaging = context / "product-groups/commerce-analytics/go-to-market/messaging.md"
+            with messaging.open("a") as stream:
+                stream.write("\nSelect customer-taste:missing-profile for this brief.\n")
+            result = self.run_linter(ontology)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("customer-taste:missing-profile does not resolve", result.stdout)
+
+    def test_render_includes_taste_nodes_and_selection_edges(self) -> None:
+        renderer = load_module("taste_renderer", REPO / "tools/render_ontology.py")
+        linter = load_module("taste_linter", LINTER)
+        self.assertEqual(renderer.REF_RE.pattern, linter.REF_RE.pattern)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", ResourceWarning)
+            docs, raws = renderer.collect(str(REPO / "gtm-ontology"))
+            context_docs, context_raws = renderer.collect(str(REPO / "company-context"))
+        docs.update(context_docs)
+        raws.update(context_raws)
+        nodes, edges = renderer.build_edges(docs, raws)
+        self.assertIn("brand-taste:company-brand-taste", nodes)
+        self.assertIn(("messaging:commerce-analytics-messaging",
+                       "customer-taste:commerce-analytics-customer-taste"), edges)
 
     def test_missing_manifest_artifact_is_an_error(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -331,6 +415,15 @@ class ValidatorTests(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
+            # The decision summary can cite the same claim in prose. Remove every
+            # remaining prose citation to make this an actually unreferenced claim.
+            for path in context.rglob("*.md"):
+                text = path.read_text(encoding="utf-8")
+                if "`claim:commerce-metric-reconciliation-friction`" in text:
+                    path.write_text(text.replace(
+                        "`claim:commerce-metric-reconciliation-friction`",
+                        "the archived friction observation"
+                    ), encoding="utf-8")
             result = self.run_linter(ontology)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -396,6 +489,9 @@ class InitializerTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertFalse(any("{{" in path.read_text(encoding="utf-8") for path in output.rglob("*") if path.is_file()))
+            self.assertFalse(list(output.rglob("*-taste.md")))
+            for path in output.rglob("messaging.md"):
+                self.assertNotIn("taste_ref:", path.read_text())
             validation = subprocess.run(
                 [PYTHON, str(self.validator), str(output), "--today", "2026-07-15"],
                 capture_output=True,
@@ -417,6 +513,43 @@ class InitializerTests(unittest.TestCase):
             )
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("absolute HTTP(S) URL", result.stderr)
+
+    def test_optional_taste_is_independent_and_group_selective(self) -> None:
+        import yaml
+        for brand, customer in [(False, True), (True, False), (True, True)]:
+            with self.subTest(brand=brand, customer=customer), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / "context"
+                args = [PYTHON, str(self.initializer), "--output", str(output),
+                        "--company-id", "example", "--company-name", "Example",
+                        "--company-domain", "https://example.com", "--updated", "2026-10-02",
+                        "--product-group", "analytics:Analytics", "--product-group", "activation:Activation"]
+                if brand:
+                    args += ["--brand-taste"]
+                if customer:
+                    args += ["--customer-taste", "analytics"]
+                result = subprocess.run(args, capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual((output / "company/brand-taste.md").exists(), brand)
+                self.assertEqual((output / "product-groups/analytics/audience/customer-taste.md").exists(), customer)
+                self.assertFalse((output / "product-groups/activation/audience/customer-taste.md").exists())
+                for group in ["analytics", "activation"]:
+                    path = output / f"product-groups/{group}/go-to-market/messaging.md"
+                    head = yaml.safe_load(path.read_text().split("---")[1])
+                    self.assertEqual("brand_taste_ref" in head, brand)
+                    self.assertEqual("customer_taste_ref" in head, customer and group == "analytics")
+                validation = self.run_validator(output)
+                self.assertEqual(validation.returncode, 0, validation.stdout + validation.stderr)
+
+    def test_rejects_customer_taste_for_unknown_group(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run([
+                PYTHON, str(self.initializer), "--output", str(Path(directory) / "context"),
+                "--company-id", "example", "--company-name", "Example",
+                "--company-domain", "https://example.com", "--updated", "2026-10-02",
+                "--product-group", "analytics", "--customer-taste", "missing",
+            ], capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("customer taste references unknown product groups", result.stdout)
 
     def test_scaffolds_only_explicitly_approved_motion_ids(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

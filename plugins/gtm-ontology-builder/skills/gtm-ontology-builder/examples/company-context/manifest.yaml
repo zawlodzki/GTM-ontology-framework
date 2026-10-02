@@ -1,7 +1,7 @@
 kind: company-context-manifest
 id: acme-analytics-company-context
-version: 0.5.0
-updated: 2026-07-16
+version: 0.6.0
+updated: 2026-10-02
 example: true
 language: en
 authoring_guide: ARTIFACT-GUIDE.md
@@ -46,6 +46,11 @@ artifacts:
     path: company/market/competitors.md
     summary: Fictional company-level competitor archetypes and comparison dimensions.
     load_when: Comparing company-wide alternatives or preparing a competitive overview.
+  - id: company-brand-taste
+    kind: brand-taste
+    path: company/brand-taste.md
+    summary: Shared convictions, voice, editorial judgment, and illustrative expression examples.
+    load_when: Creating or reviewing content for brand voice and editorial choices.
 product_groups:
   - id: commerce-analytics
     path: product-groups/commerce-analytics/manifest.yaml

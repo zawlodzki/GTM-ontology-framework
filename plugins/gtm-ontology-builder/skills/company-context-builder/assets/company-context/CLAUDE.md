@@ -27,6 +27,13 @@ Never merge product-group ICPs. Follow typed references through manifests instea
 of guessing paths. A typed reference selects the canonical upstream decision;
 repeated prose must not silently diverge from it.
 
+
+For content creation or review, load messaging and follow its optional
+`customer_taste_ref` and `brand_taste_ref` through the manifests. Customer Taste
+belongs to the selected group and preserves role/situation/channel scope; Brand
+Taste supplies shared expression choices. ICP qualification does not need either.
+Missing taste is a gap in communication knowledge, not permission to infer it.
+
 ## Ontology linkage
 
 The GTM ontology in a sibling `gtm-ontology/` tree may point here through
@@ -38,6 +45,10 @@ one is a breaking change: search both trees and generated renders first, then ru
 the GOF linter, which follows `context_root` and validates both trees together.
 
 ## Interpretation rules
+
+- Taste guides expression and audience reception; it cannot redefine product truth,
+  positioning, qualification, or buying roles. Stories are derived outputs with
+  source refs. Keep simulation feedback inferred and quotations source-grounded.
 
 - Company artifacts contain only facts shared by all product groups.
 - Group artifacts may specialize company facts but must not silently contradict them.

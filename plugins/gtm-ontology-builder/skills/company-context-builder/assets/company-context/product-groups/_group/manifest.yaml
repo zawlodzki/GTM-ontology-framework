@@ -64,5 +64,6 @@ artifacts:
     path: go-to-market/messaging.md
     summary: Message selection by role, awareness stage, asset, and channel.
     load_when: Creating a campaign, page, sales narrative, outreach, or other message.
+{{CUSTOMER_TASTE_MANIFEST_BLOCK}}
 {{MOTIONS_MANIFEST_BLOCK}}
 products: []

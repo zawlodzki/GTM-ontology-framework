@@ -1,7 +1,7 @@
 kind: product-group-manifest
 id: data-activation
-version: 0.4.0
-updated: 2026-07-15
+version: 0.5.0
+updated: 2026-10-02
 example: true
 language: en
 name: Data Activation
@@ -14,6 +14,8 @@ inherits:
   - company-commercial-model
   - company-operating-model
 agent_instructions: >
+  For content work follow messaging's optional customer_taste_ref and brand_taste_ref.
+  Qualification does not require taste.
   Load only the artifact matching the task. Use strategy for group-level choices,
   segment for the canonical customer situation, and the use-case artifact for the
   governed warehouse-to-destination workflow and its two offer variants. The ICP
@@ -74,6 +76,11 @@ artifacts:
     path: go-to-market/messaging.md
     summary: Core hierarchy and message selection by role, awareness stage, offer, asset, and channel.
     load_when: Creating a page, guide, sales narrative, outreach, pilot asset, or other customer-facing message.
+  - id: data-activation-customer-taste
+    kind: customer-taste
+    path: audience/customer-taste.md
+    summary: Scoped audience language, attention, trust, and illustrative communication hypotheses.
+    load_when: Creating or reviewing content for this group's audience reception.
 products:
   - id: warehouse-sync
     kind: product-context
