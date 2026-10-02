@@ -56,7 +56,7 @@ REF_RE = re.compile(
     r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop|claim"
     r"|product-group-strategy|product-group|gtm-motions|gtm-motion|segment|use-case"
     r"|icp|personas|buying-context|positioning|value-propositions|messaging"
-    r"|product-context):([a-z0-9_./=-]+)")
+    r"|product-context|company-strategy|brand-taste|customer-taste):([a-z0-9_./=-]+)")
 KIND_MAP = {"object": "object-type", "product-group": "product-group-manifest"}
 # Kinds nothing is expected to reference: entry points, indexes, and infrastructure.
 ORPHAN_EXEMPT = {"manifest", "glossary", "agent-policy", "identity",
@@ -66,7 +66,8 @@ CONTEXT_DOC_KINDS = {"company-profile", "company-strategy", "commercial-model",
                      "operating-model", "market-overview", "competitor-landscape",
                      "product-group-strategy", "segment", "use-case", "icp",
                      "personas", "buying-context", "gtm-motions", "positioning",
-                     "value-propositions", "messaging", "product-context"}
+                     "value-propositions", "messaging", "product-context",
+                     "brand-taste", "customer-taste"}
 CONTEXT_MANIFEST_KINDS = {"company-context-manifest", "product-group-manifest"}
 # Documentation files inside a context tree; not artifacts, never linted.
 GUIDE_KINDS = {"company-context-readme", "company-context-agent-guide",
@@ -315,6 +316,21 @@ class Linter:
                 self.add("ERROR", "context-unlisted", f,
                          "context artifact not listed in any context manifest")
 
+    def check_taste_scopes(self):
+        for f, d in sorted(self.docs.items()):
+            fields = ["customer_taste_ref", "brand_taste_ref"]
+            if d.get("kind") == "customer-taste":
+                fields += ["segment_ref", "persona_ref", "use_case_ref"]
+            for field in fields:
+                ref = d.get(field)
+                target = self.by_ref.get(ref) if isinstance(ref, str) else None
+                if not target:
+                    continue  # schema and reference checks report malformed or missing targets
+                expected = "company" if field == "brand_taste_ref" else d.get("scope")
+                if target.get("scope") != expected:
+                    self.add("ERROR", "taste-scope", f,
+                             f"{field} -> {ref} must have scope {expected!r}")
+
     def check_orphans(self):
         inbound = {tgt for _, tgt in self.edges}
         for f, d in sorted(self.docs.items()):
@@ -537,6 +553,7 @@ class Linter:
         self.check_schema()
         self.check_manifest()
         self.check_context_manifest()
+        self.check_taste_scopes()
         self.check_orphans()
         self.check_draft_refs()
         self.check_expired_claim_refs()

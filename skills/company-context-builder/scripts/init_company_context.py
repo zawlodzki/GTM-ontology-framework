@@ -92,7 +92,7 @@ def copy_template(
 ) -> None:
     skipped = skip or set()
     for path in sorted(source.rglob("*")):
-        if path.is_dir():
+        if path.is_dir() or path.name == ".DS_Store":
             continue
         relative = path.relative_to(source)
         if relative in skipped:
@@ -159,6 +159,22 @@ def motions_frontmatter_block(motions: list[tuple[str, str, str]]) -> str:
     return "\n".join(lines)
 
 
+def taste_manifest_block(kind: str, artifact_id: str, path: str) -> str:
+    brand = kind == "brand-taste"
+    summary = (
+        "Shared convictions, voice, editorial judgment, and reviewed expression examples."
+        if brand else "Scoped audience language, attention, trust, and communication observations."
+    )
+    load_when = (
+        "Creating or reviewing content for brand voice and editorial choices."
+        if brand else "Creating or reviewing content for the group's audience reception."
+    )
+    return "\n".join([
+        f"  - id: {artifact_id}", f"    kind: {kind}", f"    path: {path}",
+        f"    summary: {summary}", f"    load_when: {json.dumps(load_when)}",
+    ])
+
+
 def build_context(args: argparse.Namespace) -> Path:
     skill_root = Path(__file__).resolve().parents[1]
     template_root = skill_root / "assets" / "company-context"
@@ -176,6 +192,10 @@ def build_context(args: argparse.Namespace) -> Path:
         raise ValueError("product group identifiers must be unique")
     parsed_motions = [parse_motion(value) for value in args.motion]
     group_ids = {group_id for group_id, _ in groups}
+    customer_taste_groups = set(args.customer_taste)
+    unknown_taste_groups = sorted(customer_taste_groups - group_ids)
+    if unknown_taste_groups:
+        raise ValueError(f"customer taste references unknown product groups: {', '.join(unknown_taste_groups)}")
     unknown_groups = sorted({group_id for group_id, *_ in parsed_motions} - group_ids)
     if unknown_groups:
         raise ValueError(f"motions reference unknown product groups: {', '.join(unknown_groups)}")
@@ -199,13 +219,20 @@ def build_context(args: argparse.Namespace) -> Path:
         "LANGUAGE_YAML": json.dumps(args.language.strip(), ensure_ascii=False),
         "UPDATED": args.updated,
         "PRODUCT_GROUPS_BLOCK": product_groups_block(groups),
+        "BRAND_TASTE_MANIFEST_BLOCK": taste_manifest_block(
+            "brand-taste", "company-brand-taste", "company/brand-taste.md"
+        ) if args.brand_taste else "",
     }
 
     for path in sorted(template_root.rglob("*")):
-        if path.is_dir() or group_template in path.parents or path == group_template:
+        if path.is_dir() or path.name == ".DS_Store" or group_template in path.parents or path == group_template:
             continue
         relative = path.relative_to(template_root)
         render_text(path, output / relative, base_values)
+
+    taste_templates = skill_root / "assets" / "artifact-templates"
+    if args.brand_taste:
+        render_text(taste_templates / "brand-taste.md", output / "company/brand-taste.md", base_values)
 
     product_groups = output / "product-groups"
     product_groups.mkdir(parents=True, exist_ok=True)
@@ -218,9 +245,20 @@ def build_context(args: argparse.Namespace) -> Path:
             PRODUCT_GROUP_NAME_YAML=json.dumps(group_name, ensure_ascii=False),
             MOTIONS_MANIFEST_BLOCK=motions_manifest_block(group_id, group_motions),
             MOTIONS_FRONTMATTER_BLOCK=motions_frontmatter_block(group_motions),
+            CUSTOMER_TASTE_MANIFEST_BLOCK=taste_manifest_block(
+                "customer-taste", f"{group_id}-customer-taste", "audience/customer-taste.md"
+            ) if group_id in customer_taste_groups else "",
+            TASTE_REFS_BLOCK="\n".join(
+                (["brand_taste_ref: brand-taste:company-brand-taste"] if args.brand_taste else [])
+                + ([f"customer_taste_ref: customer-taste:{group_id}-customer-taste"]
+                   if group_id in customer_taste_groups else [])
+            ),
         )
         skip = set() if group_motions else {Path("go-to-market/motions.md")}
         copy_template(group_template, product_groups / group_id, values, skip=skip)
+        if group_id in customer_taste_groups:
+            render_text(taste_templates / "customer-taste.md",
+                        product_groups / group_id / "audience/customer-taste.md", values)
 
     return output
 
@@ -247,6 +285,10 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="GROUP_ID:MOTION_ID:NAME:SUMMARY",
         help="repeat for each approved canonical GTM motion",
     )
+    parser.add_argument("--brand-taste", action="store_true",
+                        help="include an explicitly scoped optional brand taste draft")
+    parser.add_argument("--customer-taste", action="append", default=[], type=slug,
+                        metavar="GROUP_ID", help="include an optional customer taste draft for this group")
     return parser
 
 

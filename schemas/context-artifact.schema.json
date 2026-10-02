@@ -11,10 +11,13 @@
                "operating-model", "market-overview", "competitor-landscape",
                "product-group-strategy", "segment", "use-case", "icp",
                "personas", "buying-context", "gtm-motions", "positioning",
-               "value-propositions", "messaging", "product-context"]
+               "value-propositions", "messaging", "product-context",
+               "brand-taste", "customer-taste"]
     },
     "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
     "scope": {"type": "string"},
+    "brand_taste_ref": {"type": "string", "pattern": "^brand-taste:[a-z0-9]+(-[a-z0-9]+)*$"},
+    "customer_taste_ref": {"type": "string", "pattern": "^customer-taste:[a-z0-9]+(-[a-z0-9]+)*$"},
     "claim_refs": {
       "type": "array",
       "items": {"type": "string", "pattern": "^claim:[a-z0-9]+(-[a-z0-9]+)*$"},
@@ -48,6 +51,28 @@
     }
   },
   "allOf": [
+    {
+      "if": {"properties": {"kind": {"const": "brand-taste"}}, "required": ["kind"]},
+      "then": {
+        "required": ["scope", "strategy_ref"],
+        "properties": {
+          "scope": {"const": "company"},
+          "strategy_ref": {"type": "string", "pattern": "^company-strategy:[a-z0-9]+(-[a-z0-9]+)*$"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"kind": {"const": "customer-taste"}}, "required": ["kind"]},
+      "then": {
+        "required": ["scope", "segment_ref", "persona_ref", "use_case_ref"],
+        "properties": {
+          "scope": {"type": "string", "pattern": "^product-group:[a-z0-9]+(-[a-z0-9]+)*$"},
+          "segment_ref": {"type": "string", "pattern": "^segment:[a-z0-9]+(-[a-z0-9]+)*$"},
+          "persona_ref": {"type": "string", "pattern": "^personas:[a-z0-9]+(-[a-z0-9]+)*$"},
+          "use_case_ref": {"type": "string", "pattern": "^use-case:[a-z0-9]+(-[a-z0-9]+)*$"}
+        }
+      }
+    },
     {
       "if": {"properties": {"kind": {"const": "gtm-motions"}}, "required": ["kind"]},
       "then": {"required": ["motions"]}

@@ -9,6 +9,7 @@ flowchart TD
   automation_lead_scoring["automation<br/><b>lead-scoring</b>"]
   automation_qualify_from_transcript["automation<br/><b>qualify-from-transcript</b>"]
   binding_pipedrive["binding<br/><b>pipedrive</b>"]
+  brand_taste_company_brand_taste["brand-taste<br/><b>company-brand-taste</b>"]
   buying_context_commerce_analytics_buying_context["buying-context<br/><b>commerce-analytics-buying-context</b>"]
   buying_context_data_activation_buying_context["buying-context<br/><b>data-activation-buying-context</b>"]
   claim_registry_acme_analytics_claims["claim-registry<br/><b>acme-analytics-claims</b>"]
@@ -17,6 +18,8 @@ flowchart TD
   company_profile_company_profile["company-profile<br/><b>company-profile</b>"]
   company_strategy_company_strategy["company-strategy<br/><b>company-strategy</b>"]
   competitor_landscape_company_competitors["competitor-landscape<br/><b>company-competitors</b>"]
+  customer_taste_commerce_analytics_customer_taste["customer-taste<br/><b>commerce-analytics-customer-taste</b>"]
+  customer_taste_data_activation_customer_taste["customer-taste<br/><b>data-activation-customer-taste</b>"]
   discovery_snapshot_pipedrive_2026_07_01["discovery-snapshot<br/><b>pipedrive-2026-07-01</b>"]
   draft_qualification_followup_email["draft<br/><b>qualification-followup-email</b>"]
   gtm_motion_commerce_analytics_inbound["gtm-motion<br/><b>commerce-analytics-inbound</b>"]
@@ -89,6 +92,7 @@ flowchart TD
   binding_pipedrive --> object_type_organization
   binding_pipedrive --> object_type_person
   binding_pipedrive --> system_pipedrive
+  brand_taste_company_brand_taste --> company_strategy_company_strategy
   buying_context_commerce_analytics_buying_context --> icp_commerce_analytics_icp
   buying_context_commerce_analytics_buying_context --> personas_commerce_analytics_personas
   buying_context_commerce_analytics_buying_context --> product_context_growth_plan
@@ -107,6 +111,14 @@ flowchart TD
   buying_context_data_activation_buying_context --> use_case_data_activation_core_use_case
   claim_registry_acme_analytics_claims --> segment_commerce_analytics_core_segment
   claim_registry_acme_analytics_claims --> segment_data_activation_core_segment
+  customer_taste_commerce_analytics_customer_taste --> personas_commerce_analytics_personas
+  customer_taste_commerce_analytics_customer_taste --> product_group_manifest_commerce_analytics
+  customer_taste_commerce_analytics_customer_taste --> segment_commerce_analytics_core_segment
+  customer_taste_commerce_analytics_customer_taste --> use_case_commerce_analytics_core_use_case
+  customer_taste_data_activation_customer_taste --> personas_data_activation_personas
+  customer_taste_data_activation_customer_taste --> product_group_manifest_data_activation
+  customer_taste_data_activation_customer_taste --> segment_data_activation_core_segment
+  customer_taste_data_activation_customer_taste --> use_case_data_activation_core_use_case
   discovery_snapshot_pipedrive_2026_07_01 --> system_pipedrive
   draft_qualification_followup_email --> process_new_business
   gtm_motions_commerce_analytics_motions --> buying_context_commerce_analytics_buying_context
@@ -153,7 +165,9 @@ flowchart TD
   loop_lead_qualification --> action_qualify_lead
   loop_lead_qualification --> process_new_business
   loop_lead_qualification --> prompt_lead_qualification
+  messaging_commerce_analytics_messaging --> brand_taste_company_brand_taste
   messaging_commerce_analytics_messaging --> buying_context_commerce_analytics_buying_context
+  messaging_commerce_analytics_messaging --> customer_taste_commerce_analytics_customer_taste
   messaging_commerce_analytics_messaging --> personas_commerce_analytics_personas
   messaging_commerce_analytics_messaging --> positioning_commerce_analytics_positioning
   messaging_commerce_analytics_messaging --> product_context_growth_plan
@@ -163,7 +177,9 @@ flowchart TD
   messaging_commerce_analytics_messaging --> segment_commerce_analytics_core_segment
   messaging_commerce_analytics_messaging --> use_case_commerce_analytics_core_use_case
   messaging_commerce_analytics_messaging --> value_propositions_commerce_analytics_value_propositions
+  messaging_data_activation_messaging --> brand_taste_company_brand_taste
   messaging_data_activation_messaging --> buying_context_data_activation_buying_context
+  messaging_data_activation_messaging --> customer_taste_data_activation_customer_taste
   messaging_data_activation_messaging --> personas_data_activation_personas
   messaging_data_activation_messaging --> positioning_data_activation_positioning
   messaging_data_activation_messaging --> product_context_audience_activation
@@ -266,10 +282,12 @@ flowchart TD
   product_context_warehouse_sync --> product_group_strategy_data_activation_strategy
   product_context_warehouse_sync --> segment_data_activation_core_segment
   product_context_warehouse_sync --> use_case_data_activation_core_use_case
+  product_group_strategy_commerce_analytics_strategy --> company_strategy_company_strategy
   product_group_strategy_commerce_analytics_strategy --> icp_commerce_analytics_icp
   product_group_strategy_commerce_analytics_strategy --> product_group_manifest_commerce_analytics
   product_group_strategy_commerce_analytics_strategy --> segment_commerce_analytics_core_segment
   product_group_strategy_commerce_analytics_strategy --> use_case_commerce_analytics_core_use_case
+  product_group_strategy_data_activation_strategy --> company_strategy_company_strategy
   product_group_strategy_data_activation_strategy --> icp_data_activation_icp
   product_group_strategy_data_activation_strategy --> product_group_manifest_data_activation
   product_group_strategy_data_activation_strategy --> segment_data_activation_core_segment

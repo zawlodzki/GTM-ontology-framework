@@ -12,10 +12,12 @@ value_proposition_ref: value-propositions:commerce-analytics-value-propositions
 product_refs:
   - product-context:growth-plan
   - product-context:scale-plan
+brand_taste_ref: brand-taste:company-brand-taste
+customer_taste_ref: customer-taste:commerce-analytics-customer-taste
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-15
+  updated: 2026-10-02
   owner: Revenue
   last_verified: 2026-07-15
   verify_every: 90d
@@ -105,6 +107,18 @@ or proof point.
 - **Argument:** connect the current method and struggling moment to product truth,
   responsibilities, limits, and success evidence.
 - **Proof:** live customer inputs, representative model, and explicit gaps.
+
+## Expression selection
+
+Use `brand-taste:company-brand-taste` for shared direct language, traceability,
+customer agency, and explicit responsibilities.
+
+For the Head of E-commerce at problem/use-case awareness, select CA-1 from
+`customer-taste:commerce-analytics-customer-taste`: use a recognizable review scene,
+checkable definitions, and a bounded next step. For a CMO product-aware brief,
+select CA-2 and show ownership and adoption scope. These are illustrative
+presentation hypotheses, not evidence of engagement. Keep product mechanisms and
+proof strength selected from the approved arguments above.
 
 ## Must say
 

@@ -5,7 +5,7 @@ scope: company-context
 meta:
   source: synthetic
   status: example
-  updated: 2026-07-14
+  updated: 2026-10-02
 ---
 
 # Company context: agent guide
@@ -40,6 +40,13 @@ Follow typed references through manifests, never by guessing a path. A reference
 selects a canonical upstream decision; repeated prose is only a local summary and
 must not silently diverge from the referenced artifact.
 
+
+For content creation or review, load messaging and follow its optional
+`customer_taste_ref` and `brand_taste_ref` through the manifests. Customer Taste
+belongs to the selected group and preserves role/situation/channel scope; Brand
+Taste supplies shared expression choices. ICP qualification does not need either.
+Missing taste is a gap in communication knowledge, not permission to infer it.
+
 ## Ontology linkage
 
 The GTM ontology (sibling `gtm-ontology/` tree) points here through
@@ -52,6 +59,10 @@ cross-tree identifiers: renaming one is a breaking change — search both trees
 follows `context_root` and validates both trees in one run.
 
 ## Interpretation rules
+
+- Taste guides expression and audience reception; it cannot redefine product truth,
+  positioning, qualification, or buying roles. Stories are derived outputs with
+  source refs. Keep simulation feedback inferred and quotations source-grounded.
 
 - Company artifacts contain only facts shared by all product groups.
 - Group artifacts may specialize company facts but must not silently contradict

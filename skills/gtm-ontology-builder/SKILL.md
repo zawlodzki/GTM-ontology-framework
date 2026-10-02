@@ -21,7 +21,8 @@ Starter templates: `templates/`. Copy a template, fill it, keep the structure.
 Worked example: `examples/gtm-ontology/` — a complete validated ontology (fictional
 B2B SaaS on Pipedrive), exactly what these phases produce — linked via
 `context_root` to `examples/company-context/`, a worked company-context tree
-(product groups, segments, ICPs, personas, motions, positioning).
+(product groups, segments, ICPs, personas, motions, positioning, and optional
+customer/brand taste selected only for content work).
 
 Core rules (apply throughout):
 

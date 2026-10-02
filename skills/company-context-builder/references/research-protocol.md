@@ -13,6 +13,7 @@ only public-safe conclusions belong in `company-context/`.
 5. Closed Won cohort
 6. Detailed Top 10 review
 7. Privacy and persistence
+8. Communication reception and brand expression
 
 ## Source inventory
 
@@ -61,6 +62,7 @@ Suggested verification cadences:
 - positioning, messaging, and competitor claims: 90d;
 - company strategy and operating model: 180d;
 - mission and durable company identity: 365d.
+- customer taste observations: 90d; brand editorial choices: 180d.
 
 Use a shorter cadence when the source signals an active change. A fact past
 `last_verified + verify_every` is overdue and must be rechecked or left as a warning.
@@ -165,3 +167,12 @@ Persist only aggregate counts, anonymized patterns, safe evidence descriptions, 
 user-approved durable conclusions. Delete temporary raw working files when the
 execution environment permits safe cleanup; otherwise report their location and ask
 the user to handle retention.
+
+## Communication reception and brand expression
+
+When taste work is agreed, follow `taste-protocol.md` for a separate extraction
+pass on audience language, attention, dismissal, situations, and trust. Scope
+observations to role, situation, awareness stage, and channel where relevant.
+Expand beyond won evidence only with agreed source scope. Separate verified
+non-identifying quotations, anonymized patterns, paraphrases, and illustrative
+copy. Simulated response stays inferred; reviewed real response may become learned.

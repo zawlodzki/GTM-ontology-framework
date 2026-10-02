@@ -108,6 +108,20 @@ PII protection, and distractor artifacts. Scenario-only refs such as conflicting
 claims and a draft action describe supplied test state; they do not make those
 artifacts part of the confirmed example ontology.
 
+Optional taste coverage includes content routing for both product groups to their
+own Customer Taste and shared Brand Taste, refusal to fabricate a universal
+customer reaction, and preservation of an ephemeral Buyer Sim response as inferred.
+The ICP cases also exclude taste as excess context. Negative taste fixtures detect
+wrong-group routing, unnecessary brand loading, and simulation attributed to real
+audience evidence. Golden responses are authored fixtures testing the scorer, not
+evidence of an isolated agent run or improved content quality.
+
+Evaluate taste's effect on actual copy separately: compare equivalent drafts with
+and without taste under the same brief, model, and product facts, using reviewers
+who do not know which condition produced each draft. Review language, recognizable
+situations, editorial judgment, claim correctness, and editing effort. Production
+speed or Buyer Sim ratings alone do not establish audience resonance.
+
 ## Adding a case
 
 Add the case expectations, then add one response to every fixture. The golden

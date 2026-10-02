@@ -73,7 +73,8 @@ Two linked trees of small YAML/Markdown artifacts, each a single source of truth
 
 **Company context** (`company-context/`) is the static business layer: what the company
 sells, to whom, and why. Product groups, segments, ICPs, personas, buying context,
-positioning, value propositions, messaging, GTM motions. Built first, with the
+positioning, value propositions, messaging, GTM motions, and optional Customer Taste
+and Brand Taste for content work. Built first, with the
 **company-context-builder** skill, from your materials, web research, and Closed Won
 analysis. This is what stops an agent from inventing positioning or mailing the wrong
 audience.

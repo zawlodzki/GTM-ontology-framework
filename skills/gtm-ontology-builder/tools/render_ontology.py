@@ -27,10 +27,10 @@ import yaml
 # precede shorter prefixes of themselves (product-group-strategy before
 # product-group, gtm-motions before gtm-motion).
 REF_RE = re.compile(
-    r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop"
+    r"\b(object|process|automation|action|kpi|prompt|draft|system|property|loop|claim"
     r"|product-group-strategy|product-group|gtm-motions|gtm-motion|segment|use-case"
     r"|icp|personas|buying-context|positioning|value-propositions|messaging"
-    r"|product-context):([a-z0-9_./=-]+)")
+    r"|product-context|company-strategy|brand-taste|customer-taste):([a-z0-9_./=-]+)")
 # Documentation files inside a context tree; not artifacts, never rendered.
 GUIDE_KINDS = {"company-context-readme", "company-context-agent-guide",
                "company-context-artifact-guide"}

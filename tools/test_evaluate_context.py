@@ -52,13 +52,27 @@ class ContextCompetencyEvaluationTests(unittest.TestCase):
     def test_golden_fixture_passes_every_hard_check(self) -> None:
         report = self.evaluate_fixture("golden.jsonl")
         self.assertTrue(report["passed"])
-        self.assertEqual(report["summary"]["passed_cases"], 9)
+        count = len(self.suite["cases"])
+        self.assertEqual(report["summary"]["passed_cases"], count)
         for dimension in self.evaluator.DIMENSIONS:
             self.assertEqual(
                 report["summary"]["dimensions"][dimension],
-                {"passed": 9, "total": 9},
+                {"passed": count, "total": count},
             )
-        self.assertEqual(report["summary"]["tokens"]["reported_cases"], 9)
+        self.assertEqual(report["summary"]["tokens"]["reported_cases"], count)
+
+    def test_taste_routing_fixture_detects_wrong_group_and_excess_icp_context(self) -> None:
+        report = self.evaluate_fixture("fail-taste-routing.jsonl")
+        self.assertFalse(report["passed"])
+        self.assertEqual(self.failed_dimensions(report), {
+            "commerce-analytics-content-taste": {"routing"},
+            "commerce-analytics-icp": {"routing"},
+        })
+
+    def test_taste_provenance_fixture_rejects_simulation_as_real_observation(self) -> None:
+        report = self.evaluate_fixture("fail-taste-provenance.jsonl")
+        self.assertFalse(report["passed"])
+        self.assertEqual(self.failed_dimensions(report), {"buyer-sim-is-inferred": {"provenance"}})
 
     def test_routing_fixture_fails_only_routing(self) -> None:
         report = self.evaluate_fixture("fail-routing.jsonl")
@@ -97,7 +111,8 @@ class ContextCompetencyEvaluationTests(unittest.TestCase):
     def test_duplicate_missing_and_unexpected_responses_are_structural_failures(self) -> None:
         responses, errors = self.evaluator.read_jsonl(FIXTURES / "golden.jsonl")
         self.assertEqual(errors, [])
-        altered = [*responses[:-1], responses[0], {**responses[0], "case_id": "unexpected-case"}]
+        altered = [*[row for row in responses if row["case_id"] != "qualify-with-pii"],
+                   responses[0], {**responses[0], "case_id": "unexpected-case"}]
         report = self.evaluator.evaluate(self.suite, altered)
         self.assertFalse(report["passed"])
         self.assertEqual(

@@ -66,6 +66,12 @@ ICP separation, stale or conflicting claims, draft governance, missing action in
 stage transitions, action choice, and PII/live-only protection. Omit a category when
 the local trees contain no confirmed basis for it, and report that coverage gap.
 
+When optional taste artifacts exist, include content routing to the selected group's
+Customer Taste and shared Brand Taste, exclusion of taste from ICP-only work,
+preservation of role/situation scope, and simulated reception as inferred rather
+than real audience evidence. These cases test traces, not copy quality or resonance;
+review actual drafts and audience response separately.
+
 Validate the tailored suite and create a prompt pack that does not expose case
 descriptions or expectations:
 

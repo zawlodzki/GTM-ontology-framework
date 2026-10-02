@@ -45,4 +45,5 @@ artifacts:
     path: company/market/competitors.md
     summary: Company-level competitor archetypes and comparison dimensions.
     load_when: Comparing company-wide alternatives or preparing a competitive overview.
+{{BRAND_TASTE_MANIFEST_BLOCK}}
 {{PRODUCT_GROUPS_BLOCK}}
